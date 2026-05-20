@@ -6,11 +6,9 @@
   <title>调研数据统计 — CrossPilot</title>
   <link rel="stylesheet" href="style.css">
   <script src="assets/chart.umd.min.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-  <script src="firebase-service.js?v=20260520-realtime"></script>
+  <script src="supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="data-service.js"></script>
 </head>
 <body>
   <div class="admin-container">
@@ -22,7 +20,7 @@
     <div class="auth-panel" id="authPanel" style="display:none">
       <div>
         <h2>后台登录</h2>
-        <p>请输入 Firebase Authentication 中创建的邮箱和密码。</p>
+        <p>请输入 Supabase 中创建的邮箱和密码。</p>
       </div>
       <div class="auth-form">
         <input class="text-input" id="adminEmail" type="email" placeholder="邮箱">
@@ -410,7 +408,7 @@
     }
 
     function exportCSV() {
-      if (!window.CrossPilotData.firebaseEnabled()) {
+      if (!window.CrossPilotData.supabaseEnabled()) {
         window.open('api/export', '_blank');
         return;
       }
@@ -497,7 +495,7 @@
       if (unsubscribeResponses) unsubscribeResponses();
       unsubscribeResponses = null;
 
-      if (window.CrossPilotData.firebaseEnabled()) {
+      if (window.CrossPilotData.supabaseEnabled()) {
         unsubscribeResponses = window.CrossPilotData.subscribeResponses(handleStatsData, handleStatsError);
       } else {
         loadData();
@@ -524,7 +522,7 @@
 
     window.CrossPilotData.onAuthChange(user => {
       currentUser = user;
-      if (!window.CrossPilotData.firebaseEnabled()) {
+      if (!window.CrossPilotData.supabaseEnabled()) {
         document.getElementById('authPanel').style.display = 'none';
         startAdmin();
         return;
