@@ -6,12 +6,16 @@
   let db = null;
   let auth = null;
 
+  function hasConfig() {
+    return Boolean(config && config.apiKey && config.projectId);
+  }
+
   function isStaticHosting() {
-    return /github\.io$/.test(window.location.hostname);
+    return /github\.io$/.test(window.location.hostname) || window.location.protocol === 'file:';
   }
 
   function configured() {
-    return Boolean(config && config.apiKey && window.firebase);
+    return Boolean(hasConfig() && window.firebase);
   }
 
   function init() {
@@ -47,8 +51,59 @@
     return payload;
   }
 
+  function toFirestoreValue(value) {
+    if (value === undefined || value === null) return { nullValue: null };
+    if (Array.isArray(value)) {
+      return { arrayValue: { values: value.map(toFirestoreValue) } };
+    }
+    if (typeof value === 'boolean') return { booleanValue: value };
+    if (typeof value === 'number') {
+      return Number.isInteger(value) ? { integerValue: value } : { doubleValue: value };
+    }
+    if (typeof value === 'object') {
+      const fields = {};
+      Object.entries(value).forEach(([key, item]) => {
+        fields[key] = toFirestoreValue(item);
+      });
+      return { mapValue: { fields } };
+    }
+    return { stringValue: String(value) };
+  }
+
+  function toFirestoreFields(data) {
+    const fields = {};
+    Object.entries(data).forEach(([key, value]) => {
+      fields[key] = toFirestoreValue(value);
+    });
+    return fields;
+  }
+
+  async function submitResponseRest(data) {
+    const url = 'https://firestore.googleapis.com/v1/projects/' +
+      encodeURIComponent(config.projectId) +
+      '/databases/(default)/documents/' +
+      encodeURIComponent(COLLECTION) +
+      '?key=' + encodeURIComponent(config.apiKey);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: toFirestoreFields(withCreatedAt(data)) })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result.error && result.error.message ? result.error.message : 'Firestore 写入失败');
+    }
+    const id = result.name ? result.name.split('/').pop() : null;
+    return { success: true, id };
+  }
+
   async function submitResponse(data) {
     if (!init()) {
+      if (hasConfig()) {
+        return submitResponseRest(data);
+      }
+
       if (isStaticHosting()) {
         return {
           success: false,
