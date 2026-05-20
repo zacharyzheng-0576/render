@@ -334,13 +334,15 @@
     function formatBeijingTime(isoString) {
       if (!isoString) return '';
       const date = new Date(isoString);
-      // 转换为北京时间 (UTC+8)
-      const beijingTime = new Date(date.getTime() + 8 * 60 * 60 * 1000);
-      const month = String(beijingTime.getUTCMonth() + 1).padStart(2, '0');
-      const day = String(beijingTime.getUTCDate()).padStart(2, '0');
-      const hours = String(beijingTime.getUTCHours()).padStart(2, '0');
-      const minutes = String(beijingTime.getUTCMinutes()).padStart(2, '0');
-      return `${month}-${day} ${hours}:${minutes}`;
+      // 使用 toLocaleString 转换为北京时间
+      return date.toLocaleString('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).replace(/\//g, '-');
     }
 
     function renderTable(data) {
