@@ -273,9 +273,10 @@
 
       <!-- Buttons -->
       <div class="btn-group">
-        <button class="btn btn-secondary" id="btnPrev" style="display:none">上一题</button>
-        <button class="btn btn-primary" id="btnNext">下一题</button>
+        <button type="button" class="btn btn-secondary" id="btnPrev" style="display:none">上一题</button>
+        <button type="button" class="btn btn-primary" id="btnNext">下一题</button>
       </div>
+      <div class="submit-error" id="submitError"></div>
     </div>
 
     <!-- Success -->
@@ -461,7 +462,7 @@
       }
     });
 
-    function submitSurvey() {
+    async function submitSurvey() {
       // Collect other inputs
       document.querySelectorAll('.other-input .text-input').forEach(input => {
         if (input.dataset.otherField && input.value.trim()) {
@@ -469,7 +470,19 @@
         }
       });
 
-      window.CrossPilotData.submitResponse(formData).then(data => {
+      const button = document.getElementById('btnNext');
+      const errorBox = document.getElementById('submitError');
+      const originalText = button.textContent;
+      errorBox.textContent = '';
+      button.disabled = true;
+      button.textContent = '提交中... / Submitting...';
+
+      try {
+        if (!window.CrossPilotData || !window.CrossPilotData.submitResponse) {
+          throw new Error('数据服务没有加载成功，请刷新页面后重试。');
+        }
+
+        const data = await window.CrossPilotData.submitResponse(formData);
         if (data.success) {
           document.getElementById('surveyForm').style.display = 'none';
           document.getElementById('successPage').style.display = 'block';
@@ -477,10 +490,14 @@
         } else {
           throw new Error(data.error || 'Submission failed');
         }
-      }).catch(err => {
-        alert('提交失败，请稍后重试 / Submission failed, please try again');
+      } catch (err) {
+        const message = err && err.message ? err.message : '提交失败，请稍后重试 / Submission failed, please try again';
+        errorBox.textContent = message;
+        alert(message);
         console.error(err);
-      });
+        button.disabled = false;
+        button.textContent = originalText;
+      }
     }
 
     showStep();
