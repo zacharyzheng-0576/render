@@ -68,6 +68,19 @@
     return { total: responses.length, responses };
   }
 
+  function subscribeResponses(callback, onError) {
+    if (!init()) return null;
+
+    return db.collection(COLLECTION)
+      .orderBy('created_at', 'desc')
+      .onSnapshot(snapshot => {
+        const responses = snapshot.docs.map(normalizeRow);
+        callback({ total: responses.length, responses });
+      }, error => {
+        if (onError) onError(error);
+      });
+  }
+
   async function deleteResponse(id) {
     if (!init()) {
       const response = await fetch(apiUrl('/api/delete/' + encodeURIComponent(id)), { method: 'DELETE' });
@@ -117,6 +130,7 @@
     firebaseEnabled: configured,
     submitResponse,
     loadResponses,
+    subscribeResponses,
     deleteResponse,
     clearResponses,
     login,

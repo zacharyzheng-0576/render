@@ -127,6 +127,7 @@
     let allResponses = [];
     let charts = {};
     let refreshTimer = null;
+    let unsubscribeResponses = null;
     let currentUser = null;
 
     const COLORS = [
@@ -456,21 +457,25 @@
     document.getElementById('filterExp').addEventListener('change', renderAll);
     document.getElementById('filterRevenue').addEventListener('change', renderAll);
 
+    function handleStatsData(data) {
+      const prevLen = allResponses.length;
+      allResponses = data.responses || [];
+      renderAll();
+      if (allResponses.length > prevLen && prevLen > 0) {
+        document.querySelector('.total').style.background = '#d4edda';
+        setTimeout(() => document.querySelector('.total').style.background = '', 1500);
+      }
+    }
+
+    function handleStatsError(err) {
+      console.error('Failed to load stats:', err);
+      document.getElementById('totalCount').textContent = '加载失败';
+    }
+
     function loadData() {
       window.CrossPilotData.loadResponses()
-        .then(data => {
-          const prevLen = allResponses.length;
-          allResponses = data.responses || [];
-          renderAll();
-          if (allResponses.length > prevLen && prevLen > 0) {
-            document.querySelector('.total').style.background = '#d4edda';
-            setTimeout(() => document.querySelector('.total').style.background = '', 1500);
-          }
-        })
-        .catch(err => {
-          console.error('Failed to load stats:', err);
-          document.getElementById('totalCount').textContent = '加载失败';
-        });
+        .then(handleStatsData)
+        .catch(handleStatsError);
     }
 
     document.getElementById('responseBody').addEventListener('click', function(e) {
@@ -487,14 +492,25 @@
 
     function startAdmin() {
       setProtectedVisible(true);
-      loadData();
       if (refreshTimer) clearInterval(refreshTimer);
-      refreshTimer = setInterval(loadData, 10000);
+      refreshTimer = null;
+      if (unsubscribeResponses) unsubscribeResponses();
+      unsubscribeResponses = null;
+
+      if (window.CrossPilotData.firebaseEnabled()) {
+        unsubscribeResponses = window.CrossPilotData.subscribeResponses(handleStatsData, handleStatsError);
+      } else {
+        loadData();
+        refreshTimer = setInterval(loadData, 10000);
+      }
     }
 
     function stopAdmin() {
       setProtectedVisible(false);
       if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = null;
+      if (unsubscribeResponses) unsubscribeResponses();
+      unsubscribeResponses = null;
     }
 
     document.getElementById('btnLogin').addEventListener('click', function() {
