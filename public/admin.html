@@ -331,12 +331,24 @@
       });
     }
 
+    function formatBeijingTime(isoString) {
+      if (!isoString) return '';
+      const date = new Date(isoString);
+      // 转换为北京时间 (UTC+8)
+      const beijingTime = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+      const month = String(beijingTime.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(beijingTime.getUTCDate()).padStart(2, '0');
+      const hours = String(beijingTime.getUTCHours()).padStart(2, '0');
+      const minutes = String(beijingTime.getUTCMinutes()).padStart(2, '0');
+      return `${month}-${day} ${hours}:${minutes}`;
+    }
+
     function renderTable(data) {
       const tbody = document.getElementById('responseBody');
       tbody.innerHTML = '';
       data.forEach(r => {
         const tr = document.createElement('tr');
-        const time = r.created_at ? r.created_at.substring(5, 16).replace('T', ' ') : '';
+        const time = formatBeijingTime(r.created_at);
         const countries = Array.isArray(r.countries) ? r.countries.join(', ') : '';
         const contact = r.contact_info || '';
         tr.innerHTML = `
