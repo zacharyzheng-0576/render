@@ -198,3 +198,43 @@ EdgeOne API 已实现并本地模拟测试通过：
 3. CSV 导出包含提交内容
 4. 删除该条数据
 5. 再次统计返回 0 条
+
+---
+
+## 八、2026-05-20 新方向：GitHub Pages + Firebase
+
+因为 EdgeOne 默认域名在中国大陆访问受限，且绑定国内可访问域名需要域名成本/备案成本，项目新增一条免费托管路线：
+
+```
+GitHub Pages      # 托管 public/ 静态问卷页面
+Firebase Firestore # 存问卷提交数据
+Firebase Auth      # 保护 admin 后台
+```
+
+新增文件：
+
+```
+GITHUB_PAGES_FIREBASE.md          # Firebase + GitHub Pages 配置步骤
+public/firebase-config.js         # Firebase 配置占位文件
+public/firebase-service.js        # Firebase/本地 API 双模式数据层
+docs/                             # GitHub Pages 发布目录，内容从 public/ 复制
+```
+
+本次前端改动：
+
+- `public/index.html` 改为相对路径资源，适配 `https://zacharyzheng-0576.github.io/render/`
+- `public/admin.html` 改为相对路径资源，适配 GitHub Pages 子路径
+- 问卷提交改为调用 `window.CrossPilotData.submitResponse`
+- 后台统计/删除/清空改为调用 `window.CrossPilotData`
+- Firebase 配置为空时，仍然回退到原本 Flask/EdgeOne `/api/*` 接口
+- Firebase 配置填好后，问卷提交写入 Firestore，后台需要 Firebase Auth 登录后读取数据
+
+下一步：
+
+1. 在 Firebase 创建免费项目
+2. 创建 Web App，复制 Firebase config 到 `public/firebase-config.js`
+3. 开启 Firestore
+4. 设置 Firestore Rules
+5. 开启 Email/Password 登录并创建管理员用户
+6. GitHub 仓库 Settings → Pages → Source 选择 Deploy from a branch，目录选 main / docs
+7. 推送代码，等待 Actions 部署
