@@ -6,6 +6,10 @@
   let db = null;
   let auth = null;
 
+  function isStaticHosting() {
+    return /github\.io$/.test(window.location.hostname);
+  }
+
   function configured() {
     return Boolean(config && config.apiKey && window.firebase);
   }
@@ -45,6 +49,13 @@
 
   async function submitResponse(data) {
     if (!init()) {
+      if (isStaticHosting()) {
+        return {
+          success: false,
+          error: 'Firebase 没有加载成功，请检查网络是否能访问 Google Firebase 服务。'
+        };
+      }
+
       const response = await fetch(apiUrl('/api/submit'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -59,6 +70,10 @@
 
   async function loadResponses() {
     if (!init()) {
+      if (isStaticHosting()) {
+        throw new Error('Firebase 没有加载成功，后台无法读取 Firestore。');
+      }
+
       const response = await fetch(apiUrl('/api/stats'));
       return response.json();
     }
