@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>调研数据统计 — CrossPilot</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>调研数据统计</h1>
+      <span class="total">共 <strong id="totalCount">0</strong> 份问卷</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <select class="filter-select" id="filterType">
+        <option value="">全部业务类型</option>
+        <option value="平台卖家">平台卖家</option>
+        <option value="独立站卖家">独立站卖家</option>
+        <option value="两者都做">两者都做</option>
+      </select>
+      <select class="filter-select" id="filterExp">
+        <option value="">全部入行时间</option>
+        <option value="半年以下">半年以下</option>
+        <option value="半年-1年">半年-1年</option>
+        <option value="1-3年">1-3年</option>
+        <option value="3年以上">3年以上</option>
+      </select>
+      <select class="filter-select" id="filterRevenue">
+        <option value="">全部月营收</option>
+        <option value="5千以下">5千以下</option>
+        <option value="5千-2万">5千-2万</option>
+        <option value="2万-10万">2万-10万</option>
+        <option value="10万-50万">10万-50万</option>
+        <option value="50万以上">50万以上</option>
+      </select>
+      <button class="btn-export" onclick="exportCSV()">导出 CSV</button>
+      <button class="btn-clear" onclick="clearAll()">清空全部</button>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>痛点评分雷达图</h3>
+        <div class="chart-wrapper"><canvas id="radarChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>业务类型分布</h3>
+        <div class="chart-wrapper"><canvas id="typeChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>入行时间分布</h3>
+        <div class="chart-wrapper"><canvas id="expChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>月营收分布</h3>
+        <div class="chart-wrapper"><canvas id="revenueChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>最大痛点分布</h3>
+        <div class="chart-wrapper"><canvas id="painChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>付费意愿分布</h3>
+        <div class="chart-wrapper"><canvas id="payChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>AI 工具使用情况</h3>
+        <div class="chart-wrapper"><canvas id="aiToolChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>AI 工具最缺什么</h3>
+        <div class="chart-wrapper"><canvas id="aiGapChart"></canvas></div>
+      </div>
+      <div class="chart-card full-width">
+        <h3>目标国家/地区分布</h3>
+        <div class="chart-wrapper"><canvas id="countryChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Responses table -->
+    <div class="chart-card full-width" style="margin-bottom:24px">
+      <h3>最新提交记录</h3>
+      <div class="table-wrapper" style="max-height:400px;overflow-y:auto">
+        <table class="response-table">
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>类型</th>
+              <th>入行</th>
+              <th>月营收</th>
+              <th>国家</th>
+              <th>付费意愿</th>
+              <th>愿意访谈</th>
+              <th>联系方式</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="responseBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allResponses = [];
+    let charts = {};
+
+    const COLORS = [
+      'rgba(102, 126, 234, 0.85)',
+      'rgba(118, 75, 162, 0.85)',
+      'rgba(17, 153, 142, 0.85)',
+      'rgba(56, 239, 125, 0.85)',
+      'rgba(255, 177, 66, 0.85)',
+      'rgba(255, 107, 107, 0.85)',
+      'rgba(78, 205, 196, 0.85)',
+      'rgba(199, 128, 232, 0.85)'
+    ];
+
+    // All predefined options per field — ensures they always show on charts
+    const ALL_OPTIONS = {
+      business_type: ['平台卖家', '独立站卖家', '两者都做'],
+      experience: ['半年以下', '半年-1年', '1-3年', '3年以上'],
+      revenue: ['5千以下', '5千-2万', '2万-10万', '10万-50万', '50万以上'],
+      countries: ['北美', '欧洲', '东南亚', '日韩', '中东', '拉美', '其他'],
+      platforms: ['Amazon', 'TikTok Shop', 'Shopee', 'Temu', '速卖通', '其他'],
+      traffic_channels: ['Facebook广告', 'Google广告', 'TikTok广告', 'SEO', '社交媒体', '邮件营销'],
+      biggest_pains: ['写产品文案', '做广告素材', '追踪竞品', 'SEO优化', '多平台上架', '客服回复', '其他'],
+      willing_to_pay: ['0', '99以下', '99-299', '300-599', '600以上'],
+      platform_ai_tools: ['ChatGPT', 'DeepSeek', '平台自带AI', 'ERP工具', 'Helium10等', '都没用过'],
+      ai_tool_gap: ['中文支持不好', '不够智能', '太贵', '功能太分散', '不了解', '其他']
+    };
+
+    // Chart title labels (Chinese)
+    const OPTION_LABELS = {
+      willing_to_pay: { '0': '¥0 不需要', '99以下': '¥99以下', '99-299': '¥99-299', '300-599': '¥300-599', '600以上': '¥600以上' }
+    };
+
+    function filterData() {
+      const type = document.getElementById('filterType').value;
+      const exp = document.getElementById('filterExp').value;
+      const rev = document.getElementById('filterRevenue').value;
+      return allResponses.filter(r => {
+        if (type && r.business_type !== type) return false;
+        if (exp && r.experience !== exp) return false;
+        if (rev && r.revenue !== rev) return false;
+        return true;
+      });
+    }
+
+    function countFieldWithDefaults(data, field) {
+      const allOpts = ALL_OPTIONS[field] || [];
+      const labelMap = OPTION_LABELS[field] || {};
+      const counts = {};
+      allOpts.forEach(opt => { counts[opt] = 0; });
+      data.forEach(r => {
+        const val = r[field];
+        if (val && counts.hasOwnProperty(val)) counts[val]++;
+      });
+      return { labels: allOpts.map(o => labelMap[o] || o), values: allOpts.map(o => counts[o]) };
+    }
+
+    function countMultiFieldWithDefaults(data, field) {
+      const allOpts = ALL_OPTIONS[field] || [];
+      const counts = {};
+      allOpts.forEach(opt => { counts[opt] = 0; });
+      data.forEach(r => {
+        const arr = r[field];
+        if (Array.isArray(arr)) {
+          arr.forEach(v => { if (counts.hasOwnProperty(v)) counts[v]++; });
+        }
+      });
+      return { labels: allOpts, values: allOpts.map(o => counts[o]) };
+    }
+
+    function avgField(data, field) {
+      const vals = data.map(r => r[field]).filter(v => typeof v === 'number');
+      if (vals.length === 0) return 0;
+      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    }
+
+    // Data label plugin
+    const dataLabelPlugin = {
+      id: 'dataLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        chart.data.datasets.forEach((dataset, i) => {
+          const meta = chart.getDatasetMeta(i);
+          meta.data.forEach((bar, index) => {
+            const value = dataset.data[index];
+            if (value > 0) {
+              ctx.fillStyle = '#333';
+              ctx.font = 'bold 12px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText(value, bar.x, bar.y - 6);
+            }
+          });
+        });
+      }
+    };
+
+    function renderBarChart(canvasId, result) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      if (charts[canvasId]) charts[canvasId].destroy();
+
+      charts[canvasId] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: result.labels,
+          datasets: [{
+            label: '人数',
+            data: result.values,
+            backgroundColor: COLORS.slice(0, result.labels.length),
+            borderRadius: 6,
+            maxBarThickness: 48
+          }]
+        },
+        plugins: [dataLabelPlugin],
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+            x: {
+              ticks: {
+                font: { size: 11 },
+                maxRotation: 30,
+                minRotation: 0
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderPieChart(canvasId, data, labels) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      if (charts[canvasId]) charts[canvasId].destroy();
+
+      charts[canvasId] = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: COLORS.slice(0, labels.length),
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 12 } } }
+          }
+        }
+      });
+    }
+
+    function renderRadarChart(data) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      if (charts['radarChart']) charts['radarChart'].destroy();
+
+      const groups = {};
+      data.forEach(r => {
+        const t = r.business_type || '未知';
+        if (!groups[t]) groups[t] = [];
+        groups[t].push(r);
+      });
+
+      const labels = ['创意素材', '竞品情报', '多语言管理', '广告优化', '运营效率'];
+      const fields = ['pain_creative', 'pain_intelligence', 'pain_multilingual', 'pain_ad_optimize', 'pain_efficiency'];
+
+      const datasets = Object.entries(groups).map(([type, rows], i) => ({
+        label: type,
+        data: fields.map(f => Math.round(avgField(rows, f) * 10) / 10),
+        borderColor: COLORS[i],
+        backgroundColor: COLORS[i].replace('0.85', '0.1'),
+        pointBackgroundColor: COLORS[i],
+        borderWidth: 2
+      }));
+
+      charts['radarChart'] = new Chart(ctx, {
+        type: 'radar',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          scales: {
+            r: {
+              min: 0, max: 5,
+              ticks: { stepSize: 1, font: { size: 11 } },
+              pointLabels: { font: { size: 12 } }
+            }
+          },
+          plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 12 } } }
+          }
+        }
+      });
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('responseBody');
+      tbody.innerHTML = '';
+      data.forEach(r => {
+        const tr = document.createElement('tr');
+        const time = r.created_at ? r.created_at.substring(5, 16).replace('T', ' ') : '';
+        const countries = Array.isArray(r.countries) ? r.countries.join(', ') : '';
+        const contact = r.contact_info || '';
+        tr.innerHTML = `
+          <td>${time}</td>
+          <td>${r.business_type || ''}</td>
+          <td>${r.experience || ''}</td>
+          <td>${r.revenue || ''}</td>
+          <td>${countries}</td>
+          <td>${r.willing_to_pay || ''}</td>
+          <td>${r.willing_interview || ''}</td>
+          <td>${contact}</td>
+          <td><button class="btn-del" onclick="deleteOne(${r.id})">删除</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function deleteOne(id) {
+      if (!confirm('确定删除这条数据？')) return;
+      fetch('/api/delete/' + id, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(() => loadData());
+    }
+
+    function clearAll() {
+      if (!confirm('确定清空所有数据？此操作不可撤销！')) return;
+      if (!confirm('再次确认：删除全部 ' + allResponses.length + ' 条数据？')) return;
+      fetch('/api/clear', { method: 'DELETE' })
+        .then(res => res.json())
+        .then(() => loadData());
+    }
+
+    function renderAll() {
+      const data = filterData();
+      document.getElementById('totalCount').textContent = data.length;
+
+      // Radar
+      renderRadarChart(data);
+
+      // Pie charts — use defaults for consistent labels
+      const typeRes = countFieldWithDefaults(data, 'business_type');
+      renderPieChart('typeChart', typeRes.values, typeRes.labels);
+      const expRes = countFieldWithDefaults(data, 'experience');
+      renderPieChart('expChart', expRes.values, expRes.labels);
+      const revRes = countFieldWithDefaults(data, 'revenue');
+      renderPieChart('revenueChart', revRes.values, revRes.labels);
+
+      // Bar charts — all options shown, data labels on bars
+      renderBarChart('painChart', countMultiFieldWithDefaults(data, 'biggest_pains'));
+      renderBarChart('payChart', countFieldWithDefaults(data, 'willing_to_pay'));
+      renderBarChart('aiToolChart', countMultiFieldWithDefaults(data, 'platform_ai_tools'));
+      renderBarChart('aiGapChart', countFieldWithDefaults(data, 'ai_tool_gap'));
+      renderBarChart('countryChart', countMultiFieldWithDefaults(data, 'countries'));
+
+      // Table
+      renderTable(data);
+    }
+
+    function exportCSV() { window.open('/api/export', '_blank'); }
+
+    document.getElementById('filterType').addEventListener('change', renderAll);
+    document.getElementById('filterExp').addEventListener('change', renderAll);
+    document.getElementById('filterRevenue').addEventListener('change', renderAll);
+
+    function loadData() {
+      fetch('/api/stats')
+        .then(res => res.json())
+        .then(data => {
+          const prevLen = allResponses.length;
+          allResponses = data.responses || [];
+          renderAll();
+          if (allResponses.length > prevLen && prevLen > 0) {
+            document.querySelector('.total').style.background = '#d4edda';
+            setTimeout(() => document.querySelector('.total').style.background = '', 1500);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load stats:', err);
+          document.getElementById('totalCount').textContent = '加载失败';
+        });
+    }
+
+    loadData();
+    setInterval(loadData, 10000);
+  </script>
+</body>
+</html>

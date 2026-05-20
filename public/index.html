@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>跨境电商卖家需求调研 | Cross-border Seller Survey</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="survey-header">
+      <h1>跨境电商卖家需求调研</h1>
+      <p>帮助我们了解您的真实需求，约 5 分钟</p>
+      <p class="en-sub">Help us understand your real needs — approx. 5 min</p>
+    </div>
+
+    <div class="progress-text"><span id="progressNum">1</span> / <span id="progressTotal">12</span></div>
+    <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+
+    <div id="surveyForm">
+
+      <!-- Q1: 业务类型（分支点，放最前） -->
+      <div class="question-card" data-q="1">
+        <div class="question-number">Q1</div>
+        <div class="question-title">您目前主要做哪种业务？</div>
+        <div class="question-en">What type of business do you mainly run?</div>
+        <div class="options" data-type="single" data-field="business_type">
+          <label class="option-label" data-value="平台卖家"><div class="option-radio"></div><span>平台卖家（Amazon / TikTok Shop / Shopee 等）<br><em class="en">Platform seller</em></span></label>
+          <label class="option-label" data-value="独立站卖家"><div class="option-radio"></div><span>独立站卖家（Shopify / WooCommerce 等）<br><em class="en">Independent site seller</em></span></label>
+          <label class="option-label" data-value="两者都做"><div class="option-radio"></div><span>两者都做<br><em class="en">Both</em></span></label>
+        </div>
+      </div>
+
+      <!-- Q2: 入行时间 -->
+      <div class="question-card hidden" data-q="2">
+        <div class="question-number">Q2</div>
+        <div class="question-title">您做跨境电商多久了？</div>
+        <div class="question-en">How long have you been doing cross-border e-commerce?</div>
+        <div class="options" data-type="single" data-field="experience">
+          <label class="option-label" data-value="半年以下"><div class="option-radio"></div><span>半年以下 <em class="en">Less than 6 months</em></span></label>
+          <label class="option-label" data-value="半年-1年"><div class="option-radio"></div><span>半年 ~ 1 年 <em class="en">6 months – 1 year</em></span></label>
+          <label class="option-label" data-value="1-3年"><div class="option-radio"></div><span>1 ~ 3 年 <em class="en">1 – 3 years</em></span></label>
+          <label class="option-label" data-value="3年以上"><div class="option-radio"></div><span>3 年以上 <em class="en">More than 3 years</em></span></label>
+        </div>
+      </div>
+
+      <!-- Q3: 目标国家 -->
+      <div class="question-card hidden" data-q="3">
+        <div class="question-number">Q3</div>
+        <div class="question-title">您主要做哪些国家/地区？（可多选）</div>
+        <div class="question-en">Which countries/regions do you mainly target? (Multiple choice)</div>
+        <div class="options" data-type="multi" data-field="countries">
+          <label class="option-label" data-value="北美"><div class="option-checkbox"></div><span>北美 <em class="en">North America</em></span></label>
+          <label class="option-label" data-value="欧洲"><div class="option-checkbox"></div><span>欧洲 <em class="en">Europe</em></span></label>
+          <label class="option-label" data-value="东南亚"><div class="option-checkbox"></div><span>东南亚 <em class="en">Southeast Asia</em></span></label>
+          <label class="option-label" data-value="日韩"><div class="option-checkbox"></div><span>日韩 <em class="en">Japan / Korea</em></span></label>
+          <label class="option-label" data-value="中东"><div class="option-checkbox"></div><span>中东 <em class="en">Middle East</em></span></label>
+          <label class="option-label" data-value="拉美"><div class="option-checkbox"></div><span>拉美 <em class="en">Latin America</em></span></label>
+          <label class="option-label" data-value="其他"><div class="option-checkbox"></div><span>其他 <em class="en">Other</em></span></label>
+        </div>
+        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="countries_other"></div>
+      </div>
+
+      <!-- Q4: 月营收 -->
+      <div class="question-card hidden" data-q="4">
+        <div class="question-number">Q4</div>
+        <div class="question-title">您的平均月营收大约是？（人民币）</div>
+        <div class="question-en">What is your average monthly revenue? (RMB)</div>
+        <div class="options" data-type="single" data-field="revenue">
+          <label class="option-label" data-value="5千以下"><div class="option-radio"></div><span>5 千以下 <em class="en">Under ¥5K</em></span></label>
+          <label class="option-label" data-value="5千-2万"><div class="option-radio"></div><span>5 千 ~ 2 万 <em class="en">¥5K – ¥20K</em></span></label>
+          <label class="option-label" data-value="2万-10万"><div class="option-radio"></div><span>2 万 ~ 10 万 <em class="en">¥20K – ¥100K</em></span></label>
+          <label class="option-label" data-value="10万-50万"><div class="option-radio"></div><span>10 万 ~ 50 万 <em class="en">¥100K – ¥500K</em></span></label>
+          <label class="option-label" data-value="50万以上"><div class="option-radio"></div><span>50 万以上 <em class="en">Over ¥500K</em></span></label>
+        </div>
+      </div>
+
+      <!-- ===== 平台卖家专属 ===== -->
+      <div class="section-divider hidden branch-platform">— 平台卖家相关 / Platform seller questions —</div>
+
+      <!-- A5: 主要平台 -->
+      <div class="question-card hidden branch-platform" data-q="A5">
+        <div class="question-number">Q5</div>
+        <div class="question-title">您主要在哪些平台？（可多选）</div>
+        <div class="question-en">Which platforms do you mainly sell on? (Multiple choice)</div>
+        <div class="options" data-type="multi" data-field="platforms">
+          <label class="option-label" data-value="Amazon"><div class="option-checkbox"></div><span>Amazon</span></label>
+          <label class="option-label" data-value="TikTok Shop"><div class="option-checkbox"></div><span>TikTok Shop</span></label>
+          <label class="option-label" data-value="Shopee"><div class="option-checkbox"></div><span>Shopee</span></label>
+          <label class="option-label" data-value="Temu"><div class="option-checkbox"></div><span>Temu</span></label>
+          <label class="option-label" data-value="速卖通"><div class="option-checkbox"></div><span>速卖通 <em class="en">AliExpress</em></span></label>
+          <label class="option-label" data-value="其他"><div class="option-checkbox"></div><span>其他 <em class="en">Other</em></span></label>
+        </div>
+        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="platforms_other"></div>
+      </div>
+
+      <!-- A6: 平台痛点 -->
+      <div class="question-card hidden branch-platform" data-q="A6">
+        <div class="question-number">Q6</div>
+        <div class="question-title">上新时最大的痛点是？</div>
+        <div class="question-en">What is your biggest pain point when listing new products?</div>
+        <div class="options" data-type="single" data-field="platform_pain">
+          <label class="option-label" data-value="翻译质量差"><div class="option-radio"></div><span>翻译/文案质量不够好 <em class="en">Poor translation / copy quality</em></span></label>
+          <label class="option-label" data-value="关键词不会选"><div class="option-radio"></div><span>关键词不知道怎么选 <em class="en">Don't know how to choose keywords</em></span></label>
+          <label class="option-label" data-value="多平台格式不同"><div class="option-radio"></div><span>不同平台格式要求不同 <em class="en">Different format requirements across platforms</em></span></label>
+          <label class="option-label" data-value="素材不够"><div class="option-radio"></div><span>图片/视频素材不够 <em class="en">Not enough images / video materials</em></span></label>
+          <label class="option-label" data-value="其他"><div class="option-radio"></div><span>其他 <em class="en">Other</em></span></label>
+        </div>
+        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="platform_pain_other"></div>
+      </div>
+
+      <!-- A7: AI工具使用 -->
+      <div class="question-card hidden branch-platform" data-q="A7">
+        <div class="question-number">Q7</div>
+        <div class="question-title">您用过哪些 AI 工具辅助运营？（可多选）</div>
+        <div class="question-en">Which AI tools have you used? (Multiple choice)</div>
+        <div class="options" data-type="multi" data-field="platform_ai_tools">
+          <label class="option-label" data-value="ChatGPT"><div class="option-checkbox"></div><span>ChatGPT</span></label>
+          <label class="option-label" data-value="DeepSeek"><div class="option-checkbox"></div><span>DeepSeek</span></label>
+          <label class="option-label" data-value="平台自带AI"><div class="option-checkbox"></div><span>平台自带 AI <em class="en">Platform built-in AI</em></span></label>
+          <label class="option-label" data-value="ERP工具"><div class="option-checkbox"></div><span>ERP 工具（店小秘/马帮/通途）<em class="en">ERP tools</em></span></label>
+          <label class="option-label" data-value="Helium10等"><div class="option-checkbox"></div><span>Helium 10 / Jungle Scout 等</span></label>
+          <label class="option-label" data-value="都没用过"><div class="option-checkbox"></div><span>都没用过 <em class="en">None of the above</em></span></label>
+        </div>
+      </div>
+
+      <!-- ===== 独立站卖家专属 ===== -->
+      <div class="section-divider hidden branch-indie">— 独立站卖家相关 / Independent site questions —</div>
+
+      <!-- B5: 获客渠道 -->
+      <div class="question-card hidden branch-indie" data-q="B5">
+        <div class="question-number">Q5</div>
+        <div class="question-title">您的主要获客渠道？（可多选）</div>
+        <div class="question-en">What are your main customer acquisition channels? (Multiple choice)</div>
+        <div class="options" data-type="multi" data-field="traffic_channels">
+          <label class="option-label" data-value="Facebook广告"><div class="option-checkbox"></div><span>Facebook / Instagram 广告 <em class="en">Facebook / Instagram Ads</em></span></label>
+          <label class="option-label" data-value="Google广告"><div class="option-checkbox"></div><span>Google 广告 <em class="en">Google Ads</em></span></label>
+          <label class="option-label" data-value="TikTok广告"><div class="option-checkbox"></div><span>TikTok 广告/短视频 <em class="en">TikTok Ads / Short video</em></span></label>
+          <label class="option-label" data-value="SEO"><div class="option-checkbox"></div><span>SEO（搜索引擎优化）<em class="en">Search Engine Optimization</em></span></label>
+          <label class="option-label" data-value="社交媒体"><div class="option-checkbox"></div><span>社交媒体自然流量 <em class="en">Organic social media</em></span></label>
+          <label class="option-label" data-value="邮件营销"><div class="option-checkbox"></div><span>邮件营销 <em class="en">Email marketing</em></span></label>
+        </div>
+      </div>
+
+      <!-- B6: 素材时间 -->
+      <div class="question-card hidden branch-indie" data-q="B6">
+        <div class="question-number">Q6</div>
+        <div class="question-title">每月在广告素材（图片/视频/文案）上花多少时间？</div>
+        <div class="question-en">How much time do you spend monthly on ad creatives (images / video / copy)?</div>
+        <div class="options" data-type="single" data-field="creative_hours">
+          <label class="option-label" data-value="5小时以下"><div class="option-radio"></div><span>5 小时以下 <em class="en">Less than 5 hours</em></span></label>
+          <label class="option-label" data-value="5-20小时"><div class="option-radio"></div><span>5 ~ 20 小时 <em class="en">5 – 20 hours</em></span></label>
+          <label class="option-label" data-value="20-50小时"><div class="option-radio"></div><span>20 ~ 50 小时 <em class="en">20 – 50 hours</em></span></label>
+          <label class="option-label" data-value="50小时以上"><div class="option-radio"></div><span>50 小时以上 <em class="en">More than 50 hours</em></span></label>
+        </div>
+      </div>
+
+      <!-- B7: 竞品追踪 -->
+      <div class="question-card hidden branch-indie" data-q="B7">
+        <div class="question-number">Q7</div>
+        <div class="question-title">您目前怎么追踪竞品的广告和创意？</div>
+        <div class="question-en">How do you currently track competitors' ads and creatives?</div>
+        <div class="options" data-type="single" data-field="competitor_tracking">
+          <label class="option-label" data-value="AdSpy等工具"><div class="option-radio"></div><span>用 AdSpy / Minea / PipiAds 等工具 <em class="en">Using ad spy tools</em></span></label>
+          <label class="option-label" data-value="手动刷"><div class="option-radio"></div><span>手动刷社交媒体和广告库 <em class="en">Manually browsing social media & ad libraries</em></span></label>
+          <label class="option-label" data-value="没有追踪"><div class="option-radio"></div><span>没有系统追踪 <em class="en">No systematic tracking</em></span></label>
+          <label class="option-label" data-value="其他"><div class="option-radio"></div><span>其他 <em class="en">Other</em></span></label>
+        </div>
+        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="competitor_tracking_other"></div>
+      </div>
+
+      <!-- ===== 通用问题 ===== -->
+      <div class="section-divider hidden branch-all">— 更多问题 / General questions —</div>
+
+      <!-- Q8: 最大痛点 -->
+      <div class="question-card hidden branch-all" data-q="8">
+        <div class="question-number">Q8</div>
+        <div class="question-title">哪些工作让您最头疼？（最多选 3 项）</div>
+        <div class="question-en">Which tasks frustrate you the most? (Max 3)</div>
+        <div class="max-hint">已选 <span id="painCount">0</span> / 3</div>
+        <div class="options" data-type="multi" data-field="biggest_pains" data-max="3">
+          <label class="option-label" data-value="写产品文案"><div class="option-checkbox"></div><span>写产品文案 <em class="en">Writing product copy</em></span></label>
+          <label class="option-label" data-value="做广告素材"><div class="option-checkbox"></div><span>做广告素材（图片/视频）<em class="en">Creating ad creatives</em></span></label>
+          <label class="option-label" data-value="追踪竞品"><div class="option-checkbox"></div><span>追踪竞品动态 <em class="en">Tracking competitors</em></span></label>
+          <label class="option-label" data-value="SEO优化"><div class="option-checkbox"></div><span>SEO 优化 <em class="en">SEO optimization</em></span></label>
+          <label class="option-label" data-value="多平台上架"><div class="option-checkbox"></div><span>多平台上架/本地化 <em class="en">Multi-platform listing / localization</em></span></label>
+          <label class="option-label" data-value="客服回复"><div class="option-checkbox"></div><span>客服回复 <em class="en">Customer service replies</em></span></label>
+          <label class="option-label" data-value="其他"><div class="option-checkbox"></div><span>其他 <em class="en">Other</em></span></label>
+        </div>
+        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="biggest_pains_other"></div>
+      </div>
+
+      <!-- Q9: 付费意愿 -->
+      <div class="question-card hidden branch-all" data-q="9">
+        <div class="question-number">Q9</div>
+        <div class="question-title">如果有一个 AI 工具能每天自动分析竞品广告并生成创意建议，您愿意每月付多少？</div>
+        <div class="question-en">If an AI tool could automatically analyze competitor ads and generate creative suggestions daily, how much would you pay monthly?</div>
+        <div class="options" data-type="single" data-field="willing_to_pay">
+          <label class="option-label" data-value="0"><div class="option-radio"></div><span>¥0 — 不需要这类工具 <em class="en">¥0 — Don't need this</em></span></label>
+          <label class="option-label" data-value="99以下"><div class="option-radio"></div><span>¥99 以下 <em class="en">Under ¥99</em></span></label>
+          <label class="option-label" data-value="99-299"><div class="option-radio"></div><span>¥99 ~ ¥299</span></label>
+          <label class="option-label" data-value="300-599"><div class="option-radio"></div><span>¥300 ~ ¥599</span></label>
+          <label class="option-label" data-value="600以上"><div class="option-radio"></div><span>¥600 以上 <em class="en">Over ¥600</em></span></label>
+        </div>
+      </div>
+
+      <!-- Q10: 痛点评分 -->
+      <div class="question-card hidden branch-all" data-q="10">
+        <div class="question-number">Q10</div>
+        <div class="question-title">请对以下维度的痛点程度打分</div>
+        <div class="question-en">Rate the pain level for each dimension (1 = not painful, 5 = very painful)</div>
+        <div class="slider-group">
+          <div class="slider-item">
+            <div class="slider-label"><span>创意素材制作效率 <em class="en">Creative efficiency</em></span><span class="slider-value">3</span></div>
+            <input type="range" min="1" max="5" value="3" data-field="pain_creative" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
+          </div>
+          <div class="slider-item">
+            <div class="slider-label"><span>竞品情报获取能力 <em class="en">Competitor intelligence</em></span><span class="slider-value">3</span></div>
+            <input type="range" min="1" max="5" value="3" data-field="pain_intelligence" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
+          </div>
+          <div class="slider-item">
+            <div class="slider-label"><span>多平台/多语言内容管理 <em class="en">Multi-platform / multilingual</em></span><span class="slider-value">3</span></div>
+            <input type="range" min="1" max="5" value="3" data-field="pain_multilingual" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
+          </div>
+          <div class="slider-item">
+            <div class="slider-label"><span>广告投放效果优化 <em class="en">Ad optimization</em></span><span class="slider-value">3</span></div>
+            <input type="range" min="1" max="5" value="3" data-field="pain_ad_optimize" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
+          </div>
+          <div class="slider-item">
+            <div class="slider-label"><span>整体运营效率 <em class="en">Overall efficiency</em></span><span class="slider-value">3</span></div>
+            <input type="range" min="1" max="5" value="3" data-field="pain_efficiency" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
+          </div>
+        </div>
+      </div>
+
+      <!-- Q11: AI工具不足 -->
+      <div class="question-card hidden branch-all" data-q="11">
+        <div class="question-number">Q11</div>
+        <div class="question-title">您觉得现有 AI 工具最缺什么？</div>
+        <div class="question-en">What do existing AI tools lack the most?</div>
+        <div class="options" data-type="single" data-field="ai_tool_gap">
+          <label class="option-label" data-value="中文支持不好"><div class="option-radio"></div><span>中文支持不好 <em class="en">Poor Chinese support</em></span></label>
+          <label class="option-label" data-value="不够智能"><div class="option-radio"></div><span>不够智能，生成内容需大量修改 <em class="en">Not smart enough, needs heavy editing</em></span></label>
+          <label class="option-label" data-value="太贵"><div class="option-radio"></div><span>太贵了 <em class="en">Too expensive</em></span></label>
+          <label class="option-label" data-value="功能太分散"><div class="option-radio"></div><span>功能太分散，要用很多工具 <em class="en">Too fragmented, need many tools</em></span></label>
+          <label class="option-label" data-value="不了解"><div class="option-radio"></div><span>不太了解有哪些工具 <em class="en">Don't know what tools exist</em></span></label>
+          <label class="option-label" data-value="其他"><div class="option-radio"></div><span>其他 <em class="en">Other</em></span></label>
+        </div>
+        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="ai_tool_gap_other"></div>
+      </div>
+
+      <!-- Q12: 深度交流 -->
+      <div class="question-card hidden branch-all" data-q="12">
+        <div class="question-number">Q12</div>
+        <div class="question-title">如果后续有更深入的交流机会，您方便留下联系方式吗？</div>
+        <div class="question-en">Would you like to leave your contact for further discussion?</div>
+        <div class="options" data-type="single" data-field="willing_interview">
+          <label class="option-label" data-value="愿意"><div class="option-radio"></div><span>可以，欢迎联系我 <em class="en">Sure, feel free to reach out</em></span></label>
+          <label class="option-label" data-value="不愿意"><div class="option-radio"></div><span>暂时不用 <em class="en">Not right now</em></span></label>
+        </div>
+        <div class="contact-section" id="contactSection">
+          <label>方便的话请留下至少一项联系方式<br><em class="en">Please leave at least one contact method</em></label>
+          <input type="text" class="text-input" placeholder="微信号 / WeChat ID" id="contactWechat">
+          <input type="text" class="text-input" placeholder="手机号 / Phone" id="contactPhone">
+          <input type="text" class="text-input" placeholder="邮箱 / Email" id="contactEmail">
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-group">
+        <button class="btn btn-secondary" id="btnPrev" style="display:none">上一题</button>
+        <button class="btn btn-primary" id="btnNext">下一题</button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-page" id="successPage">
+      <div class="icon">&#10003;</div>
+      <h2>感谢您的参与！</h2>
+      <p>您的反馈对我们非常重要。</p>
+      <p class="en-sub">Thank you! Your feedback is very important to us.</p>
+    </div>
+  </div>
+
+  <script>
+    const formData = {};
+    let currentStep = 0;
+    let visibleQuestions = [];
+
+    function getVisibleQuestions() {
+      const type = formData.business_type;
+      const all = ['1', '2', '3', '4'];
+      if (type === '平台卖家') {
+        all.push('A5', 'A6', 'A7');
+      } else if (type === '独立站卖家') {
+        all.push('B5', 'B6', 'B7');
+      } else if (type === '两者都做') {
+        all.push('A5', 'A6', 'B6', 'B7');
+      }
+      for (let i = 8; i <= 12; i++) all.push(String(i));
+      return all;
+    }
+
+    function showStep() {
+      visibleQuestions = getVisibleQuestions();
+      document.querySelectorAll('.question-card, .section-divider').forEach(el => el.classList.add('hidden'));
+
+      const currentQ = visibleQuestions[currentStep];
+      const card = document.querySelector(`[data-q="${currentQ}"]`);
+      if (card) card.classList.remove('hidden');
+
+      // Show section dividers
+      const type = formData.business_type;
+      if (currentQ === 'A5') {
+        const div = document.querySelector('.section-divider.branch-platform');
+        if (div && (type === '平台卖家' || type === '两者都做')) div.classList.remove('hidden');
+      }
+      if (currentQ === 'B5' || (currentQ === 'B6' && type === '两者都做')) {
+        const div = document.querySelector('.section-divider.branch-indie');
+        if (div && (type === '独立站卖家' || type === '两者都做')) div.classList.remove('hidden');
+      }
+      if (currentQ === '8') {
+        const div = document.querySelector('.section-divider.branch-all');
+        if (div) div.classList.remove('hidden');
+      }
+
+      // Progress
+      const total = visibleQuestions.length;
+      document.getElementById('progressNum').textContent = currentStep + 1;
+      document.getElementById('progressTotal').textContent = total;
+      document.getElementById('progressFill').style.width = ((currentStep + 1) / total * 100) + '%';
+
+      // Buttons
+      document.getElementById('btnPrev').style.display = currentStep > 0 ? '' : 'none';
+      document.getElementById('btnNext').textContent = currentStep >= total - 1 ? '提交 / Submit' : '下一题';
+      document.getElementById('btnNext').className = currentStep >= total - 1 ? 'btn btn-submit' : 'btn btn-primary';
+    }
+
+    function collectCurrentData() {
+      const currentQ = visibleQuestions[currentStep];
+      const card = document.querySelector(`[data-q="${currentQ}"]`);
+      if (!card) return;
+
+      card.querySelectorAll('input[type="range"]').forEach(slider => {
+        formData[slider.dataset.field] = parseInt(slider.value);
+      });
+
+      if (currentQ === '12') {
+        const wechat = document.getElementById('contactWechat').value.trim();
+        const phone = document.getElementById('contactPhone').value.trim();
+        const email = document.getElementById('contactEmail').value.trim();
+        if (wechat) { formData.contact_method = '微信'; formData.contact_info = wechat; }
+        else if (phone) { formData.contact_method = '手机'; formData.contact_info = phone; }
+        else if (email) { formData.contact_method = '邮箱'; formData.contact_info = email; }
+      }
+    }
+
+    function canProceed() {
+      const currentQ = visibleQuestions[currentStep];
+      const card = document.querySelector(`[data-q="${currentQ}"]`);
+      if (!card) return true;
+      const single = card.querySelector('.options[data-type="single"]');
+      if (single && !single.querySelector('.option-label.selected')) return false;
+      return true;
+    }
+
+    // Option click handlers
+    document.querySelectorAll('.option-label').forEach(label => {
+      label.addEventListener('click', function(e) {
+        const optionsDiv = this.closest('.options');
+        const type = optionsDiv.dataset.type;
+        const field = optionsDiv.dataset.field;
+        const value = this.dataset.value;
+        const card = this.closest('.question-card');
+        const otherInput = card.querySelector('.other-input');
+
+        if (type === 'single') {
+          optionsDiv.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
+          this.classList.add('selected');
+          formData[field] = value;
+
+          // Show/hide other input
+          if (otherInput) {
+            if (value === '其他') {
+              otherInput.classList.add('show');
+              otherInput.querySelector('input').focus();
+            } else {
+              otherInput.classList.remove('show');
+              otherInput.querySelector('input').value = '';
+            }
+          }
+
+          // Contact section
+          if (field === 'willing_interview') {
+            const cs = document.getElementById('contactSection');
+            if (value === '愿意') cs.classList.add('show');
+            else cs.classList.remove('show');
+          }
+        } else {
+          const max = parseInt(optionsDiv.dataset.max) || 99;
+          if (this.classList.contains('selected')) {
+            this.classList.remove('selected');
+          } else {
+            const selected = optionsDiv.querySelectorAll('.option-label.selected').length;
+            if (selected >= max) {
+              // Flash the hint
+              const hint = card.querySelector('.max-hint');
+              if (hint) { hint.style.color = '#ff6b6b'; setTimeout(() => hint.style.color = '', 500); }
+              return;
+            }
+            this.classList.add('selected');
+          }
+          const values = [];
+          optionsDiv.querySelectorAll('.option-label.selected').forEach(l => values.push(l.dataset.value));
+          formData[field] = values;
+
+          if (field === 'biggest_pains') {
+            document.getElementById('painCount').textContent = values.length;
+          }
+
+          // Show/hide other input for multi-select
+          if (otherInput) {
+            const hasOther = values.includes('其他');
+            if (hasOther) {
+              otherInput.classList.add('show');
+            } else {
+              otherInput.classList.remove('show');
+              otherInput.querySelector('input').value = '';
+            }
+          }
+        }
+      });
+    });
+
+    document.getElementById('btnNext').addEventListener('click', function() {
+      collectCurrentData();
+      if (!canProceed()) {
+        alert('请先选择一个选项 / Please select an option first');
+        return;
+      }
+      if (currentStep >= visibleQuestions.length - 1) {
+        submitSurvey();
+        return;
+      }
+      currentStep++;
+      showStep();
+      window.scrollTo(0, 0);
+    });
+
+    document.getElementById('btnPrev').addEventListener('click', function() {
+      collectCurrentData();
+      if (currentStep > 0) {
+        currentStep--;
+        showStep();
+        window.scrollTo(0, 0);
+      }
+    });
+
+    function submitSurvey() {
+      // Collect other inputs
+      document.querySelectorAll('.other-input .text-input').forEach(input => {
+        if (input.dataset.otherField && input.value.trim()) {
+          formData[input.dataset.otherField] = input.value.trim();
+        }
+      });
+
+      fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          document.getElementById('surveyForm').style.display = 'none';
+          document.getElementById('successPage').style.display = 'block';
+          window.scrollTo(0, 0);
+        }
+      }).catch(err => {
+        alert('提交失败，请稍后重试 / Submission failed, please try again');
+        console.error(err);
+      });
+    }
+
+    showStep();
+  </script>
+</body>
+</html>
