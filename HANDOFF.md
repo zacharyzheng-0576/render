@@ -167,8 +167,10 @@ crosspilot-survey/
 │   └── api/
 │       └── [[default]].js             # EdgeOne Pages Functions API
 └── public/
+    ├── assets/
+    │   └── chart.umd.min.js           # 本地 Chart.js，后台实际引用
     └── vendor/
-        └── chart.umd.min.js           # 本地 Chart.js，避免后台依赖 jsdelivr
+        └── chart.umd.min.js           # 本地 Chart.js 备份路径
 ```
 
 EdgeOne API 已实现并本地模拟测试通过：
@@ -183,7 +185,7 @@ EdgeOne API 已实现并本地模拟测试通过：
 
 1. EdgeOne Pages 静态输出目录填 `public`。
 2. 必须创建 KV 命名空间，并绑定变量名 `SURVEY_KV`。
-3. 后台 `/admin` 已改为加载本地 `/vendor/chart.umd.min.js`，国内打开图表更稳。
+3. 后台 `/admin` 已改为加载本地 `/assets/chart.umd.min.js`，国内打开图表更稳。
 4. EdgeOne 上 `/admin` 和 `/admin/` 已通过函数跳转到 `/admin.html`。
 5. `/admin` 仍未加密码保护，正式收集前建议补一个简单后台保护。
 
