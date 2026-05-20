@@ -290,6 +290,48 @@
     let currentStep = 0;
     let visibleQuestions = [];
 
+    function firestoreValue(value) {
+      if (value === undefined || value === null) return { nullValue: null };
+      if (Array.isArray(value)) return { arrayValue: { values: value.map(firestoreValue) } };
+      if (typeof value === 'boolean') return { booleanValue: value };
+      if (typeof value === 'number') return Number.isInteger(value) ? { integerValue: value } : { doubleValue: value };
+      if (typeof value === 'object') {
+        const fields = {};
+        Object.entries(value).forEach(([key, item]) => { fields[key] = firestoreValue(item); });
+        return { mapValue: { fields } };
+      }
+      return { stringValue: String(value) };
+    }
+
+    async function submitResponse(data) {
+      if (window.CrossPilotData && window.CrossPilotData.submitResponse) {
+        return window.CrossPilotData.submitResponse(data);
+      }
+
+      const config = window.CROSSPILOT_FIREBASE_CONFIG;
+      if (!config || !config.apiKey || !config.projectId) {
+        throw new Error('Firebase 配置没有加载成功，请刷新页面后重试。');
+      }
+
+      const payload = Object.assign({}, data, { created_at: new Date().toISOString() });
+      const fields = {};
+      Object.entries(payload).forEach(([key, value]) => { fields[key] = firestoreValue(value); });
+      const url = 'https://firestore.googleapis.com/v1/projects/' +
+        encodeURIComponent(config.projectId) +
+        '/databases/(default)/documents/survey_responses?key=' +
+        encodeURIComponent(config.apiKey);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.error && result.error.message ? result.error.message : 'Firestore 写入失败');
+      }
+      return { success: true, id: result.name ? result.name.split('/').pop() : null };
+    }
+
     function getVisibleQuestions() {
       const type = formData.business_type;
       const all = ['1', '2', '3', '4'];
@@ -475,11 +517,7 @@
       button.textContent = '提交中... / Submitting...';
 
       try {
-        if (!window.CrossPilotData || !window.CrossPilotData.submitResponse) {
-          throw new Error('数据服务没有加载成功，请刷新页面后重试。');
-        }
-
-        const data = await window.CrossPilotData.submitResponse(formData);
+        const data = await submitResponse(formData);
         if (data.success) {
           document.getElementById('surveyForm').style.display = 'none';
           document.getElementById('successPage').style.display = 'block';
