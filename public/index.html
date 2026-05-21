@@ -563,14 +563,18 @@
   <!-- VIEW 2: 答题页面 -->
   <div id="view-survey" class="view-screen view-hidden">
     <div class="apple-card w-full max-w-2xl flex flex-col overflow-hidden">
+      <!-- Brand Bar -->
+      <div class="px-6 pt-4 md:px-8">
+        <div class="flex justify-between items-center opacity-50">
+          <span class="text-[11px] font-semibold text-white/60 tracking-wide">Crosspilot AI</span>
+          <span class="text-[11px] text-white/40" id="brand-tagline">出海每一步，都有方向</span>
+        </div>
+      </div>
+
       <!-- Progress -->
-      <div class="px-6 pt-5 pb-4 md:px-8 md:pt-6 md:pb-5">
+      <div class="px-6 pt-3 pb-4 md:px-8 md:pb-5">
         <div class="flex justify-between items-center mb-3">
-          <div class="flex items-center gap-3">
-            <span class="text-xs font-bold text-blue-400">Crosspilot AI</span>
-            <span class="text-[10px] text-[#48484A]">|</span>
-            <span id="progress-text" class="text-xs font-semibold text-[#98989D] tracking-wider uppercase">进度 1 / 12</span>
-          </div>
+          <span id="progress-text" class="text-xs font-semibold text-[#98989D] tracking-wider uppercase">进度 1 / 12</span>
           <button onclick="exitSurvey()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#3A3A3C] transition-colors">
             <svg class="w-5 h-5 text-[#98989D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
