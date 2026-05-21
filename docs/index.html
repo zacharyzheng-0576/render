@@ -943,30 +943,26 @@
 
       const isLastQuestion = currentStep >= visibleQuestions.length - 1;
       nextBtn.disabled = !canProceed;
-      nextBtn.textContent = isLastQuestion ? '提交问卷' : '继续';
+
+      // 最后一题显示绿色提交按钮
+      if (isLastQuestion) {
+        nextBtn.textContent = '提交问卷';
+        nextBtn.className = 'apple-btn bg-[#34C759] hover:bg-[#30B350] text-white px-8 py-3 disabled:opacity-40 disabled:cursor-not-allowed';
+      } else {
+        nextBtn.textContent = '继续';
+        nextBtn.className = 'apple-btn apple-btn-primary px-8 py-3';
+      }
 
       prevBtn.classList.toggle('hidden', currentStep === 0);
       document.getElementById('prev-spacer').classList.toggle('hidden', currentStep > 0);
     }
 
-    let isLastQuestionAnswered = false;
-
     function goNext() {
       collectInputs();
 
-      // 如果是最后一题且已回答，点击按钮提交
-      if (isLastQuestionAnswered) {
-        submitSurvey();
-        return;
-      }
-
-      // 如果是最后一题，标记为已回答，更新按钮为"提交问卷"
+      // 如果是最后一题，直接提交
       if (currentStep >= visibleQuestions.length - 1) {
-        isLastQuestionAnswered = true;
-        const nextBtn = document.getElementById('next-btn');
-        nextBtn.textContent = '提交问卷';
-        nextBtn.classList.remove('apple-btn-primary');
-        nextBtn.classList.add('apple-btn', 'bg-[#34C759]', 'hover:bg-[#30B350]');
+        submitSurvey();
         return;
       }
 
