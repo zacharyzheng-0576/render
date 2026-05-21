@@ -1268,10 +1268,11 @@
       const prevBtn = document.getElementById('prev-btn');
 
       let canProceed = false;
+      const otherValue = currentLang === 'zh' ? '其他' : 'Other';
       switch (q.type) {
         case 'single':
           canProceed = formData[q.field] !== undefined;
-          if (canProceed && formData[q.field] === '其他') {
+          if (canProceed && formData[q.field] === otherValue) {
             canProceed = (formData[q.field + '_other'] || '').trim().length > 0;
           }
           break;
