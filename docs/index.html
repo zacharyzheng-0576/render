@@ -25,12 +25,32 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: linear-gradient(135deg, #0a0a12 0%, #0f1020 30%, #0a0f1a 60%, #0d0a18 100%);
+      background: #000000;
       color: #F5F5F7;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
       min-height: 100vh;
+      position: relative;
+    }
+
+    /* 底部蓝色渐变：上黑下蓝，慢慢扩散 */
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40vh;
+      background: linear-gradient(
+        to top,
+        rgba(30, 58, 138, 0.3) 0%,
+        rgba(30, 58, 138, 0.15) 30%,
+        rgba(15, 23, 42, 0.08) 60%,
+        transparent 100%
+      );
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* View transitions */
@@ -46,6 +66,7 @@
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
+      z-index: 1;
     }
     .view-hidden {
       opacity: 0;
