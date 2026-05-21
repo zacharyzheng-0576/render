@@ -25,7 +25,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background-color: #000000;
+      background: linear-gradient(135deg, #0a0a0f 0%, #0d0d1a 50%, #0a0f1a 100%);
       color: #F5F5F7;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -61,10 +61,10 @@
 
     /* Card styles */
     .apple-card {
-      background: #1C1C1E;
+      background: linear-gradient(145deg, #1a1a24 0%, #1e1e2a 50%, #1a1f28 100%);
       border-radius: 20px;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(59, 130, 246, 0.1);
     }
 
     .apple-card-hover {
@@ -72,8 +72,8 @@
     }
     .apple-card-hover:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 113, 227, 0.15);
-      border-color: rgba(0, 113, 227, 0.3);
+      box-shadow: 0 8px 40px rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.25);
     }
 
     /* Button styles */
@@ -93,36 +93,40 @@
     }
 
     .apple-btn-primary {
-      background-color: #0071E3;
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #2563eb 100%);
       color: #FFFFFF;
+      box-shadow: 0 2px 12px rgba(37, 99, 235, 0.3);
     }
     .apple-btn-primary:hover:not(:disabled) {
-      background-color: #0077ED;
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
     }
     .apple-btn-primary:active:not(:disabled) {
       transform: scale(0.98);
     }
     .apple-btn-primary:disabled {
-      background-color: #0071E3;
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
       opacity: 0.4;
       cursor: not-allowed;
+      box-shadow: none;
     }
 
     .apple-btn-secondary {
-      background-color: #0071E3;
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
       color: #FFFFFF;
+      box-shadow: 0 2px 12px rgba(37, 99, 235, 0.3);
     }
     .apple-btn-secondary:hover {
-      background-color: #0077ED;
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
     }
 
     .apple-btn-text {
       background: none;
-      color: #0071E3;
+      color: #60a5fa;
       padding: 8px 12px;
     }
     .apple-btn-text:hover {
-      background-color: rgba(0, 113, 227, 0.15);
+      background-color: rgba(59, 130, 246, 0.1);
     }
 
     /* Content animation */
@@ -135,47 +139,48 @@
       position: relative;
       padding: 16px 20px;
       border-radius: 14px;
-      background: #2C2C2E;
+      background: linear-gradient(145deg, #22222e 0%, #262636 100%);
       border: 2px solid transparent;
       cursor: pointer;
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
     }
     .option-item:hover {
-      background: #3A3A3C;
+      background: linear-gradient(145deg, #2a2a38 0%, #2e2e40 100%);
     }
     .option-item:active {
       transform: scale(0.98);
     }
     .option-item.selected {
-      border-color: #0071E3;
-      background: rgba(0, 113, 227, 0.15);
+      border-color: #3b82f6;
+      background: linear-gradient(145deg, rgba(37, 99, 235, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.08);
     }
 
     .option-radio {
       width: 22px;
       height: 22px;
-      border: 2px solid #636366;
+      border: 2px solid #4b5563;
       border-radius: 50%;
       transition: all 0.2s ease;
       flex-shrink: 0;
     }
     .option-item.selected .option-radio {
-      border-color: #0071E3;
-      background: #0071E3;
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
     }
 
     .option-check {
       width: 22px;
       height: 22px;
-      border: 2px solid #636366;
+      border: 2px solid #4b5563;
       border-radius: 6px;
       transition: all 0.2s ease;
       flex-shrink: 0;
     }
     .option-item.selected .option-check {
-      border-color: #0071E3;
-      background: #0071E3;
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
     }
 
     /* Slider styles */
@@ -184,7 +189,7 @@
       appearance: none;
       width: 100%;
       height: 6px;
-      background: #3A3A3C;
+      background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
       border-radius: 3px;
       outline: none;
     }
@@ -193,30 +198,31 @@
       appearance: none;
       width: 28px;
       height: 28px;
-      background: #FFFFFF;
-      border: 2px solid #0071E3;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border: 2px solid #3b82f6;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
     }
 
     /* Input styles */
     .apple-input {
       width: 100%;
       padding: 12px 16px;
-      border: 1px solid #3A3A3C;
+      border: 1px solid #334155;
       border-radius: 10px;
       font-size: 15px;
       outline: none;
-      transition: border-color 0.2s ease;
-      background: #2C2C2E;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: linear-gradient(145deg, #1e293b 0%, #222842 100%);
       color: #F5F5F7;
     }
     .apple-input:focus {
-      border-color: #0071E3;
+      border-color: #3b82f6;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
     }
     .apple-input::placeholder {
-      color: #636366;
+      color: #64748b;
     }
 
     /* Other input animation */
@@ -248,15 +254,16 @@
     /* Progress bar */
     .progress-bar {
       height: 3px;
-      background: #3A3A3C;
+      background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
       border-radius: 2px;
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
-      background: #0071E3;
+      background: linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
       border-radius: 2px;
       transition: width 0.4s ease;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
     }
 
     /* Error toast */
@@ -265,13 +272,13 @@
       bottom: 32px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #FF3B30;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
       color: white;
       padding: 12px 24px;
       border-radius: 980px;
       font-size: 15px;
       font-weight: 500;
-      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
       opacity: 0;
       transition: all 0.3s ease;
       z-index: 100;
@@ -283,13 +290,13 @@
 
     /* Section header */
     #section-header {
-      border-bottom-color: #3A3A3C !important;
+      border-bottom-color: #1e293b !important;
     }
 
     /* Navigation bar */
     .nav-bar {
-      background: #1C1C1E !important;
-      border-color: #3A3A3C !important;
+      background: linear-gradient(145deg, #1a1a24 0%, #1e1e2a 100%) !important;
+      border-color: #1e293b !important;
     }
   </style>
 </head>
@@ -299,17 +306,17 @@
   <div id="view-home" class="view-screen view-active">
     <div class="w-full max-w-3xl text-center">
       <div class="mb-6">
-        <span class="inline-block px-4 py-1.5 bg-[#0071E3]/10 text-[#0071E3] text-sm font-semibold rounded-full tracking-wide">
+        <span class="inline-block px-4 py-1.5 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-blue-400 text-sm font-semibold rounded-full tracking-wide border border-blue-500/20">
           Crosspilot AI
         </span>
       </div>
 
       <!-- 语言选择 -->
       <div class="mb-8 flex justify-center gap-2">
-        <button onclick="setLanguage('zh')" id="lang-zh" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-[#0071E3] text-white">
+        <button onclick="setLanguage('zh')" id="lang-zh" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/20">
           中文
         </button>
-        <button onclick="setLanguage('en')" id="lang-en" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-[#2C2C2E] text-[#98989D] hover:bg-[#3A3A3C]">
+        <button onclick="setLanguage('en')" id="lang-en" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-gray-800/80 text-gray-400 hover:bg-gray-700/80 border border-gray-700/50">
           English
         </button>
       </div>
@@ -324,8 +331,8 @@
       <div class="grid md:grid-cols-2 gap-5 w-full">
         <!-- 快速调研 -->
         <div class="apple-card apple-card-hover p-7 md:p-8 text-left cursor-pointer" onclick="startSurvey('shallow')">
-          <div class="w-12 h-12 rounded-2xl bg-[#0071E3]/20 flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-[#0071E3]" fill="currentColor" viewBox="0 0 20 20">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center mb-5 border border-blue-500/10">
+            <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
             </svg>
           </div>
@@ -337,7 +344,7 @@
             <span id="shallow-info" class="text-xs font-medium text-[#98989D] bg-[#2C2C2E] px-3 py-1.5 rounded-full">
               约 5 分钟 · 12 题
             </span>
-            <span id="shallow-btn" class="text-[#0071E3] text-sm font-medium flex items-center gap-1">
+            <span id="shallow-btn" class="text-blue-400 text-sm font-medium flex items-center gap-1">
               开始
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -348,20 +355,20 @@
 
         <!-- 深度调研 -->
         <div class="apple-card apple-card-hover p-7 md:p-8 text-left cursor-pointer" onclick="startSurvey('deep')">
-          <div class="w-12 h-12 rounded-2xl bg-[#5856D6]/20 flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-[#5856D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mb-5 border border-indigo-500/10">
+            <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
             </svg>
           </div>
           <h3 id="deep-title" class="text-xl font-semibold text-white mb-2">深度调研</h3>
-          <p id="deep-desc" class="text-[15px] text-[#98989D] mb-6 leading-relaxed">
+          <p id="deep-desc" class="text-[15px] text-gray-400 mb-6 leading-relaxed">
             全面剖析业务细节与痛点，为您匹配高度定制化的解决方案。
           </p>
           <div class="flex items-center justify-between">
-            <span id="deep-info" class="text-xs font-medium text-[#98989D] bg-[#2C2C2E] px-3 py-1.5 rounded-full">
+            <span id="deep-info" class="text-xs font-medium text-gray-400 bg-gray-800/60 px-3 py-1.5 rounded-full border border-gray-700/50">
               约 10 分钟 · 25 题
             </span>
-            <span id="deep-btn" class="text-[#5856D6] text-sm font-medium flex items-center gap-1">
+            <span id="deep-btn" class="text-indigo-400 text-sm font-medium flex items-center gap-1">
               开始
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -380,7 +387,7 @@
       <div class="px-6 pt-5 pb-4 md:px-8 md:pt-6 md:pb-5">
         <div class="flex justify-between items-center mb-3">
           <div class="flex items-center gap-3">
-            <span class="text-xs font-bold text-[#0071E3]">Crosspilot AI</span>
+            <span class="text-xs font-bold text-blue-400">Crosspilot AI</span>
             <span class="text-[10px] text-[#48484A]">|</span>
             <span id="progress-text" class="text-xs font-semibold text-[#98989D] tracking-wider uppercase">进度 1 / 12</span>
           </div>
@@ -402,7 +409,7 @@
 
         <!-- Question Area -->
         <div id="question-area">
-          <div id="question-number" class="text-xs font-bold text-[#0071E3] tracking-widest uppercase mb-3"></div>
+          <div id="question-number" class="text-xs font-bold text-blue-400 tracking-widest uppercase mb-3"></div>
           <h2 id="question-title" class="text-[22px] md:text-[26px] font-semibold text-white mb-1.5 leading-snug tracking-tight"></h2>
           <p id="question-en" class="text-[15px] text-[#98989D] mb-1.5"></p>
           <p id="question-hint" class="text-[13px] text-[#636366] mb-6 hidden"></p>
@@ -434,7 +441,7 @@
       </div>
 
       <!-- Navigation -->
-      <div class="px-6 py-5 md:px-8 md:py-6 border-t border-[#3A3A3C] flex justify-between items-center bg-[#1C1C1E] rounded-b-2xl">
+      <div class="px-6 py-5 md:px-8 md:py-6 border-t border-gray-800/50 flex justify-between items-center bg-gradient-to-b from-transparent to-black/20 rounded-b-2xl">
         <button id="prev-btn" onclick="goBack()" class="apple-btn-text hidden">
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -452,8 +459,8 @@
   <!-- VIEW 3: 感谢页面 -->
   <div id="view-thanks" class="view-screen view-hidden">
     <div class="w-full max-w-md text-center">
-      <div class="w-20 h-20 rounded-full bg-[#0071E3]/20 flex items-center justify-center mx-auto mb-8">
-        <svg class="w-10 h-10 text-[#0071E3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center mx-auto mb-8 border border-blue-500/20">
+        <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
         </svg>
       </div>
@@ -558,8 +565,8 @@
     function setLanguage(lang) {
       currentLang = lang;
       // Update language buttons
-      document.getElementById('lang-zh').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'zh' ? 'bg-[#0071E3] text-white' : 'bg-[#2C2C2E] text-[#98989D] hover:bg-[#3A3A3C]'}`;
-      document.getElementById('lang-en').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'en' ? 'bg-[#0071E3] text-white' : 'bg-[#2C2C2E] text-[#98989D] hover:bg-[#3A3A3C]'}`;
+      document.getElementById('lang-zh').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'zh' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-gray-800/80 text-gray-400 hover:bg-gray-700/80 border border-gray-700/50'}`;
+      document.getElementById('lang-en').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'en' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-gray-800/80 text-gray-400 hover:bg-gray-700/80 border border-gray-700/50'}`;
       // Update home page text
       updateHomeText();
     }
@@ -882,7 +889,7 @@
         const hint = document.createElement('div');
         hint.className = 'text-[13px] text-[#98989D] mb-4';
         hint.id = 'max-hint';
-        hint.innerHTML = `${t('selected')} <span class="font-semibold text-[#0071E3]">${selected.length}</span> / ${q.maxSelect}`;
+        hint.innerHTML = `${t('selected')} <span class="font-semibold text-blue-400">${selected.length}</span> / ${q.maxSelect}`;
         container.appendChild(hint);
       }
 
@@ -940,7 +947,7 @@
           // Update hint
           const hint = document.getElementById('max-hint');
           if (hint) {
-            hint.innerHTML = `${t('selected')} <span class="font-semibold text-[#0071E3]">${current.length}</span> / ${q.maxSelect}`;
+            hint.innerHTML = `${t('selected')} <span class="font-semibold text-blue-400">${current.length}</span> / ${q.maxSelect}`;
           }
 
           // Other
@@ -981,7 +988,7 @@
         div.innerHTML = `
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-[15px] font-medium text-white">${fieldText}</span>
-            <span class="text-[22px] font-bold text-[#0071E3] slider-value">${value}</span>
+            <span class="text-[22px] font-bold text-blue-400 slider-value">${value}</span>
           </div>
           <input type="range" min="${q.min}" max="${q.max}" value="${value}" class="w-full" data-field="${f.field}">
         `;
