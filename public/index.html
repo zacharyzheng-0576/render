@@ -1248,6 +1248,10 @@
       document.getElementById('contact-phone').placeholder = t('phonePlaceholder');
       document.getElementById('contact-email').placeholder = t('emailPlaceholder');
 
+      // 英文模式下只显示邮箱
+      document.getElementById('contact-wechat').style.display = currentLang === 'en' ? 'none' : '';
+      document.getElementById('contact-phone').style.display = currentLang === 'en' ? 'none' : '';
+
       ['wechat', 'phone', 'email'].forEach(type => {
         const input = document.getElementById(`contact-${type}`);
         input.value = formData[`contact_${type}`] || '';
