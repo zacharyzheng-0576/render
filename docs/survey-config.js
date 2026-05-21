@@ -46,11 +46,11 @@ window.SURVEY_CONFIG = {
         en: 'What is your average monthly revenue?',
         hint: { zh: '人民币', en: 'RMB' },
         options: [
-          { value: '5千以下', zh: '5千以下', en: 'Under ¥5K', desc: null },
-          { value: '5千-2万', zh: '5千 ~ 2万', en: '¥5K – ¥20K', desc: null },
-          { value: '2万-10万', zh: '2万 ~ 10万', en: '¥20K – ¥100K', desc: null },
-          { value: '10万-50万', zh: '10万 ~ 50万', en: '¥100K – ¥500K', desc: null },
-          { value: '50万以上', zh: '50万以上', en: 'Over ¥500K', desc: null }
+          { value: '5千以下', zh: '5千以下', en: 'Under $700', desc: null },
+          { value: '5千-2万', zh: '5千 ~ 2万', en: '$700 – $2,800', desc: null },
+          { value: '2万-10万', zh: '2万 ~ 10万', en: '$2,800 – $14,000', desc: null },
+          { value: '10万-50万', zh: '10万 ~ 50万', en: '$14,000 – $70,000', desc: null },
+          { value: '50万以上', zh: '50万以上', en: 'Over $70,000', desc: null }
         ]
       },
 
@@ -153,11 +153,11 @@ window.SURVEY_CONFIG = {
         zh: '如果AI工具能显著提升您的工作效率，您愿意每月付多少？',
         en: 'If an AI tool significantly improved your efficiency, how much would you pay monthly?',
         options: [
-          { value: '0', zh: '¥0 — 不需要', en: '¥0 — Don\'t need', desc: null },
-          { value: '99以下', zh: '¥99 以下', en: 'Under ¥99', desc: null },
-          { value: '99-299', zh: '¥99 ~ ¥299', en: '¥99 – ¥299', desc: null },
-          { value: '300-599', zh: '¥300 ~ ¥599', en: '¥300 – ¥599', desc: null },
-          { value: '600以上', zh: '¥600 以上', en: 'Over ¥600', desc: null }
+          { value: '0', zh: '¥0 — 不需要', en: '$0 — Don\'t need', desc: null },
+          { value: '99以下', zh: '¥99 以下', en: 'Under $14', desc: null },
+          { value: '99-299', zh: '¥99 ~ ¥299', en: '$14 – $42', desc: null },
+          { value: '300-599', zh: '¥300 ~ ¥599', en: '$42 – $84', desc: null },
+          { value: '600以上', zh: '¥600 以上', en: 'Over $84', desc: null }
         ]
       },
 
@@ -401,11 +401,11 @@ window.SURVEY_CONFIG = {
         zh: '如果AI能帮您把上新时间从1小时缩短到10分钟，您愿意为每个SKU付多少？',
         en: 'If AI could reduce listing time from 1 hour to 10 minutes, how much would you pay per SKU?',
         options: [
-          { value: '0', zh: '¥0 — 不需要', en: '¥0 — Don\'t need', desc: null },
-          { value: '1-5元', zh: '¥1 ~ ¥5 / SKU', en: '¥1 – ¥5 / SKU', desc: null },
-          { value: '5-10元', zh: '¥5 ~ ¥10 / SKU', en: '¥5 – ¥10 / SKU', desc: null },
-          { value: '10-20元', zh: '¥10 ~ ¥20 / SKU', en: '¥10 – ¥20 / SKU', desc: null },
-          { value: '20元以上', zh: '¥20+ / SKU', en: '¥20+ / SKU', desc: null }
+          { value: '0', zh: '¥0 — 不需要', en: '$0 — Don\'t need', desc: null },
+          { value: '1-5元', zh: '¥1 ~ ¥5 / SKU', en: '$0.15 – $0.70 / SKU', desc: null },
+          { value: '5-10元', zh: '¥5 ~ ¥10 / SKU', en: '$0.70 – $1.40 / SKU', desc: null },
+          { value: '10-20元', zh: '¥10 ~ ¥20 / SKU', en: '$1.40 – $2.80 / SKU', desc: null },
+          { value: '20元以上', zh: '¥20+ / SKU', en: '$2.80+ / SKU', desc: null }
         ]
       },
       {
@@ -416,11 +416,11 @@ window.SURVEY_CONFIG = {
         zh: '如果AI能帮您每天生成10条广告创意并分析效果，您愿意每月付多少？',
         en: 'If AI could generate 10 ad creatives daily and analyze performance, how much would you pay monthly?',
         options: [
-          { value: '0', zh: '¥0 — 不需要', en: '¥0 — Don\'t need', desc: null },
-          { value: '99以下', zh: '¥99 以下', en: 'Under ¥99', desc: null },
-          { value: '99-299', zh: '¥99 ~ ¥299', en: '¥99 – ¥299', desc: null },
-          { value: '300-599', zh: '¥300 ~ ¥599', en: '¥300 – ¥599', desc: null },
-          { value: '600以上', zh: '¥600+', en: '¥600+', desc: null }
+          { value: '0', zh: '¥0 — 不需要', en: '$0 — Don\'t need', desc: null },
+          { value: '99以下', zh: '¥99 以下', en: 'Under $14', desc: null },
+          { value: '99-299', zh: '¥99 ~ ¥299', en: '$14 – $42', desc: null },
+          { value: '300-599', zh: '¥300 ~ ¥599', en: '$42 – $84', desc: null },
+          { value: '600以上', zh: '¥600+', en: 'Over $84', desc: null }
         ]
       },
 

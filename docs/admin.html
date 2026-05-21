@@ -4,7 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>调研数据统计 — CrossPilot</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'apple': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
   <script src="assets/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -12,155 +23,350 @@
   <script src="supabase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="data-service.js"></script>
-</head>
-<body>
-  <div class="admin-container">
-    <div class="admin-header">
-      <h1>调研数据统计</h1>
-      <span class="total">共 <strong id="totalCount">0</strong> 份问卷</span>
-    </div>
+  <style>
+    * { box-sizing: border-box; }
 
-    <div class="auth-panel" id="authPanel" style="display:none">
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #F5F5F7;
+      color: #1D1D1F;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Card styles */
+    .apple-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Button styles */
+    .apple-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 980px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    .apple-btn-primary {
+      background-color: #0071E3;
+      color: #FFFFFF;
+    }
+    .apple-btn-primary:hover {
+      background-color: #0077ED;
+    }
+
+    .apple-btn-secondary {
+      background-color: #E8E8ED;
+      color: #1D1D1F;
+    }
+    .apple-btn-secondary:hover {
+      background-color: #DEDEE3;
+    }
+
+    .apple-btn-danger {
+      background-color: #FF3B30;
+      color: #FFFFFF;
+    }
+    .apple-btn-danger:hover {
+      background-color: #FF453A;
+    }
+
+    .apple-btn-success {
+      background-color: #34C759;
+      color: #FFFFFF;
+    }
+
+    .apple-btn-purple {
+      background-color: #5856D6;
+      color: #FFFFFF;
+    }
+
+    /* Input styles */
+    .apple-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #E5E5EA;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      background: #FFFFFF;
+    }
+    .apple-input:focus {
+      border-color: #0071E3;
+    }
+
+    .apple-select {
+      padding: 10px 14px;
+      border: 1px solid #E5E5EA;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      background: #FFFFFF;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    .apple-select:focus {
+      border-color: #0071E3;
+    }
+
+    /* Table styles */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: #86868B;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #F5F5F7;
+      border-bottom: 1px solid #E5E5EA;
+    }
+    .data-table td {
+      padding: 14px 16px;
+      font-size: 14px;
+      color: #1D1D1F;
+      border-bottom: 1px solid #F0F0F0;
+    }
+    .data-table tr:hover td {
+      background: #F5F5F7;
+    }
+
+    /* Badge styles */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 980px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-blue {
+      background: rgba(0, 113, 227, 0.1);
+      color: #0071E3;
+    }
+    .badge-purple {
+      background: rgba(88, 86, 214, 0.1);
+      color: #5856D6;
+    }
+
+    /* Delete button */
+    .btn-delete {
+      padding: 6px 12px;
+      border: 1px solid #FF3B30;
+      color: #FF3B30;
+      background: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-delete:hover {
+      background: #FF3B30;
+      color: white;
+    }
+
+    /* Chart card */
+    .chart-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .chart-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1D1D1F;
+      margin-bottom: 16px;
+    }
+
+    /* Auth panel */
+    .auth-card {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C7C7CC;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #86868B;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+  <!-- Auth Panel -->
+  <div id="auth-panel" class="hidden">
+    <div class="apple-card auth-card">
+      <h2 class="text-2xl font-bold text-[#1D1D1F] mb-2">后台登录</h2>
+      <p class="text-[15px] text-[#86868B] mb-8">请输入管理员账号和密码</p>
+      <div class="space-y-4">
+        <input type="email" id="admin-email" class="apple-input" placeholder="邮箱">
+        <input type="password" id="admin-password" class="apple-input" placeholder="密码">
+        <button id="btn-login" class="apple-btn apple-btn-primary w-full py-3" onclick="handleLogin()">登录</button>
+        <p id="auth-error" class="text-[13px] text-[#FF3B30] hidden"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content" class="hidden max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
       <div>
-        <h2>后台登录</h2>
-        <p>请输入 Supabase 中创建的邮箱和密码。</p>
+        <h1 class="text-[28px] font-bold text-[#1D1D1F] tracking-tight">调研数据统计</h1>
+        <p class="text-[15px] text-[#86868B] mt-1">共 <span id="total-count" class="font-semibold text-[#0071E3]">0</span> 份问卷</p>
       </div>
-      <div class="auth-form">
-        <input class="text-input" id="adminEmail" type="email" placeholder="邮箱">
-        <input class="text-input" id="adminPassword" type="password" placeholder="密码">
-        <button class="btn-export" id="btnLogin">登录</button>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="exportCSV()" class="apple-btn apple-btn-secondary text-[13px]">导出 CSV</button>
+        <button onclick="exportExcel()" class="apple-btn apple-btn-success text-[13px]">导出 Excel</button>
+        <button onclick="exportPDF()" class="apple-btn apple-btn-purple text-[13px]">导出 PDF</button>
+        <button onclick="clearAll()" class="apple-btn apple-btn-danger text-[13px]">清空全部</button>
       </div>
-      <div class="auth-error" id="authError"></div>
     </div>
 
     <!-- Filters -->
-    <div class="filters">
-      <select class="filter-select" id="filterSurveyType">
-        <option value="">全部问卷类型</option>
-        <option value="shallow">快速调研</option>
-        <option value="deep">深度调研</option>
-      </select>
-      <select class="filter-select" id="filterType">
-        <option value="">全部业务类型</option>
-        <option value="平台卖家">平台卖家</option>
-        <option value="独立站卖家">独立站卖家</option>
-        <option value="两者都做">两者都做</option>
-      </select>
-      <select class="filter-select" id="filterExp">
-        <option value="">全部入行时间</option>
-        <option value="半年以下">半年以下</option>
-        <option value="半年-1年">半年-1年</option>
-        <option value="1-3年">1-3年</option>
-        <option value="3年以上">3年以上</option>
-      </select>
-      <select class="filter-select" id="filterRevenue">
-        <option value="">全部月营收</option>
-        <option value="5千以下">5千以下</option>
-        <option value="5千-2万">5千-2万</option>
-        <option value="2万-10万">2万-10万</option>
-        <option value="10万-50万">10万-50万</option>
-        <option value="50万以上">50万以上</option>
-      </select>
-      <button class="btn-export" onclick="exportCSV()">导出 CSV</button>
-      <button class="btn-export" onclick="exportExcel()" style="background:#34C759">导出 Excel</button>
-      <button class="btn-export" onclick="exportPDF()" style="background:#5856D6">导出 PDF</button>
-      <button class="btn-clear" onclick="clearAll()">清空全部</button>
+    <div class="apple-card p-5 mb-6">
+      <div class="flex flex-wrap gap-3">
+        <select id="filter-survey-type" class="apple-select" onchange="renderAll()">
+          <option value="">全部问卷类型</option>
+          <option value="shallow">快速调研</option>
+          <option value="deep">深度调研</option>
+        </select>
+        <select id="filter-type" class="apple-select" onchange="renderAll()">
+          <option value="">全部业务类型</option>
+          <option value="平台卖家">平台卖家</option>
+          <option value="独立站卖家">独立站卖家</option>
+          <option value="两者都做">两者都做</option>
+        </select>
+        <select id="filter-exp" class="apple-select" onchange="renderAll()">
+          <option value="">全部入行时间</option>
+          <option value="半年以下">半年以下</option>
+          <option value="半年-1年">半年-1年</option>
+          <option value="1-3年">1-3年</option>
+          <option value="3年以上">3年以上</option>
+        </select>
+        <select id="filter-revenue" class="apple-select" onchange="renderAll()">
+          <option value="">全部月营收</option>
+          <option value="5千以下">5千以下</option>
+          <option value="5千-2万">5千-2万</option>
+          <option value="2万-10万">2万-10万</option>
+          <option value="10万-50万">10万-50万</option>
+          <option value="50万以上">50万以上</option>
+        </select>
+      </div>
     </div>
 
-    <!-- Charts -->
-    <div class="chart-grid">
-      <!-- Basic Charts -->
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
       <div class="chart-card">
         <h3>痛点评分雷达图</h3>
-        <div class="chart-wrapper"><canvas id="radarChart"></canvas></div>
+        <canvas id="radarChart"></canvas>
       </div>
       <div class="chart-card">
         <h3>业务类型分布</h3>
-        <div class="chart-wrapper"><canvas id="typeChart"></canvas></div>
+        <canvas id="typeChart"></canvas>
       </div>
       <div class="chart-card">
         <h3>入行时间分布</h3>
-        <div class="chart-wrapper"><canvas id="expChart"></canvas></div>
+        <canvas id="expChart"></canvas>
       </div>
       <div class="chart-card">
         <h3>月营收分布</h3>
-        <div class="chart-wrapper"><canvas id="revenueChart"></canvas></div>
+        <canvas id="revenueChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>最大痛点分布</h3>
-        <div class="chart-wrapper"><canvas id="painChart"></canvas></div>
+        <h3>最耗时任务</h3>
+        <canvas id="taskChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>付费意愿分布</h3>
-        <div class="chart-wrapper"><canvas id="payChart"></canvas></div>
+        <h3>AI 使用经验</h3>
+        <canvas id="aiExpChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>AI 工具使用情况</h3>
-        <div class="chart-wrapper"><canvas id="aiToolChart"></canvas></div>
+        <h3>AI 担忧因素</h3>
+        <canvas id="aiConcernChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>AI 工具最缺什么</h3>
-        <div class="chart-wrapper"><canvas id="aiGapChart"></canvas></div>
+        <h3>付费意愿</h3>
+        <canvas id="payChart"></canvas>
       </div>
-      <div class="chart-card full-width">
-        <h3>目标国家/地区分布</h3>
-        <div class="chart-wrapper"><canvas id="countryChart"></canvas></div>
+      <div class="chart-card">
+        <h3>AI 期望价值</h3>
+        <canvas id="aiValueChart"></canvas>
       </div>
 
-      <!-- Deep Survey Charts -->
-      <div class="chart-card deep-chart" style="display:none">
+      <!-- Deep survey charts -->
+      <div class="chart-card deep-chart hidden">
         <h3>SKU 数量分布</h3>
-        <div class="chart-wrapper"><canvas id="skuChart"></canvas></div>
+        <canvas id="skuChart"></canvas>
       </div>
-      <div class="chart-card deep-chart" style="display:none">
-        <h3>每月上新 SKU 数</h3>
-        <div class="chart-wrapper"><canvas id="newSkuChart"></canvas></div>
+      <div class="chart-card deep-chart hidden">
+        <h3>上架耗时分布</h3>
+        <canvas id="listingTimeChart"></canvas>
       </div>
-      <div class="chart-card deep-chart" style="display:none">
-        <h3>单个 SKU 上架耗时</h3>
-        <div class="chart-wrapper"><canvas id="listingTimeChart"></canvas></div>
-      </div>
-      <div class="chart-card deep-chart" style="display:none">
+      <div class="chart-card deep-chart hidden">
         <h3>广告投放状态</h3>
-        <div class="chart-wrapper"><canvas id="adStatusChart"></canvas></div>
+        <canvas id="adStatusChart"></canvas>
       </div>
-      <div class="chart-card deep-chart" style="display:none">
-        <h3>月广告预算分布</h3>
-        <div class="chart-wrapper"><canvas id="adBudgetChart"></canvas></div>
-      </div>
-      <div class="chart-card deep-chart" style="display:none">
+      <div class="chart-card deep-chart hidden">
         <h3>功能需求排名</h3>
-        <div class="chart-wrapper"><canvas id="featureChart"></canvas></div>
+        <canvas id="featureChart"></canvas>
       </div>
-      <div class="chart-card deep-chart" style="display:none">
-        <h3>价格接受度</h3>
-        <div class="chart-wrapper"><canvas id="priceChart"></canvas></div>
+      <div class="chart-card deep-chart hidden">
+        <h3>上架付费意愿</h3>
+        <canvas id="listingPayChart"></canvas>
       </div>
-      <div class="chart-card deep-chart" style="display:none">
-        <h3>AI 使用频率</h3>
-        <div class="chart-wrapper"><canvas id="aiFreqChart"></canvas></div>
+      <div class="chart-card deep-chart hidden">
+        <h3>创意付费意愿</h3>
+        <canvas id="creativePayChart"></canvas>
       </div>
     </div>
 
-    <!-- Responses table -->
-    <div class="chart-card full-width" id="tableCard" style="margin-bottom:24px">
-      <h3>最新提交记录</h3>
-      <div class="table-wrapper" style="max-height:400px;overflow-y:auto">
-        <table class="response-table">
+    <!-- Data Table -->
+    <div class="apple-card overflow-hidden mb-8">
+      <div class="p-5 border-b border-gray-100">
+        <h3 class="text-[17px] font-semibold text-[#1D1D1F]">最新提交记录</h3>
+      </div>
+      <div class="overflow-x-auto" style="max-height: 500px;">
+        <table class="data-table">
           <thead>
             <tr>
               <th>时间</th>
-              <th>问卷类型</th>
+              <th>类型</th>
               <th>业务类型</th>
               <th>入行时间</th>
               <th>月营收</th>
-              <th>国家</th>
-              <th>付费意愿</th>
+              <th>AI经验</th>
               <th>联系方式</th>
               <th>操作</th>
             </tr>
           </thead>
-          <tbody id="responseBody"></tbody>
+          <tbody id="response-body"></tbody>
         </table>
       </div>
     </div>
@@ -169,52 +375,35 @@
   <script>
     let allResponses = [];
     let charts = {};
-    let refreshTimer = null;
-    let unsubscribeResponses = null;
-    let currentUser = null;
 
     const COLORS = [
-      'rgba(0, 122, 255, 0.85)',
-      'rgba(88, 86, 214, 0.85)',
-      'rgba(52, 199, 89, 0.85)',
-      'rgba(255, 149, 0, 0.85)',
-      'rgba(255, 59, 48, 0.85)',
-      'rgba(175, 82, 222, 0.85)',
-      'rgba(255, 177, 66, 0.85)',
-      'rgba(78, 205, 196, 0.85)'
+      '#0071E3', '#5856D6', '#34C759', '#FF9500', '#FF3B30',
+      '#AF52DE', '#FF2D55', '#5AC8FA', '#FFCC00', '#30B0C7'
     ];
 
     const ALL_OPTIONS = {
       business_type: ['平台卖家', '独立站卖家', '两者都做'],
       experience: ['半年以下', '半年-1年', '1-3年', '3年以上'],
       revenue: ['5千以下', '5千-2万', '2万-10万', '10万-50万', '50万以上'],
-      countries: ['北美', '欧洲', '东南亚', '日韩', '中东', '拉美', '其他'],
-      platforms: ['Amazon', 'TikTok Shop', 'Shopee', 'Temu', '速卖通', '其他'],
-      traffic_channels: ['Facebook广告', 'Google广告', 'TikTok广告', 'SEO', '社交媒体', '邮件营销'],
-      biggest_pains: ['写产品文案', '做广告素材', '追踪竞品', 'SEO优化', '多平台上架', '客服回复', '其他'],
+      ai_experience: ['经常用', '偶尔用', '试过', '想试', '不考虑'],
+      ai_value_expectation: ['节省时间', '提升质量', '降低成本', '快速上手', '一站式', '其他'],
       willing_to_pay: ['0', '99以下', '99-299', '300-599', '600以上'],
-      platform_ai_tools: ['ChatGPT', 'DeepSeek', '平台自带AI', 'ERP工具', 'Helium10等', '都没用过'],
-      ai_tool_gap: ['中文支持不好', '不够智能', '太贵', '功能太分散', '不了解', '其他'],
-      // Deep survey options
+      time_consuming_tasks: ['商品上架', '广告素材', '竞品分析', '客服回复', '内容本地化', 'SEO优化', '数据分析', '其他'],
+      ai_concerns: ['质量不稳定', '不够本地化', '需要大量修改', '学习成本高', '数据安全', '价格贵', '不了解', '其他'],
       sku_count: ['1-10', '11-50', '51-200', '201-1000', '1000以上'],
-      monthly_new_sku: ['0-5', '6-10', '10-30', '31-100', '100以上', '不定'],
       listing_time: ['10分钟以下', '10-30分钟', '30-60分钟', '1-2小时', '2小时以上'],
       ad_status: ['在投', '测试中', '计划中', '没有'],
-      ad_budget: ['1000以下', '1000-5000', '5000-20000', '20000-50000', '50000以上', '还没花'],
-      ai_usage_frequency: ['经常', '偶尔', '试过但不好', '想试', '不想'],
-      package_price_range: ['99以下', '99-199', '199-399', '399-699', '699以上', '不确定'],
-      top_features: ['Amazon上架', 'Shopify页面', 'TikTok Shop', 'Etsy文案', 'SEO关键词', 'FAQ生成', '客服模板', '市场准备度检查', '批量CSV导出', '多语言版本']
-    };
-
-    const OPTION_LABELS = {
-      willing_to_pay: { '0': '¥0', '99以下': '¥99以下', '99-299': '¥99-299', '300-599': '¥300-599', '600以上': '¥600+' }
+      top_features: ['商品文案', '广告创意', '竞品追踪', '多平台上架', '内容本地化', '客服回复', '数据分析', '其他'],
+      pay_for_listing: ['0', '1-5元', '5-10元', '10-20元', '20元以上'],
+      pay_for_creative: ['0', '99以下', '99-299', '300-599', '600以上']
     };
 
     function filterData() {
-      const surveyType = document.getElementById('filterSurveyType').value;
-      const type = document.getElementById('filterType').value;
-      const exp = document.getElementById('filterExp').value;
-      const rev = document.getElementById('filterRevenue').value;
+      const surveyType = document.getElementById('filter-survey-type').value;
+      const type = document.getElementById('filter-type').value;
+      const exp = document.getElementById('filter-exp').value;
+      const rev = document.getElementById('filter-revenue').value;
+
       return allResponses.filter(r => {
         if (surveyType && r.survey_type !== surveyType) return false;
         if (type && r.business_type !== type) return false;
@@ -224,47 +413,38 @@
       });
     }
 
-    function countFieldWithDefaults(data, field) {
-      const allOpts = ALL_OPTIONS[field] || [];
-      const labelMap = OPTION_LABELS[field] || {};
+    function countField(data, field) {
+      const opts = ALL_OPTIONS[field] || [];
       const counts = {};
-      allOpts.forEach(opt => { counts[opt] = 0; });
+      opts.forEach(o => counts[o] = 0);
       data.forEach(r => {
         const val = r[field];
         if (val && counts.hasOwnProperty(val)) counts[val]++;
       });
-      return { labels: allOpts.map(o => labelMap[o] || o), values: allOpts.map(o => counts[o]) };
+      return { labels: opts, values: opts.map(o => counts[o]) };
     }
 
-    function countMultiFieldWithDefaults(data, field) {
-      const allOpts = ALL_OPTIONS[field] || [];
+    function countMultiField(data, field) {
+      const opts = ALL_OPTIONS[field] || [];
       const counts = {};
-      allOpts.forEach(opt => { counts[opt] = 0; });
+      opts.forEach(o => counts[o] = 0);
       data.forEach(r => {
         const arr = r[field];
         if (Array.isArray(arr)) {
           arr.forEach(v => { if (counts.hasOwnProperty(v)) counts[v]++; });
         }
       });
-      return { labels: allOpts, values: allOpts.map(o => counts[o]) };
+      return { labels: opts, values: opts.map(o => counts[o]) };
     }
 
     function avgField(data, field) {
       const vals = data.map(r => r[field]).filter(v => typeof v === 'number');
-      if (vals.length === 0) return 0;
-      return vals.reduce((a, b) => a + b, 0) / vals.length;
+      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
     }
 
-    function escapeHtml(value) {
-      return String(value || '').replace(/[&<>"']/g, ch => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[ch]));
-    }
-
-    function formatBeijingTime(isoString) {
+    function formatTime(isoString) {
       if (!isoString) return '';
-      const date = new Date(isoString);
-      return date.toLocaleString('zh-CN', {
+      return new Date(isoString).toLocaleString('zh-CN', {
         timeZone: 'Asia/Shanghai',
         month: '2-digit', day: '2-digit',
         hour: '2-digit', minute: '2-digit',
@@ -272,40 +452,29 @@
       }).replace(/\//g, '-');
     }
 
-    const dataLabelPlugin = {
-      id: 'dataLabels',
-      afterDatasetsDraw(chart) {
-        const { ctx } = chart;
-        chart.data.datasets.forEach((dataset, i) => {
-          const meta = chart.getDatasetMeta(i);
-          meta.data.forEach((bar, index) => {
-            const value = dataset.data[index];
-            if (value > 0) {
-              ctx.fillStyle = '#1D1D1F';
-              ctx.font = 'bold 12px -apple-system, sans-serif';
-              ctx.textAlign = 'center';
-              ctx.fillText(value, bar.x, bar.y - 6);
-            }
-          });
-        });
-      }
-    };
-
     function renderBarChart(canvasId, result) {
       const ctx = document.getElementById(canvasId)?.getContext('2d');
       if (!ctx) return;
       if (charts[canvasId]) charts[canvasId].destroy();
+
       charts[canvasId] = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: result.labels,
-          datasets: [{ label: '人数', data: result.values, backgroundColor: COLORS.slice(0, result.labels.length), borderRadius: 6, maxBarThickness: 48 }]
+          datasets: [{
+            data: result.values,
+            backgroundColor: COLORS.slice(0, result.labels.length),
+            borderRadius: 6,
+            maxBarThickness: 40
+          }]
         },
-        plugins: [dataLabelPlugin],
         options: {
           responsive: true,
           plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { ticks: { font: { size: 11 }, maxRotation: 30 } } }
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
+            x: { ticks: { font: { size: 11 }, maxRotation: 45 } }
+          }
         }
       });
     }
@@ -314,10 +483,22 @@
       const ctx = document.getElementById(canvasId)?.getContext('2d');
       if (!ctx) return;
       if (charts[canvasId]) charts[canvasId].destroy();
+
       charts[canvasId] = new Chart(ctx, {
         type: 'doughnut',
-        data: { labels, datasets: [{ data, backgroundColor: COLORS.slice(0, labels.length), borderWidth: 2, borderColor: '#fff' }] },
-        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } } } }
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: COLORS.slice(0, labels.length),
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } }
+        }
       });
     }
 
@@ -335,314 +516,232 @@
 
       const labels = ['创意素材', '竞品情报', '多语言管理', '广告优化', '运营效率'];
       const fields = ['pain_creative', 'pain_intelligence', 'pain_multilingual', 'pain_ad_optimize', 'pain_efficiency'];
-      const datasets = Object.entries(groups).map(([type, rows], i) => ({
-        label: type,
-        data: fields.map(f => Math.round(avgField(rows, f) * 10) / 10),
-        borderColor: COLORS[i], backgroundColor: COLORS[i].replace('0.85', '0.1'),
-        pointBackgroundColor: COLORS[i], borderWidth: 2
-      }));
 
       charts['radarChart'] = new Chart(ctx, {
         type: 'radar',
-        data: { labels, datasets },
+        data: {
+          labels,
+          datasets: Object.entries(groups).map(([type, rows], i) => ({
+            label: type,
+            data: fields.map(f => Math.round(avgField(rows, f) * 10) / 10),
+            borderColor: COLORS[i],
+            backgroundColor: COLORS[i] + '20',
+            borderWidth: 2,
+            pointBackgroundColor: COLORS[i]
+          }))
+        },
         options: {
           responsive: true,
-          scales: { r: { min: 0, max: 5, ticks: { stepSize: 1 }, pointLabels: { font: { size: 12 } } } },
-          plugins: { legend: { position: 'bottom', labels: { font: { size: 12 } } } }
+          scales: { r: { min: 0, max: 5, ticks: { stepSize: 1 } } },
+          plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
         }
       });
     }
 
     function renderTable(data) {
-      const tbody = document.getElementById('responseBody');
-      tbody.innerHTML = '';
-      data.forEach(r => {
-        const tr = document.createElement('tr');
-        const time = formatBeijingTime(r.created_at);
-        const countries = Array.isArray(r.countries) ? r.countries.join(', ') : '';
-        const contact = r.contact_wechat || r.contact_phone || r.contact_email || '';
-        const surveyTypeLabel = r.survey_type === 'deep' ? '深度' : '快速';
-        tr.innerHTML = `
-          <td>${escapeHtml(time)}</td>
-          <td><span style="background:${r.survey_type === 'deep' ? '#5856D6' : '#007AFF'};color:white;padding:2px 8px;border-radius:4px;font-size:11px">${surveyTypeLabel}</span></td>
-          <td>${escapeHtml(r.business_type)}</td>
-          <td>${escapeHtml(r.experience)}</td>
-          <td>${escapeHtml(r.revenue)}</td>
-          <td>${escapeHtml(countries)}</td>
-          <td>${escapeHtml(r.willing_to_pay)}</td>
-          <td>${escapeHtml(contact)}</td>
-          <td><button class="btn-del" data-id="${escapeHtml(r.id)}">删除</button></td>
+      const tbody = document.getElementById('response-body');
+      tbody.innerHTML = data.map(r => {
+        const contact = r.contact_wechat || r.contact_phone || r.contact_email || '-';
+        const typeBadge = r.survey_type === 'deep'
+          ? '<span class="badge badge-purple">深度</span>'
+          : '<span class="badge badge-blue">快速</span>';
+
+        return `
+          <tr>
+            <td>${formatTime(r.created_at)}</td>
+            <td>${typeBadge}</td>
+            <td>${r.business_type || '-'}</td>
+            <td>${r.experience || '-'}</td>
+            <td>${r.revenue || '-'}</td>
+            <td>${r.ai_experience || '-'}</td>
+            <td>${contact}</td>
+            <td><button class="btn-delete" onclick="deleteOne('${r.id}')">删除</button></td>
+          </tr>
         `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function deleteOne(id) {
-      if (window._deleting) return;
-      if (!confirm('确定删除这条数据？')) return;
-      window._deleting = true;
-      window.CrossPilotData.deleteResponse(id)
-        .then(() => loadData())
-        .catch(err => { console.error('Delete failed:', err); alert('删除失败，请重试'); })
-        .finally(() => { window._deleting = false; });
-    }
-
-    function clearAll() {
-      if (window._deleting) return;
-      if (!confirm('确定清空所有数据？此操作不可撤销！')) return;
-      if (!confirm('再次确认：删除全部 ' + allResponses.length + ' 条数据？')) return;
-      window._deleting = true;
-      window.CrossPilotData.clearResponses(allResponses)
-        .then(() => loadData())
-        .catch(err => { console.error('Clear failed:', err); alert('清空失败，请重试'); })
-        .finally(() => { window._deleting = false; });
+      }).join('');
     }
 
     function renderAll() {
       const data = filterData();
-      document.getElementById('totalCount').textContent = data.length;
+      document.getElementById('total-count').textContent = data.length;
 
-      // Show/hide deep survey charts
+      // Show/hide deep charts
       const hasDeep = data.some(r => r.survey_type === 'deep');
       document.querySelectorAll('.deep-chart').forEach(el => {
-        el.style.display = hasDeep ? '' : 'none';
+        el.classList.toggle('hidden', !hasDeep);
       });
 
       // Basic charts
       renderRadarChart(data);
-      renderPieChart('typeChart', countFieldWithDefaults(data, 'business_type').values, ALL_OPTIONS.business_type);
-      renderPieChart('expChart', countFieldWithDefaults(data, 'experience').values, ALL_OPTIONS.experience);
-      renderPieChart('revenueChart', countFieldWithDefaults(data, 'revenue').values, ALL_OPTIONS.revenue);
-      renderBarChart('painChart', countMultiFieldWithDefaults(data, 'biggest_pains'));
-      renderBarChart('payChart', countFieldWithDefaults(data, 'willing_to_pay'));
-      renderBarChart('aiToolChart', countMultiFieldWithDefaults(data, 'platform_ai_tools'));
-      renderBarChart('aiGapChart', countFieldWithDefaults(data, 'ai_tool_gap'));
-      renderBarChart('countryChart', countMultiFieldWithDefaults(data, 'countries'));
+      renderPieChart('typeChart', countField(data, 'business_type').values, ALL_OPTIONS.business_type);
+      renderPieChart('expChart', countField(data, 'experience').values, ALL_OPTIONS.experience);
+      renderPieChart('revenueChart', countField(data, 'revenue').values, ALL_OPTIONS.revenue);
+      renderBarChart('taskChart', countMultiField(data, 'time_consuming_tasks'));
+      renderPieChart('aiExpChart', countField(data, 'ai_experience').values, ALL_OPTIONS.ai_experience);
+      renderBarChart('aiConcernChart', countMultiField(data, 'ai_concerns'));
+      renderBarChart('payChart', countField(data, 'willing_to_pay'));
+      renderPieChart('aiValueChart', countField(data, 'ai_value_expectation').values, ALL_OPTIONS.ai_value_expectation);
 
-      // Deep survey charts
+      // Deep charts
       if (hasDeep) {
-        renderBarChart('skuChart', countFieldWithDefaults(data, 'sku_count'));
-        renderBarChart('newSkuChart', countFieldWithDefaults(data, 'monthly_new_sku'));
-        renderBarChart('listingTimeChart', countFieldWithDefaults(data, 'listing_time'));
-        renderPieChart('adStatusChart', countFieldWithDefaults(data, 'ad_status').values, ALL_OPTIONS.ad_status);
-        renderBarChart('adBudgetChart', countFieldWithDefaults(data, 'ad_budget'));
-        renderBarChart('featureChart', countMultiFieldWithDefaults(data, 'top_features'));
-        renderBarChart('priceChart', countFieldWithDefaults(data, 'package_price_range'));
-        renderPieChart('aiFreqChart', countFieldWithDefaults(data, 'ai_usage_frequency').values, ALL_OPTIONS.ai_usage_frequency);
+        renderBarChart('skuChart', countField(data, 'sku_count'));
+        renderBarChart('listingTimeChart', countField(data, 'listing_time'));
+        renderPieChart('adStatusChart', countField(data, 'ad_status').values, ALL_OPTIONS.ad_status);
+        renderBarChart('featureChart', countMultiField(data, 'top_features'));
+        renderBarChart('listingPayChart', countField(data, 'pay_for_listing'));
+        renderBarChart('creativePayChart', countField(data, 'pay_for_creative'));
       }
 
       renderTable(data);
     }
 
-    // Export CSV
+    // Export functions
     function exportCSV() {
       const data = filterData();
-      const headers = ['提交时间', '问卷类型', '业务类型', '入行时间', '月营收', '国家', '付费意愿', '联系方式'];
+      const headers = ['时间', '类型', '业务类型', '入行时间', '月营收', 'AI经验', '联系方式'];
       const rows = data.map(r => [
-        r.created_at, r.survey_type === 'deep' ? '深度' : '快速',
-        r.business_type, r.experience, r.revenue,
-        Array.isArray(r.countries) ? r.countries.join('|') : '',
-        r.willing_to_pay, r.contact_wechat || r.contact_phone || r.contact_email || ''
+        r.created_at,
+        r.survey_type === 'deep' ? '深度' : '快速',
+        r.business_type || '',
+        r.experience || '',
+        r.revenue || '',
+        r.ai_experience || '',
+        r.contact_wechat || r.contact_phone || r.contact_email || ''
       ]);
       const csv = '﻿' + [headers, ...rows].map(row => row.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
-      downloadFile(csv, 'survey_export.csv', 'text/csv;charset=utf-8');
+      download(csv, 'survey_export.csv', 'text/csv;charset=utf-8');
     }
 
-    // Export Excel
     function exportExcel() {
       const data = filterData();
       const wb = XLSX.utils.book_new();
 
-      // Shallow data
-      const shallowData = data.filter(r => r.survey_type !== 'deep');
-      if (shallowData.length > 0) {
-        const ws = XLSX.utils.json_to_sheet(shallowData.map(r => ({
-          '提交时间': r.created_at,
-          '业务类型': r.business_type,
-          '入行时间': r.experience,
-          '目标国家': Array.isArray(r.countries) ? r.countries.join(', ') : '',
-          '月营收': r.revenue,
-          '主要平台': Array.isArray(r.platforms) ? r.platforms.join(', ') : '',
-          '最大痛点': Array.isArray(r.biggest_pains) ? r.biggest_pains.join(', ') : '',
-          '付费意愿': r.willing_to_pay,
-          '联系方式': r.contact_wechat || r.contact_phone || r.contact_email || ''
-        })));
-        XLSX.utils.book_append_sheet(wb, ws, '快速调研');
-      }
-
-      // Deep data
-      const deepData = data.filter(r => r.survey_type === 'deep');
-      if (deepData.length > 0) {
-        const ws = XLSX.utils.json_to_sheet(deepData.map(r => ({
-          '提交时间': r.created_at,
-          '业务类型': r.business_type,
-          '入行时间': r.experience,
-          '目标国家': Array.isArray(r.countries) ? r.countries.join(', ') : '',
-          '月营收': r.revenue,
-          'SKU数量': r.sku_count,
-          '每月上新': r.monthly_new_sku,
-          '上架耗时': r.listing_time,
-          '广告状态': r.ad_status,
-          '广告预算': r.ad_budget,
-          '功能需求': Array.isArray(r.top_features) ? r.top_features.join(', ') : '',
-          '价格接受度': r.package_price_range,
-          '联系方式': r.contact_wechat || r.contact_phone || r.contact_email || ''
-        })));
-        XLSX.utils.book_append_sheet(wb, ws, '深度调研');
-      }
-
+      const ws = XLSX.utils.json_to_sheet(data.map(r => ({
+        '提交时间': r.created_at,
+        '问卷类型': r.survey_type === 'deep' ? '深度' : '快速',
+        '业务类型': r.business_type,
+        '入行时间': r.experience,
+        '月营收': r.revenue,
+        'AI经验': r.ai_experience,
+        '最耗时任务': Array.isArray(r.time_consuming_tasks) ? r.time_consuming_tasks.join(', ') : '',
+        'AI担忧': Array.isArray(r.ai_concerns) ? r.ai_concerns.join(', ') : '',
+        '付费意愿': r.willing_to_pay,
+        '联系方式': r.contact_wechat || r.contact_phone || r.contact_email || ''
+      })));
+      XLSX.utils.book_append_sheet(wb, ws, '调研数据');
       XLSX.writeFile(wb, 'survey_export.xlsx');
     }
 
-    // Export PDF
     function exportPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('l', 'mm', 'a4');
 
-      // Title
       doc.setFontSize(18);
       doc.text('CrossPilot Survey Report', 14, 20);
       doc.setFontSize(10);
       doc.text(`Generated: ${new Date().toLocaleString('zh-CN')}`, 14, 28);
 
-      // Summary
       const data = filterData();
       doc.setFontSize(12);
-      doc.text(`Total Responses: ${data.length}`, 14, 38);
-      doc.text(`Shallow: ${data.filter(r => r.survey_type !== 'deep').length} | Deep: ${data.filter(r => r.survey_type === 'deep').length}`, 14, 45);
-
-      // Table
-      const tableData = data.slice(0, 50).map(r => [
-        formatBeijingTime(r.created_at),
-        r.survey_type === 'deep' ? '深度' : '快速',
-        r.business_type || '',
-        r.experience || '',
-        r.revenue || '',
-        r.willing_to_pay || ''
-      ]);
+      doc.text(`Total: ${data.length} | Shallow: ${data.filter(r => r.survey_type !== 'deep').length} | Deep: ${data.filter(r => r.survey_type === 'deep').length}`, 14, 38);
 
       doc.autoTable({
-        head: [['Time', 'Type', 'Business', 'Experience', 'Revenue', 'Willing to Pay']],
-        body: tableData,
-        startY: 55,
+        head: [['Time', 'Type', 'Business', 'Experience', 'Revenue', 'AI Experience']],
+        body: data.slice(0, 50).map(r => [
+          formatTime(r.created_at),
+          r.survey_type === 'deep' ? 'Deep' : 'Quick',
+          r.business_type || '',
+          r.experience || '',
+          r.revenue || '',
+          r.ai_experience || ''
+        ]),
+        startY: 45,
         styles: { fontSize: 8 },
-        headStyles: { fillColor: [0, 122, 255] }
+        headStyles: { fillColor: [0, 113, 227] }
       });
 
       doc.save('survey_report.pdf');
     }
 
-    function downloadFile(content, filename, type) {
+    function download(content, filename, type) {
       const url = URL.createObjectURL(new Blob([content], { type }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
       URL.revokeObjectURL(url);
     }
 
-    // Event listeners
-    document.getElementById('filterSurveyType').addEventListener('change', renderAll);
-    document.getElementById('filterType').addEventListener('change', renderAll);
-    document.getElementById('filterExp').addEventListener('change', renderAll);
-    document.getElementById('filterRevenue').addEventListener('change', renderAll);
-
-    document.getElementById('responseBody').addEventListener('click', function(e) {
-      const button = e.target.closest('.btn-del');
-      if (button) deleteOne(button.dataset.id);
-    });
-
-    function handleStatsData(data) {
-      const prevLen = allResponses.length;
-      allResponses = data.responses || [];
-      renderAll();
-      if (allResponses.length > prevLen && prevLen > 0) {
-        document.querySelector('.total').style.background = '#d4edda';
-        setTimeout(() => document.querySelector('.total').style.background = '', 1500);
-      }
+    // CRUD
+    function deleteOne(id) {
+      if (!confirm('确定删除这条数据？')) return;
+      window.CrossPilotData.deleteResponse(id).then(loadData).catch(err => alert('删除失败'));
     }
 
-    function handleStatsError(err) {
-      console.error('Failed to load stats:', err);
-      document.getElementById('totalCount').textContent = '加载失败';
-    }
-
-    async function loadDataWithRetry(maxRetries = 2) {
-      for (let i = 0; i <= maxRetries; i++) {
-        try {
-          const data = await window.CrossPilotData.loadResponses();
-          handleStatsData(data);
-          return;
-        } catch (err) {
-          if (i === maxRetries) { handleStatsError(err); return; }
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-      }
+    function clearAll() {
+      if (!confirm('确定清空所有数据？此操作不可撤销！')) return;
+      if (!confirm('再次确认：删除全部数据？')) return;
+      window.CrossPilotData.clearResponses(allResponses).then(loadData).catch(err => alert('清空失败'));
     }
 
     function loadData() {
-      if (!navigator.onLine) {
-        document.getElementById('totalCount').textContent = '网络断开';
-        return;
-      }
-      loadDataWithRetry();
+      window.CrossPilotData.loadResponses().then(data => {
+        allResponses = data.responses || [];
+        renderAll();
+      }).catch(err => {
+        document.getElementById('total-count').textContent = '加载失败';
+      });
     }
 
-    function setProtectedVisible(visible) {
-      document.querySelector('.filters').style.display = visible ? '' : 'none';
-      document.querySelector('.chart-grid').style.display = visible ? '' : 'none';
-      document.getElementById('tableCard').style.display = visible ? '' : 'none';
-      document.querySelector('.total').style.display = visible ? '' : 'none';
-    }
+    // Auth
+    function handleLogin() {
+      const email = document.getElementById('admin-email').value.trim();
+      const password = document.getElementById('admin-password').value;
+      const errorEl = document.getElementById('auth-error');
 
-    function startAdmin() {
-      setProtectedVisible(true);
-      if (refreshTimer) clearInterval(refreshTimer);
-      refreshTimer = null;
-      loadData();
-      refreshTimer = setInterval(loadData, 10000);
-    }
-
-    function stopAdmin() {
-      setProtectedVisible(false);
-      if (refreshTimer) clearInterval(refreshTimer);
-      refreshTimer = null;
-    }
-
-    document.getElementById('btnLogin').addEventListener('click', function() {
-      if (window._loggingIn) return;
-      const email = document.getElementById('adminEmail').value.trim();
-      const password = document.getElementById('adminPassword').value;
       if (!email || !password) {
-        document.getElementById('authError').textContent = '请输入邮箱和密码';
+        errorEl.textContent = '请输入邮箱和密码';
+        errorEl.classList.remove('hidden');
         return;
       }
-      document.getElementById('authError').textContent = '';
-      window._loggingIn = true;
-      const btn = document.getElementById('btnLogin');
+
+      errorEl.classList.add('hidden');
+      const btn = document.getElementById('btn-login');
       btn.disabled = true;
       btn.textContent = '登录中...';
-      window.CrossPilotData.login(email, password)
-        .catch(err => { document.getElementById('authError').textContent = err.message || '登录失败'; })
-        .finally(() => { window._loggingIn = false; btn.disabled = false; btn.textContent = '登录'; });
-    });
 
+      window.CrossPilotData.login(email, password)
+        .catch(err => {
+          errorEl.textContent = err.message || '登录失败';
+          errorEl.classList.remove('hidden');
+        })
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = '登录';
+        });
+    }
+
+    // Init
     window.CrossPilotData.onAuthChange(user => {
-      currentUser = user;
       if (!window.CrossPilotData.supabaseEnabled()) {
-        document.getElementById('authPanel').style.display = 'none';
-        startAdmin();
+        document.getElementById('auth-panel').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+        loadData();
         return;
       }
+
       if (window.CrossPilotData.isAllowedAdmin(user)) {
-        document.getElementById('authPanel').style.display = 'none';
-        startAdmin();
+        document.getElementById('auth-panel').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('hidden');
+        loadData();
       } else {
-        stopAdmin();
-        document.getElementById('authPanel').style.display = '';
-        if (user) { document.getElementById('authError').textContent = '当前账号不在管理员邮箱列表中'; }
+        document.getElementById('auth-panel').classList.remove('hidden');
+        document.getElementById('main-content').classList.add('hidden');
       }
     });
+
+    // Auto-refresh
+    setInterval(loadData, 30000);
   </script>
 </body>
 </html>
