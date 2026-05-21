@@ -657,6 +657,7 @@
         — Crosspilot AI 团队
       </p>
       <p class="text-[14px] text-[#98989D] mb-10">
+        <span id="contact-label"></span>
         <a href="mailto:hambur.zach@gmail.com" class="text-blue-400 hover:text-blue-300 transition-colors">hambur.zach@gmail.com</a>
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -700,6 +701,7 @@
         thankTitle: '感谢您的参与！',
         thankDesc: '您的反馈对我们极其宝贵，我们将仔细分析并以此优化服务。',
         thankTeam: '— Crosspilot AI 团队',
+        contactLabel: '联系方式：',
         continueDeep: '继续深度调研',
         backHome: '返回首页',
         exitConfirm: '确定要退出吗？进度将不会保留。',
@@ -732,6 +734,7 @@
         thankTitle: 'Thank you!',
         thankDesc: 'Your feedback is extremely valuable. We will analyze it carefully.',
         thankTeam: '— Crosspilot AI Team',
+        contactLabel: 'Contact: ',
         continueDeep: 'Continue to Detailed Survey',
         backHome: 'Back to Home',
         exitConfirm: 'Are you sure you want to exit? Progress will not be saved.',
@@ -1419,6 +1422,7 @@
       document.getElementById('thank-title').textContent = t('thankTitle');
       document.getElementById('thank-desc').textContent = t('thankDesc');
       document.getElementById('thank-team').textContent = t('thankTeam');
+      document.getElementById('contact-label').textContent = t('contactLabel');
       document.getElementById('continue-deep-text').textContent = t('continueDeep');
       document.getElementById('back-home-text').textContent = t('backHome');
       document.getElementById('btn-continue-deep').classList.toggle('hidden', surveyType !== 'shallow');
