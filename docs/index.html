@@ -60,26 +60,34 @@
       z-index: 10;
     }
 
-    /* Liquid Glass Card */
+    /* ============================================
+       LIQUID GLASS CARD
+       ============================================ */
     .apple-card {
+      /* 多层透明渐变叠加 */
       background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.08) 0%,
         rgba(255, 255, 255, 0.04) 50%,
         rgba(255, 255, 255, 0.06) 100%
       );
+      /* 背景模糊 + 饱和度增强 */
       backdrop-filter: blur(40px) saturate(180%);
       -webkit-backdrop-filter: blur(40px) saturate(180%);
+      /* 24px 大圆角 */
       border-radius: 24px;
+      /* 多层阴影创造深度 */
       box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),  /* 内部高光 */
+        inset 0 -1px 0 rgba(0, 0, 0, 0.2);       /* 内部阴影 */
+      /* 半透明白色边框 */
       border: 1px solid rgba(255, 255, 255, 0.12);
       position: relative;
       overflow: hidden;
     }
 
+    /* 折射效果：卡片顶部高光线 */
     .apple-card::before {
       content: '';
       position: absolute;
@@ -87,22 +95,26 @@
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      z-index: 1;
     }
 
     .apple-card-hover {
       transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
+    /* 动态阴影：悬停时蓝色光晕 */
     .apple-card-hover:hover {
       transform: translateY(-4px) scale(1.01);
       box-shadow:
-        0 16px 48px rgba(59, 130, 246, 0.15),
+        0 16px 48px rgba(59, 130, 246, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.15),
         inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-      border-color: rgba(59, 130, 246, 0.25);
+      border-color: rgba(59, 130, 246, 0.3);
     }
 
-    /* Glass Button */
+    /* ============================================
+       GLASS BUTTON
+       ============================================ */
     .apple-btn {
       display: inline-flex;
       align-items: center;
@@ -121,13 +133,18 @@
     }
 
     .apple-btn-primary {
+      /* 半透明蓝色背景 */
       background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(59, 130, 246, 0.95) 100%);
       color: #FFFFFF;
+      /* 多层阴影 */
       box-shadow:
         0 4px 16px rgba(37, 99, 235, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      /* 玻璃质感：模糊 */
       backdrop-filter: blur(10px);
     }
+
+    /* 顶部高光：::before 伪元素实现 */
     .apple-btn-primary::before {
       content: '';
       position: absolute;
@@ -135,13 +152,15 @@
       left: 0;
       right: 0;
       height: 50%;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), transparent);
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
       border-radius: 100px 100px 0 0;
+      pointer-events: none;
     }
+
     .apple-btn-primary:hover:not(:disabled) {
       background: linear-gradient(135deg, rgba(29, 78, 216, 0.95) 0%, rgba(37, 99, 235, 1) 100%);
       box-shadow:
-        0 8px 24px rgba(37, 99, 235, 0.4),
+        0 8px 24px rgba(37, 99, 235, 0.45),
         inset 0 1px 0 rgba(255, 255, 255, 0.25);
       transform: translateY(-1px);
     }
@@ -156,11 +175,23 @@
     }
 
     .apple-btn-secondary {
+      /* 玻璃质感：半透明 + 模糊 */
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
       color: #FFFFFF;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(20px);
+    }
+    .apple-btn-secondary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+      border-radius: 100px 100px 0 0;
+      pointer-events: none;
     }
     .apple-btn-secondary:hover {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
@@ -182,11 +213,14 @@
       transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    /* Liquid Glass Option */
+    /* ============================================
+       LIQUID GLASS OPTION
+       ============================================ */
     .option-item {
       position: relative;
       padding: 16px 20px;
       border-radius: 16px;
+      /* 玻璃背景：半透明渐变 */
       background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.06) 0%,
@@ -199,33 +233,37 @@
       transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
       -webkit-tap-highlight-color: transparent;
     }
+
+    /* 交互反馈：悬停时透明度变化 */
     .option-item:hover {
       background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.05) 100%
+        rgba(255, 255, 255, 0.06) 100%
       );
       border-color: rgba(255, 255, 255, 0.15);
     }
     .option-item:active {
       transform: scale(0.98);
     }
+
+    /* 选中态：蓝色光晕 + 边框高亮 */
     .option-item.selected {
       background: linear-gradient(
         135deg,
-        rgba(59, 130, 246, 0.15) 0%,
-        rgba(37, 99, 235, 0.1) 100%
+        rgba(59, 130, 246, 0.18) 0%,
+        rgba(37, 99, 235, 0.12) 100%
       );
-      border-color: rgba(59, 130, 246, 0.4);
+      border-color: rgba(59, 130, 246, 0.5);
       box-shadow:
-        0 0 24px rgba(59, 130, 246, 0.1),
+        0 0 30px rgba(59, 130, 246, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     .option-radio {
       width: 22px;
       height: 22px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.25);
       border-radius: 50%;
       transition: all 0.3s ease;
       flex-shrink: 0;
@@ -234,13 +272,13 @@
     .option-item.selected .option-radio {
       border-color: #3b82f6;
       background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-      box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
     }
 
     .option-check {
       width: 22px;
       height: 22px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.25);
       border-radius: 6px;
       transition: all 0.3s ease;
       flex-shrink: 0;
@@ -249,15 +287,18 @@
     .option-item.selected .option-check {
       border-color: #3b82f6;
       background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-      box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
     }
 
-    /* Slider styles */
+    /* ============================================
+       SLIDER STYLES
+       ============================================ */
     input[type="range"] {
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
       height: 6px;
+      /* 玻璃轨道：半透明背景 */
       background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 100%);
       border-radius: 3px;
       outline: none;
@@ -271,12 +312,15 @@
       border: 2px solid #3b82f6;
       border-radius: 50%;
       cursor: pointer;
+      /* 蓝色光晕效果 */
       box-shadow:
-        0 2px 8px rgba(59, 130, 246, 0.3),
-        0 0 20px rgba(59, 130, 246, 0.15);
+        0 2px 8px rgba(59, 130, 246, 0.4),
+        0 0 20px rgba(59, 130, 246, 0.2);
     }
 
-    /* Glass Input */
+    /* ============================================
+       GLASS INPUT
+       ============================================ */
     .apple-input {
       width: 100%;
       padding: 14px 18px;
@@ -285,6 +329,7 @@
       font-size: 15px;
       outline: none;
       transition: all 0.3s ease;
+      /* 玻璃背景 */
       background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.06) 0%,
@@ -296,7 +341,7 @@
     }
     .apple-input:focus {
       border-color: rgba(59, 130, 246, 0.5);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
       background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.08) 0%,
@@ -304,7 +349,7 @@
       );
     }
     .apple-input::placeholder {
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.35);
     }
 
     /* Other input animation */
@@ -333,21 +378,27 @@
       opacity: 1;
     }
 
-    /* Glass Progress bar */
+    /* ============================================
+       GLASS PROGRESS BAR
+       ============================================ */
     .progress-bar {
       height: 4px;
+      /* 玻璃轨道：半透明背景 */
       background: rgba(255, 255, 255, 0.08);
       border-radius: 2px;
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
+      /* 蓝色渐变填充 */
       background: linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%);
       border-radius: 2px;
       transition: width 0.4s ease;
-      box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+      /* 光晕效果 */
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.5);
       position: relative;
     }
+    /* 内部高光：顶部反光 */
     .progress-fill::after {
       content: '';
       position: absolute;
@@ -355,10 +406,13 @@
       left: 0;
       right: 0;
       height: 50%;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
+      border-radius: 2px 2px 0 0;
     }
 
-    /* Error toast */
+    /* ============================================
+       ERROR TOAST
+       ============================================ */
     .error-toast {
       position: fixed;
       bottom: 32px;
@@ -377,7 +431,7 @@
       opacity: 0;
       transition: all 0.3s ease;
       z-index: 100;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
     .error-toast.show {
       transform: translateX(-50%) translateY(0);
@@ -389,20 +443,18 @@
       margin-bottom: 8px;
     }
 
-    /* Glass Navigation bar */
+    /* ============================================
+       GLASS NAVIGATION BAR
+       ============================================ */
     .nav-bar {
       background: linear-gradient(
         180deg,
         transparent 0%,
-        rgba(0, 0, 0, 0.3) 100%
+        rgba(0, 0, 0, 0.4) 100%
       ) !important;
       backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
       border-color: rgba(255, 255, 255, 0.05) !important;
-    }
-
-    /* Floating glow effect */
-    .glow-blue {
-      box-shadow: 0 0 60px rgba(59, 130, 246, 0.15);
     }
   </style>
 </head>
