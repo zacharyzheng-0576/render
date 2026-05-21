@@ -614,10 +614,11 @@
             <div id="contact-options" class="space-y-2.5 mb-4"></div>
             <div id="contact-fields" class="contact-wrapper">
               <div class="p-5 bg-[#2C2C2E] rounded-2xl space-y-3 mt-4">
-                <p class="text-[13px] text-[#98989D] mb-1">请留下至少一项联系方式</p>
+                <p id="contact-hint" class="text-[13px] text-[#98989D] mb-1">请留下至少一项联系方式</p>
                 <input type="text" id="contact-wechat" class="apple-input" placeholder="微信号 / WeChat ID">
                 <input type="text" id="contact-phone" class="apple-input" placeholder="手机号 / Phone">
                 <input type="text" id="contact-email" class="apple-input" placeholder="邮箱 / Email">
+                <input type="text" id="contact-linkedin" class="apple-input" placeholder="领英账号 / LinkedIn Profile">
               </div>
             </div>
           </div>
@@ -704,6 +705,7 @@
         wechatPlaceholder: '微信号 / WeChat ID',
         phonePlaceholder: '手机号 / Phone',
         emailPlaceholder: '邮箱 / Email',
+        linkedinPlaceholder: '领英账号 / LinkedIn Profile',
         otherPlaceholder: '请补充说明',
         networkError: '网络已断开',
         submitError: '提交失败',
@@ -735,6 +737,7 @@
         wechatPlaceholder: 'WeChat ID',
         phonePlaceholder: 'Phone number',
         emailPlaceholder: 'Email address',
+        linkedinPlaceholder: 'LinkedIn Profile',
         otherPlaceholder: 'Please specify',
         networkError: 'Network disconnected',
         submitError: 'Submission failed',
@@ -1239,20 +1242,26 @@
       });
 
       // Contact fields
-      const contactHint = document.querySelector('#contact-fields .contact-label');
+      const contactHint = document.getElementById('contact-hint');
       if (contactHint) contactHint.textContent = t('contactHint');
       document.getElementById('contact-wechat').placeholder = t('wechatPlaceholder');
       document.getElementById('contact-phone').placeholder = t('phonePlaceholder');
       document.getElementById('contact-email').placeholder = t('emailPlaceholder');
+      document.getElementById('contact-linkedin').placeholder = t('linkedinPlaceholder');
 
-      // 英文模式下只显示邮箱
+      // 根据语言显示不同的输入框
+      // 中文模式：微信号、手机号、邮箱、领英
+      // 英文模式：Email、LinkedIn
       document.getElementById('contact-wechat').style.display = currentLang === 'en' ? 'none' : '';
       document.getElementById('contact-phone').style.display = currentLang === 'en' ? 'none' : '';
+      document.getElementById('contact-linkedin').style.display = '';
 
-      ['wechat', 'phone', 'email'].forEach(type => {
+      ['wechat', 'phone', 'email', 'linkedin'].forEach(type => {
         const input = document.getElementById(`contact-${type}`);
-        input.value = formData[`contact_${type}`] || '';
-        input.oninput = () => { formData[`contact_${type}`] = input.value; };
+        if (input) {
+          input.value = formData[`contact_${type}`] || '';
+          input.oninput = () => { formData[`contact_${type}`] = input.value; };
+        }
       });
     }
 
