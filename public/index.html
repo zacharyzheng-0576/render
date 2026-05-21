@@ -440,10 +440,10 @@
         — Crosspilot AI 团队
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <button id="btn-continue-deep" onclick="startSurvey('deep', true)" class="apple-btn apple-btn-primary hidden">
+        <button id="btn-continue-deep" onclick="continueToDeep()" class="apple-btn apple-btn-primary hidden">
           继续深度调研
         </button>
-        <button onclick="switchView('view-home')" class="apple-btn apple-btn-secondary">
+        <button onclick="goHome()" class="apple-btn apple-btn-secondary">
           返回首页
         </button>
       </div>
@@ -485,6 +485,7 @@
     }
 
     let continueFromShallow = false;
+    let pendingShallowData = null; // 存储待提交的浅度数据
 
     function startSurvey(type, isContinue = false) {
       surveyType = type;
@@ -1011,11 +1012,21 @@
       collectInputs();
       formData.completed_at = new Date().toISOString();
 
+      // 如果是浅度调研，先存储数据，不立即提交
+      if (surveyType === 'shallow') {
+        pendingShallowData = { ...formData };
+        isSubmitting = false;
+        showThankYou();
+        return;
+      }
+
+      // 深度调研或独立深度调研，直接提交
       try {
         if (!navigator.onLine) throw new Error('网络已断开');
 
         const result = await submitWithRetry(formData);
         if (result.success) {
+          pendingShallowData = null; // 清除待提交数据
           showThankYou();
         } else {
           throw new Error(result.error || '提交失败');
@@ -1041,6 +1052,26 @@
     function showThankYou() {
       document.getElementById('btn-continue-deep').classList.toggle('hidden', surveyType !== 'shallow');
       switchView('view-thanks');
+    }
+
+    // 继续深度调研
+    function continueToDeep() {
+      startSurvey('deep', true);
+    }
+
+    // 返回首页（如果有待提交的浅度数据，先提交）
+    async function goHome() {
+      if (pendingShallowData) {
+        try {
+          if (!navigator.onLine) throw new Error('网络已断开');
+          await submitWithRetry(pendingShallowData);
+          pendingShallowData = null;
+        } catch (err) {
+          showError('提交失败: ' + err.message);
+          return;
+        }
+      }
+      switchView('view-home');
     }
 
     function showError(message) {
