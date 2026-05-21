@@ -943,15 +943,8 @@
 
       const isLastQuestion = currentStep >= visibleQuestions.length - 1;
       nextBtn.disabled = !canProceed;
-
-      // 最后一题显示绿色提交按钮
-      if (isLastQuestion) {
-        nextBtn.textContent = '提交问卷';
-        nextBtn.className = 'apple-btn bg-[#34C759] hover:bg-[#30B350] text-white px-8 py-3 disabled:opacity-40 disabled:cursor-not-allowed';
-      } else {
-        nextBtn.textContent = '继续';
-        nextBtn.className = 'apple-btn apple-btn-primary px-8 py-3';
-      }
+      nextBtn.textContent = isLastQuestion ? '提交问卷' : '继续';
+      nextBtn.className = 'apple-btn apple-btn-primary px-8 py-3';
 
       prevBtn.classList.toggle('hidden', currentStep === 0);
       document.getElementById('prev-spacer').classList.toggle('hidden', currentStep > 0);
