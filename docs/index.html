@@ -465,6 +465,10 @@
       card.querySelectorAll('.text-input').forEach(input => {
         input.addEventListener('input', () => {
           formData[input.dataset.field] = input.value;
+          // Update continue button when typing in "Other" input
+          if (input.closest('.other-input')) {
+            updateContinueButton();
+          }
         });
       });
     }
