@@ -554,32 +554,32 @@
     let allResponses = [];
     let charts = {};
 
-    // Liquid Glass color palette - brighter, more vivid
+    // Liquid Glass color palette - vivid and bright
     const COLORS = [
-      'rgba(59, 130, 246, 0.85)',   // Blue
-      'rgba(99, 102, 241, 0.85)',   // Indigo
-      'rgba(34, 197, 94, 0.85)',    // Green
-      'rgba(251, 146, 60, 0.85)',   // Orange
-      'rgba(248, 113, 113, 0.85)',  // Red
-      'rgba(168, 85, 247, 0.85)',   // Purple
-      'rgba(236, 72, 153, 0.85)',   // Pink
-      'rgba(56, 189, 248, 0.85)',   // Light Blue
-      'rgba(250, 204, 21, 0.85)',   // Yellow
-      'rgba(45, 212, 191, 0.85)'    // Teal
+      'rgba(96, 165, 250, 0.9)',    // Blue
+      'rgba(129, 140, 248, 0.9)',   // Indigo
+      'rgba(74, 222, 128, 0.9)',    // Green
+      'rgba(253, 186, 116, 0.9)',   // Orange
+      'rgba(252, 165, 165, 0.9)',   // Red
+      'rgba(192, 132, 252, 0.9)',   // Purple
+      'rgba(244, 114, 182, 0.9)',   // Pink
+      'rgba(103, 232, 249, 0.9)',   // Light Blue
+      'rgba(253, 224, 71, 0.9)',    // Yellow
+      'rgba(94, 234, 212, 0.9)'     // Teal
     ];
 
-    // Gradient colors for liquid glass effect - brighter
+    // Gradient colors for liquid glass effect - bright with strong glass feel
     const GRADIENT_COLORS = [
-      { start: 'rgba(96, 165, 250, 0.95)', end: 'rgba(59, 130, 246, 0.5)' },
-      { start: 'rgba(129, 140, 248, 0.95)', end: 'rgba(99, 102, 241, 0.5)' },
-      { start: 'rgba(74, 222, 128, 0.95)', end: 'rgba(34, 197, 94, 0.5)' },
-      { start: 'rgba(253, 186, 116, 0.95)', end: 'rgba(251, 146, 60, 0.5)' },
-      { start: 'rgba(252, 165, 165, 0.95)', end: 'rgba(248, 113, 113, 0.5)' },
-      { start: 'rgba(192, 132, 252, 0.95)', end: 'rgba(168, 85, 247, 0.5)' },
-      { start: 'rgba(244, 114, 182, 0.95)', end: 'rgba(236, 72, 153, 0.5)' },
-      { start: 'rgba(103, 232, 249, 0.95)', end: 'rgba(56, 189, 248, 0.5)' },
-      { start: 'rgba(253, 224, 71, 0.95)', end: 'rgba(250, 204, 21, 0.5)' },
-      { start: 'rgba(94, 234, 212, 0.95)', end: 'rgba(45, 212, 191, 0.5)' }
+      { start: 'rgba(147, 197, 253, 1)', end: 'rgba(59, 130, 246, 0.6)' },
+      { start: 'rgba(165, 180, 252, 1)', end: 'rgba(99, 102, 241, 0.6)' },
+      { start: 'rgba(134, 239, 172, 1)', end: 'rgba(34, 197, 94, 0.6)' },
+      { start: 'rgba(253, 211, 153, 1)', end: 'rgba(251, 146, 60, 0.6)' },
+      { start: 'rgba(254, 202, 202, 1)', end: 'rgba(248, 113, 113, 0.6)' },
+      { start: 'rgba(216, 180, 254, 1)', end: 'rgba(168, 85, 247, 0.6)' },
+      { start: 'rgba(251, 182, 215, 1)', end: 'rgba(236, 72, 153, 0.6)' },
+      { start: 'rgba(165, 243, 252, 1)', end: 'rgba(56, 189, 248, 0.6)' },
+      { start: 'rgba(254, 240, 138, 1)', end: 'rgba(250, 204, 21, 0.6)' },
+      { start: 'rgba(153, 246, 228, 1)', end: 'rgba(45, 212, 191, 0.6)' }
     ];
 
     const ALL_OPTIONS = {
