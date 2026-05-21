@@ -544,6 +544,11 @@
 
     function updateVisibleQuestions() {
       visibleQuestions = questions.filter(q => {
+        // 从浅度继续深度时，过滤掉联系方式问题
+        if (continueFromShallow && q.type === 'contact') {
+          return false;
+        }
+        // 分支逻辑
         if (!q.branch) return true;
         const val = formData[q.branch.field];
         return Array.isArray(val)
@@ -569,22 +574,16 @@
     }
 
     function renderQuestion(q) {
-      // Section header (inline, not separate page)
+      // Section header - show on every question that has a section
       const sectionHeader = document.getElementById('section-header');
       if (q.section && q.sectionTitle) {
-        const prevQ = visibleQuestions[currentStep - 1];
-        const showSection = !prevQ || prevQ.section !== q.section;
-        if (showSection) {
-          sectionHeader.classList.remove('hidden');
-          sectionHeader.innerHTML = `
-            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-              <span class="text-lg">${SECTION_ICONS[q.section] || '📝'}</span>
-              <span class="text-sm font-semibold text-[#86868B]">${q.sectionTitle.zh}</span>
-            </div>
-          `;
-        } else {
-          sectionHeader.classList.add('hidden');
-        }
+        sectionHeader.classList.remove('hidden');
+        sectionHeader.innerHTML = `
+          <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+            <span class="text-lg">${SECTION_ICONS[q.section] || '📝'}</span>
+            <span class="text-sm font-semibold text-[#86868B]">${q.sectionTitle.zh}</span>
+          </div>
+        `;
       } else {
         sectionHeader.classList.add('hidden');
       }
