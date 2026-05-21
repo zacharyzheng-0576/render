@@ -509,15 +509,10 @@
       currentStep = 0;
       updateVisibleQuestions();
 
-      // 如果是从浅度继续，跳过已回答的问题和联系方式
+      // 如果是从浅度继续，跳过已回答的问题
       if (isContinue) {
         while (currentStep < visibleQuestions.length) {
           const q = visibleQuestions[currentStep];
-          // 跳过联系方式问题（无论是否填写）
-          if (q.type === 'contact') {
-            currentStep++;
-            continue;
-          }
           // 跳过已回答的问题
           if (formData[q.field]) {
             currentStep++;
@@ -946,8 +941,9 @@
           break;
       }
 
+      const isLastQuestion = currentStep >= visibleQuestions.length - 1;
       nextBtn.disabled = !canProceed;
-      nextBtn.textContent = currentStep >= visibleQuestions.length - 1 ? '提交问卷' : '继续';
+      nextBtn.textContent = isLastQuestion ? '提交问卷' : '继续';
 
       prevBtn.classList.toggle('hidden', currentStep === 0);
       document.getElementById('prev-spacer').classList.toggle('hidden', currentStep > 0);
