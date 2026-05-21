@@ -417,7 +417,7 @@
           上一题
         </button>
         <div id="prev-spacer"></div>
-        <button id="next-btn" onclick="goNext()" class="apple-btn apple-btn-primary px-8 py-3" disabled>
+        <button id="next-btn" class="apple-btn apple-btn-primary px-8 py-3" disabled>
           继续
         </button>
       </div>
@@ -946,36 +946,37 @@
       }
 
       const isLastQuestion = currentStep >= visibleQuestions.length - 1;
-      // 如果从浅度继续，最后一题按钮始终可用
-      if (continueFromShallow && isLastQuestion) {
-        nextBtn.disabled = false;
+
+      // 设置按钮文本和点击事件
+      if (isLastQuestion) {
+        nextBtn.textContent = '提交问卷';
+        nextBtn.onclick = function() {
+          submitSurvey();
+        };
+        // 如果从浅度继续，按钮始终可用
+        if (continueFromShallow) {
+          nextBtn.disabled = false;
+        } else {
+          nextBtn.disabled = !canProceed;
+        }
       } else {
+        nextBtn.textContent = '继续';
+        nextBtn.onclick = function() {
+          goNext();
+        };
         nextBtn.disabled = !canProceed;
       }
-      nextBtn.textContent = isLastQuestion ? '提交问卷' : '继续';
-      nextBtn.className = 'apple-btn apple-btn-primary px-8 py-3';
 
+      nextBtn.className = 'apple-btn apple-btn-primary px-8 py-3';
       prevBtn.classList.toggle('hidden', currentStep === 0);
       document.getElementById('prev-spacer').classList.toggle('hidden', currentStep > 0);
     }
 
-    let lastQuestionClicked = false;
-
     function goNext() {
       collectInputs();
 
-      // 如果是最后一题
+      // 如果是最后一题，不提交，只显示提交按钮
       if (currentStep >= visibleQuestions.length - 1) {
-        // 如果从浅度继续且是第一次点击，标记为已点击，不提交
-        if (continueFromShallow && !lastQuestionClicked) {
-          lastQuestionClicked = true;
-          const nextBtn = document.getElementById('next-btn');
-          nextBtn.textContent = '提交问卷';
-          nextBtn.disabled = false;
-          return;
-        }
-        // 否则提交
-        submitSurvey();
         return;
       }
 
