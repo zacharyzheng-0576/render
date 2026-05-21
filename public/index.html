@@ -513,16 +513,19 @@
 
       // 如果是从浅度继续，跳到第一个未回答的深度问题
       if (isContinue) {
-        while (currentStep < visibleQuestions.length) {
-          const q = visibleQuestions[currentStep];
-          if (formData[q.field]) {
-            currentStep++;
-            continue;
+        let firstUnanswered = -1;
+        for (let i = 0; i < visibleQuestions.length; i++) {
+          const q = visibleQuestions[i];
+          if (!formData[q.field]) {
+            firstUnanswered = i;
+            break;
           }
-          break;
         }
-        // 如果跳过头了，回到最后一题让用户手动提交
-        if (currentStep >= visibleQuestions.length) {
+        // 如果有未回答的问题，跳到第一个未回答的
+        if (firstUnanswered >= 0) {
+          currentStep = firstUnanswered;
+        } else {
+          // 如果所有问题都已回答，跳到最后一题
           currentStep = visibleQuestions.length - 1;
         }
       }
@@ -942,7 +945,12 @@
       }
 
       const isLastQuestion = currentStep >= visibleQuestions.length - 1;
-      nextBtn.disabled = !canProceed;
+      // 如果是最后一题且从浅度继续，按钮始终可用
+      if (isLastQuestion && continueFromShallow) {
+        nextBtn.disabled = false;
+      } else {
+        nextBtn.disabled = !canProceed;
+      }
       nextBtn.textContent = isLastQuestion ? '提交问卷' : '继续';
       nextBtn.className = 'apple-btn apple-btn-primary px-8 py-3';
 
