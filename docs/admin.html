@@ -614,10 +614,24 @@
         },
         options: {
           responsive: true,
-          plugins: { legend: { display: false } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#fff',
+              bodyColor: '#fff'
+            }
+          },
           scales: {
-            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } } },
-            x: { ticks: { font: { size: 11 }, maxRotation: 45 } }
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1, font: { size: 11 }, color: 'rgba(255, 255, 255, 0.5)' },
+              grid: { color: 'rgba(255, 255, 255, 0.08)' }
+            },
+            x: {
+              ticks: { font: { size: 11 }, maxRotation: 45, color: 'rgba(255, 255, 255, 0.5)' },
+              grid: { color: 'rgba(255, 255, 255, 0.05)' }
+            }
           }
         }
       });
@@ -636,12 +650,26 @@
             data,
             backgroundColor: COLORS.slice(0, labels.length),
             borderWidth: 2,
-            borderColor: '#fff'
+            borderColor: 'rgba(0, 0, 0, 0.3)'
           }]
         },
         options: {
           responsive: true,
-          plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } }
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { size: 11 },
+                padding: 12,
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#fff',
+              bodyColor: '#fff'
+            }
+          }
         }
       });
     }
@@ -676,8 +704,36 @@
         },
         options: {
           responsive: true,
-          scales: { r: { min: 0, max: 5, ticks: { stepSize: 1 } } },
-          plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
+          scales: {
+            r: {
+              min: 0,
+              max: 5,
+              ticks: {
+                stepSize: 1,
+                color: 'rgba(255, 255, 255, 0.5)',
+                backdropColor: 'transparent'
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              angleLines: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              pointLabels: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                font: { size: 12 }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { size: 11 },
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            }
+          }
         }
       });
     }
