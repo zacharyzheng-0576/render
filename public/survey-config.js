@@ -73,7 +73,7 @@ window.SURVEY_CONFIG = {
           { value: '内容本地化', zh: '内容翻译和本地化', en: 'Content translation & localization', desc: null },
           { value: 'SEO优化', zh: 'SEO关键词优化', en: 'SEO keyword optimization', desc: null },
           { value: '数据分析', zh: '销售数据分析和报表', en: 'Sales data analysis & reporting', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
       {
@@ -106,7 +106,7 @@ window.SURVEY_CONFIG = {
           { value: '客服', zh: '自动回复客户', en: 'Auto-replying to customers', desc: null },
           { value: '数据分析', zh: '分析销售数据', en: 'Analyzing sales data', desc: null },
           { value: '图片处理', zh: '处理商品图片', en: 'Processing product images', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
 
@@ -128,7 +128,7 @@ window.SURVEY_CONFIG = {
           { value: '数据安全', zh: '担心数据安全和隐私', en: 'Data security and privacy concerns', desc: null },
           { value: '价格贵', zh: '价格太贵', en: 'Too expensive', desc: null },
           { value: '不了解', zh: '不了解有什么AI工具', en: 'Don\'t know what AI tools exist', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
       {
@@ -143,7 +143,7 @@ window.SURVEY_CONFIG = {
           { value: '降低成本', zh: '降低人力成本', en: 'Reduce labor costs', desc: null },
           { value: '快速上手', zh: '简单易用，不需要学习', en: 'Easy to use, no learning curve', desc: null },
           { value: '一站式', zh: '一站式解决多个问题', en: 'One-stop solution for multiple problems', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
       {
@@ -239,7 +239,7 @@ window.SURVEY_CONFIG = {
           { value: '图片处理', zh: '处理商品图片/主图', en: 'Processing product images', desc: null },
           { value: '格式适配', zh: '适配不同平台格式', en: 'Adapting to different platform formats', desc: null },
           { value: '合规检查', zh: '检查合规性/禁词', en: 'Checking compliance/banned words', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
       {
@@ -317,7 +317,7 @@ window.SURVEY_CONFIG = {
           { value: '工具', zh: '用 AdSpy / Minea / PipiAds 等工具', en: 'Using ad spy tools', desc: null },
           { value: '手动', zh: '手动刷社交媒体和广告库', en: 'Manually browsing social media & ad libraries', desc: null },
           { value: '没有', zh: '没有系统追踪', en: 'No systematic tracking', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
       {
@@ -335,7 +335,7 @@ window.SURVEY_CONFIG = {
           { value: '不知道有效', zh: '不知道什么素材有效', en: 'Don\'t know what creatives work', desc: null },
           { value: '竞品抄袭', zh: '想参考竞品但不知道怎么找', en: 'Want to reference competitors but don\'t know how', desc: null },
           { value: '测试成本高', zh: 'A/B测试成本高', en: 'A/B testing is expensive', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
 
@@ -387,7 +387,7 @@ window.SURVEY_CONFIG = {
           { value: '内容本地化', zh: 'AI翻译和本地化', en: 'AI translation and localization', desc: null },
           { value: '客服回复', zh: 'AI自动回复客户', en: 'AI auto-reply to customers', desc: null },
           { value: '数据分析', zh: 'AI销售数据分析', en: 'AI sales data analysis', desc: null },
-          { value: '其他', zh: '其他', en: 'Other', desc: null, hasOther: true }
+          { value: 'OTHER', zh: '其他', en: 'Other', desc: null, hasOther: true }
         ]
       },
 
