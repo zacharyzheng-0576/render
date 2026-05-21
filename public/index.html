@@ -489,6 +489,7 @@
     function startSurvey(type, isContinue = false) {
       surveyType = type;
       continueFromShallow = isContinue;
+      isLastQuestionAnswered = false;
       const config = window.SURVEY_CONFIG[type];
 
       if (type === 'shallow') {
@@ -947,12 +948,27 @@
       document.getElementById('prev-spacer').classList.toggle('hidden', currentStep > 0);
     }
 
+    let isLastQuestionAnswered = false;
+
     function goNext() {
       collectInputs();
-      if (currentStep >= visibleQuestions.length - 1) {
+
+      // 如果是最后一题且已回答，点击按钮提交
+      if (isLastQuestionAnswered) {
         submitSurvey();
         return;
       }
+
+      // 如果是最后一题，标记为已回答，更新按钮为"提交问卷"
+      if (currentStep >= visibleQuestions.length - 1) {
+        isLastQuestionAnswered = true;
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.textContent = '提交问卷';
+        nextBtn.classList.remove('apple-btn-primary');
+        nextBtn.classList.add('apple-btn', 'bg-[#34C759]', 'hover:bg-[#30B350]');
+        return;
+      }
+
       animateOut('next');
       setTimeout(() => {
         currentStep++;
