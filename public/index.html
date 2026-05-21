@@ -376,16 +376,20 @@
               contactSection.classList.toggle('show', value === '愿意');
             }
 
-            // Auto-advance for single-select (not contact)
+            // Auto-advance for single-select (not contact, not "Other")
             if (q.type === 'single') {
-              setTimeout(() => {
-                // Collect other input if visible
-                const otherInput = card.querySelector('.other-input.show input');
-                if (otherInput && otherInput.value.trim()) {
-                  formData[`${field}_other`] = otherInput.value.trim();
-                }
-                goNext();
-              }, 150);
+              const isOtherOption = q.options.find(o => o.value === value)?.hasOther;
+              if (!isOtherOption) {
+                setTimeout(() => {
+                  goNext();
+                }, 150);
+              } else {
+                // Focus on the other input
+                setTimeout(() => {
+                  const otherInput = card.querySelector('.other-input.show input');
+                  if (otherInput) otherInput.focus();
+                }, 200);
+              }
             }
           });
         });
@@ -475,20 +479,33 @@
 
       const floatingContinue = document.getElementById('floatingContinue');
       const continueBtn = document.getElementById('continueBtn');
+      const isLastQuestion = currentStep >= visibleQuestions.length - 1;
 
       if (q.type === 'multi') {
         const selected = formData[q.field] || [];
         const hasSelection = selected.length > 0;
         floatingContinue.classList.toggle('visible', true);
         continueBtn.disabled = !hasSelection;
+        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
+        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
       } else if (q.type === 'slider') {
         const hasChanged = q.fields.some(f => formData[f.field] !== undefined);
         floatingContinue.classList.toggle('visible', true);
         continueBtn.disabled = !hasChanged;
+        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
+        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
       } else if (q.type === 'textarea') {
         const hasContent = formData[q.field] && formData[q.field].trim().length > 0;
         floatingContinue.classList.toggle('visible', true);
         continueBtn.disabled = !hasContent;
+        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
+        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
+      } else if (q.type === 'contact') {
+        // Contact question always shows continue/submit button
+        floatingContinue.classList.toggle('visible', true);
+        continueBtn.disabled = false;
+        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
+        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
       } else {
         floatingContinue.classList.remove('visible');
       }
