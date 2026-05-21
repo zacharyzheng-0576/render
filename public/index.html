@@ -5,137 +5,422 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>跨境电商卖家需求调研 | Cross-border Seller Survey</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            apple: {
+              blue: '#0071E3',
+              gray: '#86868B',
+              bg: '#F5F5F7',
+              dark: '#1D1D1F'
+            }
+          },
+          borderRadius: {
+            'apple': '18px',
+            'apple-lg': '24px',
+            'pill': '98px'
+          }
+        }
+      }
+    }
+  </script>
   <script src="supabase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="survey-config.js"></script>
   <script src="data-service.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #F5F5F7;
+      color: #1D1D1F;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    .apple-card {
+      background: #FFFFFF;
+      border-radius: 24px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .apple-card-hover:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .apple-btn-primary {
+      background-color: #0071E3;
+      color: #FFFFFF;
+      border-radius: 98px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .apple-btn-primary:hover:not(:disabled) {
+      background-color: #0077ED;
+      transform: scale(1.03);
+      box-shadow: 0 4px 14px rgba(0, 113, 227, 0.4);
+    }
+
+    .apple-btn-primary:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    .apple-btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .view-screen {
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .view-hidden {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .view-active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      z-index: 10;
+    }
+
+    .content-slide {
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .option-label {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .option-label:active {
+      transform: scale(0.98);
+    }
+
+    /* Custom checkbox style for multi-select */
+    .multi-option .check-icon {
+      transition: all 0.2s ease;
+    }
+
+    .multi-option.selected .check-icon {
+      background-color: #0071E3;
+      border-color: #0071E3;
+    }
+
+    /* Slider custom style */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: #E5E5EA;
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 28px;
+      height: 28px;
+      background: #FFFFFF;
+      border: 3px solid #0071E3;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
+    }
+
+    /* Other input animation */
+    .other-input-wrapper {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .other-input-wrapper.show {
+      max-height: 80px;
+      opacity: 1;
+      margin-top: 12px;
+    }
+
+    /* Contact section animation */
+    .contact-wrapper {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .contact-wrapper.show {
+      max-height: 300px;
+      opacity: 1;
+    }
+  </style>
 </head>
-<body>
-  <!-- Landing Page -->
-  <div class="landing-page" id="landingPage">
-    <div class="landing-logo">📊</div>
-    <h1 class="landing-title">跨境电商卖家需求调研</h1>
-    <p class="landing-subtitle">Cross-border Seller Survey</p>
-    <div class="survey-type-cards">
-      <div class="survey-type-card shallow" onclick="startSurvey('shallow')">
-        <div class="card-icon">⚡</div>
-        <div class="card-title">快速调研</div>
-        <div class="card-desc">了解您的核心需求</div>
-        <div class="card-time">约5分钟 · 12题</div>
-      </div>
-      <div class="survey-type-card deep" onclick="startSurvey('deep')">
-        <div class="card-icon">📋</div>
-        <div class="card-title">深度调研</div>
-        <div class="card-desc">全面了解您的业务细节</div>
-        <div class="card-time">约10分钟 · 25题</div>
+<body class="relative min-h-screen">
+
+  <!-- VIEW 1: 首页 (Home) -->
+  <div id="view-home" class="view-screen view-active">
+    <div class="w-full max-w-4xl text-center flex flex-col items-center">
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[#1D1D1F] mb-5">
+        跨境电商卖家需求调研
+      </h1>
+      <p class="text-xl text-[#86868B] mb-14 max-w-2xl leading-relaxed">
+        了解您的核心需求与业务痛点，帮助我们为您提供更加精准、优质的定制化服务与支持。
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-6 w-full">
+        <!-- 卡片：快速调研 -->
+        <div class="apple-card apple-card-hover p-8 md:p-10 flex flex-col items-start text-left cursor-pointer group" onclick="startSurvey('shallow')">
+          <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
+            <svg class="w-7 h-7 text-[#0071E3]" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-semibold mb-3 tracking-tight group-hover:text-[#0071E3] transition-colors">快速调研</h3>
+          <p class="text-[#86868B] mb-10 flex-grow text-[15px] leading-relaxed">
+            聚焦核心业务指标，快速评估您的基本需求与现状。
+          </p>
+          <div class="flex items-center justify-between w-full mt-auto">
+            <span class="text-xs font-semibold text-[#1D1D1F] bg-[#F5F5F7] px-3 py-1.5 rounded-full tracking-wide">
+              约 5 分钟 · 12 题
+            </span>
+            <div class="text-[#0071E3] font-medium group-hover:translate-x-1 transition-transform flex items-center gap-1">
+              开始
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 卡片：深度调研 -->
+        <div class="apple-card apple-card-hover p-8 md:p-10 flex flex-col items-start text-left cursor-pointer group" onclick="startSurvey('deep')">
+          <div class="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
+            <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-semibold mb-3 tracking-tight group-hover:text-purple-600 transition-colors">深度调研</h3>
+          <p class="text-[#86868B] mb-10 flex-grow text-[15px] leading-relaxed">
+            全面剖析业务细节与痛点，为您匹配高度定制化的解决方案。
+          </p>
+          <div class="flex items-center justify-between w-full mt-auto">
+            <span class="text-xs font-semibold text-[#1D1D1F] bg-[#F5F5F7] px-3 py-1.5 rounded-full tracking-wide">
+              约 10 分钟 · 25 题
+            </span>
+            <div class="text-purple-600 font-medium group-hover:translate-x-1 transition-transform flex items-center gap-1">
+              开始
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Survey Page -->
-  <div class="survey-container" id="surveyPage" style="display:none">
-    <!-- Back Button -->
-    <button class="back-button" id="backButton" onclick="goBack()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M15 18l-6-6 6-6"/>
-      </svg>
-    </button>
-
-    <!-- Progress Header -->
-    <div class="progress-header">
-      <div class="progress-info">
-        <span class="progress-text" id="progressText">1 / 14</span>
-        <span class="progress-section" id="progressSection"></span>
+  <!-- VIEW 2: 答题页面 (Survey) -->
+  <div id="view-survey" class="view-screen view-hidden items-center justify-center">
+    <div class="apple-card w-full max-w-2xl flex flex-col relative overflow-hidden">
+      <!-- Progress Bar -->
+      <div class="absolute top-0 left-0 w-full h-1.5 bg-[#F5F5F7]">
+        <div id="progress-bar" class="h-full bg-[#0071E3] transition-all duration-500 ease-out" style="width: 0%;"></div>
       </div>
-      <div class="progress-bar">
-        <div class="fill" id="progressFill"></div>
+
+      <!-- Header -->
+      <div class="flex justify-between items-center p-6 md:p-8 border-b border-gray-100/50">
+        <span id="progress-text" class="text-xs font-bold tracking-widest text-[#86868B] uppercase">
+          进度 1 / 12
+        </span>
+        <button onclick="exitSurvey()" class="text-[#86868B] hover:text-[#1D1D1F] transition-colors p-1 rounded-full hover:bg-gray-100">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Question Content -->
+      <div class="flex-grow relative overflow-hidden p-6 md:px-12 md:py-8 min-h-[400px]">
+        <div id="question-content" class="content-slide w-full">
+          <!-- Section Divider (hidden by default) -->
+          <div id="section-divider" class="hidden text-center py-8">
+            <div id="section-icon" class="text-5xl mb-4"></div>
+            <h2 id="section-title" class="text-3xl font-bold tracking-tight text-[#1D1D1F] mb-2"></h2>
+            <p id="section-subtitle" class="text-lg text-[#86868B]"></p>
+          </div>
+
+          <!-- Question -->
+          <div id="question-area">
+            <div id="question-number" class="text-xs font-bold text-[#0071E3] tracking-widest uppercase mb-3"></div>
+            <h2 id="question-title" class="text-2xl md:text-[28px] font-semibold tracking-tight text-[#1D1D1F] mb-2 leading-snug"></h2>
+            <p id="question-en" class="text-sm text-[#86868B] mb-2"></p>
+            <p id="question-hint" class="text-sm text-[#AEAEB2] mb-6 hidden"></p>
+
+            <!-- Options Container -->
+            <div id="options-container" class="space-y-3"></div>
+
+            <!-- Slider Container -->
+            <div id="slider-container" class="hidden space-y-6"></div>
+
+            <!-- Textarea Container -->
+            <div id="textarea-container" class="hidden">
+              <textarea id="textarea-input" class="w-full p-4 rounded-apple border-2 border-[#E5E5EA] focus:border-[#0071E3] outline-none resize-none min-h-[120px] text-[15px] bg-[#F5F5F7] focus:bg-white transition-all" placeholder=""></textarea>
+            </div>
+
+            <!-- Contact Container -->
+            <div id="contact-container" class="hidden">
+              <div id="contact-options" class="space-y-3 mb-4"></div>
+              <div id="contact-fields" class="contact-wrapper">
+                <div class="p-5 bg-[#F5F5F7] rounded-apple space-y-3">
+                  <p class="text-sm text-[#86868B]">请留下至少一项联系方式</p>
+                  <input type="text" id="contact-wechat" class="w-full p-3 rounded-lg border border-[#E5E5EA] focus:border-[#0071E3] outline-none text-[15px] bg-white" placeholder="微信号 / WeChat ID">
+                  <input type="text" id="contact-phone" class="w-full p-3 rounded-lg border border-[#E5E5EA] focus:border-[#0071E3] outline-none text-[15px] bg-white" placeholder="手机号 / Phone">
+                  <input type="text" id="contact-email" class="w-full p-3 rounded-lg border border-[#E5E5EA] focus:border-[#0071E3] outline-none text-[15px] bg-white" placeholder="邮箱 / Email">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <div class="p-6 md:p-8 bg-white flex justify-between items-center z-10 border-t border-gray-100/50">
+        <button id="prev-btn" onclick="goBack()" class="text-[#0071E3] font-medium hover:opacity-80 transition-opacity hidden">
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            上一题
+          </span>
+        </button>
+        <div id="prev-spacer" class="flex-grow"></div>
+        <button id="next-btn" onclick="goNext()" class="apple-btn-primary px-10 py-3.5 text-base font-semibold shadow-[0_4px_14px_rgba(0,113,227,0.3)]" disabled>
+          继续
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Question Container -->
-    <div id="questionContainer"></div>
-
-    <!-- Floating Continue Button (for multi-select and slider) -->
-    <div class="floating-continue" id="floatingContinue">
-      <button class="btn btn-primary" id="continueBtn" onclick="goNext()" disabled>
-        继续 / Continue
-      </button>
-    </div>
-
-    <!-- Success Page -->
-    <div class="success-page" id="successPage">
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="20 6 9 17 4 12"/>
+  <!-- VIEW 3: 感谢页面 (Thank You) -->
+  <div id="view-thanks" class="view-screen view-hidden">
+    <div class="w-full max-w-xl flex flex-col items-center text-center">
+      <div class="w-24 h-24 rounded-full bg-blue-50 text-[#0071E3] flex items-center justify-center mb-8">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
         </svg>
       </div>
-      <h2>感谢您的参与！</h2>
-      <p>您的反馈对我们非常重要</p>
-      <p class="en-sub">Thank you! Your feedback is very important to us.</p>
-      <button class="continue-deep-btn" id="continueDeepBtn" onclick="continueDeepSurvey()" style="display:none">
-        继续深度调研 / Continue to Detailed Survey
-      </button>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-[#1D1D1F] mb-5">感谢您的参与！</h1>
+      <p class="text-xl text-[#86868B] mb-12 leading-relaxed">
+        您的反馈对我们极其宝贵。我们将仔细分析并以此优化我们的服务体验。
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+        <button id="btn-continue-deep" onclick="startSurvey('deep')" class="apple-btn-primary px-8 py-3.5 text-base font-semibold shadow-[0_4px_14px_rgba(0,113,227,0.3)] hidden">
+          继续深度调研
+        </button>
+        <button onclick="switchView('view-home')" class="bg-[#E8E8ED] hover:bg-[#DEDEE3] text-[#1D1D1F] px-8 py-3.5 rounded-[98px] text-base font-semibold transition-colors">
+          返回首页
+        </button>
+      </div>
     </div>
+  </div>
+
+  <!-- Submit Error Toast -->
+  <div id="error-toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+    <span id="error-message"></span>
   </div>
 
   <script>
     // ============================================
     // Survey Engine
     // ============================================
-    let surveyType = null; // 'shallow' or 'deep'
+    let surveyType = null;
     let questions = [];
     let visibleQuestions = [];
     let currentStep = 0;
     let formData = {};
     let isSubmitting = false;
 
-    // Section icons mapping
     const SECTION_ICONS = {
       'profile': '👤',
       'branch': '💼',
-      'operations': '📦',
-      'needs': '💡',
-      'ai_tools': '🤖',
+      'ai_scenarios': '🤖',
+      'ai_attitude': '💡',
+      'listing_details': '📦',
       'ad_creative': '📢',
-      'validation': '✅',
+      'feature_validation': '✅',
+      'pricing': '💰',
       'contact': '📞'
     };
+
+    // View switching
+    function switchView(targetViewId) {
+      const views = ['view-home', 'view-survey', 'view-thanks'];
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if (id === targetViewId) {
+          el.classList.remove('view-hidden');
+          el.classList.add('view-active');
+        } else {
+          el.classList.remove('view-active');
+          el.classList.add('view-hidden');
+        }
+      });
+    }
 
     // Start survey
     function startSurvey(type) {
       surveyType = type;
       const config = window.SURVEY_CONFIG[type];
 
-      // Build question list
       if (type === 'shallow') {
         questions = config.questions;
       } else {
-        // Deep survey: include shallow Q1-Q7 + deep-specific questions
         const shallowQuestions = window.SURVEY_CONFIG.shallow.questions;
         const shallowBase = shallowQuestions.filter(q => !q.deepOnly);
         const deepExtra = config.questions.filter(q => q.deepOnly);
         questions = [...shallowBase, ...deepExtra];
       }
 
-      // Add survey_type to form data
-      formData.survey_type = type;
+      formData = { survey_type: type, started_at: new Date().toISOString() };
+      currentStep = 0;
 
-      // Update UI
-      document.getElementById('landingPage').style.display = 'none';
-      document.getElementById('surveyPage').style.display = 'flex';
-
-      // Calculate visible questions
       updateVisibleQuestions();
+      switchView('view-survey');
       showQuestion();
+    }
 
-      // Track start time
-      formData.started_at = new Date().toISOString();
+    // Exit survey
+    function exitSurvey() {
+      if (confirm("确定要退出当前的调研吗？之前的进度将不会保留。")) {
+        switchView('view-home');
+      }
     }
 
     // Update visible questions based on branch logic
     function updateVisibleQuestions() {
       visibleQuestions = questions.filter(q => {
-        // Check branch condition
         if (q.branch) {
           const branchValue = formData[q.branch.field];
           if (Array.isArray(branchValue)) {
@@ -147,442 +432,455 @@
       });
     }
 
-    // Render a single question
-    function renderQuestion(q) {
-      const container = document.getElementById('questionContainer');
-
-      // Section divider
-      if (q.section && q.sectionTitle) {
-        const prevQ = visibleQuestions[visibleQuestions.indexOf(q) - 1];
-        if (!prevQ || prevQ.section !== q.section) {
-          const sectionDiv = document.createElement('div');
-          sectionDiv.className = 'section-divider-card';
-          sectionDiv.innerHTML = `
-            <div class="section-icon">${SECTION_ICONS[q.section] || '📝'}</div>
-            <div class="section-title">${q.sectionTitle.zh}</div>
-            <div class="section-subtitle">${q.sectionTitle.en}</div>
-          `;
-          container.appendChild(sectionDiv);
-
-          // Auto-advance section divider after 800ms
-          setTimeout(() => {
-            sectionDiv.style.display = 'none';
-          }, 800);
-        }
-      }
-
-      // Question card
-      const card = document.createElement('div');
-      card.className = 'question-card';
-      card.id = `question-${q.id}`;
-
-      let html = `
-        <div class="question-number">${getQuestionNumber(q)}</div>
-        <div class="question-title">${q.zh}</div>
-        <div class="question-en">${q.en}</div>
-      `;
-
-      if (q.hint) {
-        html += `<div class="question-hint">${q.hint.zh} / ${q.hint.en}</div>`;
-      }
-
-      // Render based on type
-      switch (q.type) {
-        case 'single':
-          html += renderSingleOptions(q);
-          break;
-        case 'multi':
-          html += renderMultiOptions(q);
-          break;
-        case 'slider':
-          html += renderSliders(q);
-          break;
-        case 'textarea':
-          html += renderTextarea(q);
-          break;
-        case 'contact':
-          html += renderContact(q);
-          break;
-      }
-
-      card.innerHTML = html;
-      container.appendChild(card);
-
-      // Attach event listeners
-      attachEventListeners(q, card);
-    }
-
-    // Render single-select options
-    function renderSingleOptions(q) {
-      let html = '<div class="options">';
-      q.options.forEach(opt => {
-        const selected = formData[q.field] === opt.value ? 'selected' : '';
-        html += `
-          <label class="option-label ${selected}" data-value="${opt.value}" data-field="${q.field}">
-            <div class="option-radio"></div>
-            <div class="option-content">
-              <div class="option-text">${opt.zh}</div>
-              ${opt.desc ? `<div class="option-desc">${opt.desc.zh}</div>` : ''}
-              <div class="option-en">${opt.en}</div>
-            </div>
-            ${selected ? '<span class="option-check">✓</span>' : ''}
-          </label>
-        `;
-        if (opt.hasOther) {
-          const otherValue = formData[`${q.field}_other`] || '';
-          html += `
-            <div class="other-input ${selected && opt.value === '其他' ? 'show' : ''}">
-              <input type="text" class="text-input" placeholder="请补充说明 / Please specify"
-                     data-other-field="${q.field}_other" value="${otherValue}">
-            </div>
-          `;
-        }
-      });
-      html += '</div>';
-      return html;
-    }
-
-    // Render multi-select options
-    function renderMultiOptions(q) {
-      const selected = Array.isArray(formData[q.field]) ? formData[q.field] : [];
-      let html = '';
-
-      if (q.maxSelect) {
-        html += `<div class="max-hint">已选 <span class="count">${selected.length}</span> / ${q.maxSelect}</div>`;
-      }
-
-      html += '<div class="options">';
-      q.options.forEach(opt => {
-        const isSelected = selected.includes(opt.value);
-        html += `
-          <label class="option-label ${isSelected ? 'selected' : ''}" data-value="${opt.value}" data-field="${q.field}">
-            <div class="option-checkbox"></div>
-            <div class="option-content">
-              <div class="option-text">${opt.zh}</div>
-              ${opt.desc ? `<div class="option-desc">${opt.desc.zh}</div>` : ''}
-              <div class="option-en">${opt.en}</div>
-            </div>
-          </label>
-        `;
-        if (opt.hasOther) {
-          const otherValue = formData[`${q.field}_other`] || '';
-          html += `
-            <div class="other-input ${isSelected ? 'show' : ''}">
-              <input type="text" class="text-input" placeholder="请补充说明 / Please specify"
-                     data-other-field="${q.field}_other" value="${otherValue}">
-            </div>
-          `;
-        }
-      });
-      html += '</div>';
-      return html;
-    }
-
-    // Render sliders
-    function renderSliders(q) {
-      let html = '<div class="slider-group">';
-      q.fields.forEach(f => {
-        const value = formData[f.field] || q.default;
-        html += `
-          <div class="slider-item">
-            <div class="slider-label">
-              <div>
-                <div class="slider-label-text">${f.zh}</div>
-                <div class="slider-label-en">${f.en}</div>
-              </div>
-              <div class="slider-value">${value}</div>
-            </div>
-            <input type="range" min="${q.min}" max="${q.max}" value="${value}"
-                   data-field="${f.field}" oninput="updateSliderValue(this)">
-          </div>
-        `;
-      });
-      html += '</div>';
-      return html;
-    }
-
-    // Render textarea
-    function renderTextarea(q) {
-      const value = formData[q.field] || '';
-      return `
-        <textarea class="textarea-input" data-field="${q.field}"
-                  placeholder="${q.placeholder.zh} / ${q.placeholder.en}">${value}</textarea>
-      `;
-    }
-
-    // Render contact question
-    function renderContact(q) {
-      const selected = formData[q.field];
-      let html = '<div class="options">';
-      q.options.forEach(opt => {
-        const isSelected = selected === opt.value;
-        html += `
-          <label class="option-label ${isSelected ? 'selected' : ''}" data-value="${opt.value}" data-field="${q.field}">
-            <div class="option-radio"></div>
-            <div class="option-content">
-              <div class="option-text">${opt.zh}</div>
-              <div class="option-en">${opt.en}</div>
-            </div>
-            ${isSelected ? '<span class="option-check">✓</span>' : ''}
-          </label>
-        `;
-      });
-      html += '</div>';
-
-      // Contact fields
-      const showContact = selected === '愿意';
-      html += `<div class="contact-section ${showContact ? 'show' : ''}" id="contactSection">`;
-      html += '<div class="contact-fields">';
-      html += '<div class="contact-label">方便的话请留下至少一项联系方式 / Please leave at least one contact method</div>';
-      q.contactFields.forEach(f => {
-        const value = formData[f.field] || '';
-        html += `<input type="text" class="text-input" placeholder="${f.placeholder.zh} / ${f.placeholder.en}" data-field="${f.field}" value="${value}">`;
-      });
-      html += '</div></div>';
-
-      return html;
-    }
-
-    // Attach event listeners
-    function attachEventListeners(q, card) {
-      // Single-select options
-      if (q.type === 'single' || q.type === 'contact') {
-        card.querySelectorAll('.option-label').forEach(label => {
-          label.addEventListener('click', () => {
-            const value = label.dataset.value;
-            const field = label.dataset.field;
-
-            // Update selection
-            card.querySelectorAll('.option-label').forEach(l => {
-              l.classList.remove('selected');
-              l.querySelector('.option-check')?.remove();
-            });
-            label.classList.add('selected');
-            label.insertAdjacentHTML('beforeend', '<span class="option-check">✓</span>');
-
-            // Update form data
-            formData[field] = value;
-
-            // Handle "Other" input
-            const otherInput = label.closest('.options').querySelector('.other-input');
-            if (otherInput) {
-              const hasOther = q.options.find(o => o.value === value)?.hasOther;
-              otherInput.classList.toggle('show', hasOther);
-            }
-
-            // Handle contact section
-            if (q.type === 'contact' && q.contactFields) {
-              const contactSection = card.querySelector('.contact-section');
-              contactSection.classList.toggle('show', value === '愿意');
-            }
-
-            // Update continue button for single-select
-            updateContinueButton();
-
-            // Auto-advance for single-select (not contact, not "Other")
-            if (q.type === 'single') {
-              const isOtherOption = q.options.find(o => o.value === value)?.hasOther;
-              if (!isOtherOption) {
-                setTimeout(() => {
-                  goNext();
-                }, 150);
-              } else {
-                // Focus on the other input
-                setTimeout(() => {
-                  const otherInput = card.querySelector('.other-input.show input');
-                  if (otherInput) otherInput.focus();
-                }, 200);
-              }
-            }
-          });
-        });
-      }
-
-      // Multi-select options
-      if (q.type === 'multi') {
-        card.querySelectorAll('.option-label').forEach(label => {
-          label.addEventListener('click', () => {
-            const value = label.dataset.value;
-            const field = label.dataset.field;
-            const maxSelect = q.maxSelect || 99;
-
-            // Toggle selection
-            if (label.classList.contains('selected')) {
-              label.classList.remove('selected');
-              formData[field] = (formData[field] || []).filter(v => v !== value);
-            } else {
-              if ((formData[field] || []).length >= maxSelect) {
-                // Flash hint
-                const hint = card.querySelector('.max-hint');
-                if (hint) {
-                  hint.style.color = '#FF3B30';
-                  setTimeout(() => hint.style.color = '', 500);
-                }
-                return;
-              }
-              label.classList.add('selected');
-              formData[field] = [...(formData[field] || []), value];
-            }
-
-            // Update count
-            const countEl = card.querySelector('.max-hint .count');
-            if (countEl) {
-              countEl.textContent = (formData[field] || []).length;
-            }
-
-            // Handle "Other" input
-            const otherInput = label.querySelector('.other-input') || label.nextElementSibling;
-            if (otherInput?.classList.contains('other-input')) {
-              otherInput.classList.toggle('show', label.classList.contains('selected'));
-            }
-
-            // Show/hide continue button
-            updateContinueButton();
-          });
-        });
-      }
-
-      // Slider inputs
-      if (q.type === 'slider') {
-        card.querySelectorAll('input[type="range"]').forEach(slider => {
-          slider.addEventListener('input', () => {
-            formData[slider.dataset.field] = parseInt(slider.value);
-            updateContinueButton();
-          });
-        });
-      }
-
-      // Textarea
-      if (q.type === 'textarea') {
-        const textarea = card.querySelector('textarea');
-        textarea.addEventListener('input', () => {
-          formData[q.field] = textarea.value;
-          updateContinueButton();
-        });
-      }
-
-      // Text inputs (other fields, contact)
-      card.querySelectorAll('.text-input').forEach(input => {
-        input.addEventListener('input', () => {
-          formData[input.dataset.field] = input.value;
-          // Update continue button when typing in "Other" input
-          if (input.closest('.other-input')) {
-            updateContinueButton();
-          }
-        });
-      });
-    }
-
-    // Update slider value display
-    function updateSliderValue(slider) {
-      const valueDisplay = slider.parentElement.querySelector('.slider-value');
-      valueDisplay.textContent = slider.value;
-    }
-
-    // Update continue button visibility
-    function updateContinueButton() {
-      const q = visibleQuestions[currentStep];
-      if (!q) return;
-
-      const floatingContinue = document.getElementById('floatingContinue');
-      const continueBtn = document.getElementById('continueBtn');
-      const isLastQuestion = currentStep >= visibleQuestions.length - 1;
-
-      // Check if single-select with "Other" selected
-      if (q.type === 'single') {
-        const selectedValue = formData[q.field];
-        const isOtherSelected = q.options.find(o => o.value === selectedValue)?.hasOther;
-        if (isOtherSelected) {
-          floatingContinue.classList.toggle('visible', true);
-          continueBtn.disabled = false;
-          continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
-          continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
-          return;
-        }
-        floatingContinue.classList.remove('visible');
-        return;
-      }
-
-      if (q.type === 'multi') {
-        const selected = formData[q.field] || [];
-        const hasSelection = selected.length > 0;
-        floatingContinue.classList.toggle('visible', true);
-        continueBtn.disabled = !hasSelection;
-        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
-        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
-      } else if (q.type === 'slider') {
-        const hasChanged = q.fields.some(f => formData[f.field] !== undefined);
-        floatingContinue.classList.toggle('visible', true);
-        continueBtn.disabled = !hasChanged;
-        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
-        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
-      } else if (q.type === 'textarea') {
-        const hasContent = formData[q.field] && formData[q.field].trim().length > 0;
-        floatingContinue.classList.toggle('visible', true);
-        continueBtn.disabled = !hasContent;
-        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
-        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
-      } else if (q.type === 'contact') {
-        floatingContinue.classList.toggle('visible', true);
-        continueBtn.disabled = false;
-        continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
-        continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
-      } else {
-        floatingContinue.classList.remove('visible');
-      }
-    }
-
-    // Get question number
-    function getQuestionNumber(q) {
-      const idx = visibleQuestions.indexOf(q);
-      return `Q${idx + 1}`;
-    }
-
     // Show current question
     function showQuestion() {
-      const container = document.getElementById('questionContainer');
-      container.innerHTML = '';
-
       if (currentStep >= visibleQuestions.length) {
         submitSurvey();
         return;
       }
 
       const q = visibleQuestions[currentStep];
-      renderQuestion(q);
+      const total = visibleQuestions.length;
 
       // Update progress
-      updateProgress();
+      document.getElementById('progress-text').textContent = `进度 ${currentStep + 1} / ${total}`;
+      document.getElementById('progress-bar').style.width = `${((currentStep + 1) / total) * 100}%`;
 
-      // Update back button
-      document.getElementById('backButton').classList.toggle('visible', currentStep > 0);
+      // Check for section divider
+      const sectionDivider = document.getElementById('section-divider');
+      const questionArea = document.getElementById('question-area');
 
-      // Update continue button
-      updateContinueButton();
+      if (q.section && q.sectionTitle) {
+        const prevQ = visibleQuestions[currentStep - 1];
+        if (!prevQ || prevQ.section !== q.section) {
+          // Show section divider
+          sectionDivider.classList.remove('hidden');
+          questionArea.classList.add('hidden');
+          document.getElementById('section-icon').textContent = SECTION_ICONS[q.section] || '📝';
+          document.getElementById('section-title').textContent = q.sectionTitle.zh;
+          document.getElementById('section-subtitle').textContent = q.sectionTitle.en;
 
-      // Scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+          // Auto-advance after delay
+          setTimeout(() => {
+            sectionDivider.classList.add('hidden');
+            questionArea.classList.remove('hidden');
+            renderQuestion(q);
+          }, 1200);
+          return;
+        }
+      }
+
+      sectionDivider.classList.add('hidden');
+      questionArea.classList.remove('hidden');
+      renderQuestion(q);
     }
 
-    // Update progress
-    function updateProgress() {
-      const total = visibleQuestions.length;
-      const current = currentStep + 1;
-      const percent = (current / total) * 100;
+    // Render question
+    function renderQuestion(q) {
+      // Update question header
+      document.getElementById('question-number').textContent = `Q${currentStep + 1}`;
+      document.getElementById('question-title').textContent = q.zh;
+      document.getElementById('question-en').textContent = q.en;
 
-      document.getElementById('progressText').textContent = `${current} / ${total}`;
-      document.getElementById('progressFill').style.width = `${percent}%`;
+      const hintEl = document.getElementById('question-hint');
+      if (q.hint) {
+        hintEl.textContent = `${q.hint.zh} / ${q.hint.en}`;
+        hintEl.classList.remove('hidden');
+      } else {
+        hintEl.classList.add('hidden');
+      }
 
-      // Update section name
+      // Hide all containers
+      document.getElementById('options-container').classList.add('hidden');
+      document.getElementById('slider-container').classList.add('hidden');
+      document.getElementById('textarea-container').classList.add('hidden');
+      document.getElementById('contact-container').classList.add('hidden');
+
+      // Render based on type
+      switch (q.type) {
+        case 'single':
+          renderSingleOptions(q);
+          break;
+        case 'multi':
+          renderMultiOptions(q);
+          break;
+        case 'slider':
+          renderSliders(q);
+          break;
+        case 'textarea':
+          renderTextarea(q);
+          break;
+        case 'contact':
+          renderContact(q);
+          break;
+      }
+
+      // Update navigation buttons
+      updateNavigation();
+
+      // Animate in
+      const contentEl = document.getElementById('question-content');
+      contentEl.style.transition = 'none';
+      contentEl.style.transform = 'translateX(30px)';
+      contentEl.style.opacity = '0';
+      void contentEl.offsetWidth;
+      contentEl.style.transition = 'opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)';
+      contentEl.style.transform = 'translateX(0)';
+      contentEl.style.opacity = '1';
+    }
+
+    // Render single-select options
+    function renderSingleOptions(q) {
+      const container = document.getElementById('options-container');
+      container.classList.remove('hidden');
+      container.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const isSelected = formData[q.field] === opt.value;
+        const div = document.createElement('div');
+        div.className = 'option-label';
+        div.innerHTML = `
+          <label class="relative flex items-center p-4 rounded-apple cursor-pointer bg-[#F5F5F7] border-2 ${isSelected ? 'border-[#0071E3] bg-[#0071E3]/[0.03]' : 'border-transparent hover:bg-[#E8E8ED]'} transition-all group" data-value="${opt.value}">
+            <input type="radio" name="answer" class="peer sr-only" ${isSelected ? 'checked' : ''}>
+            <div class="w-[22px] h-[22px] rounded-full border-[1.5px] ${isSelected ? 'border-[#0071E3] bg-[#0071E3]' : 'border-[#C7C7CC]'} mr-4 flex items-center justify-center transition-colors bg-white">
+              ${isSelected ? '<svg class="w-3.5 h-3.5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+            </div>
+            <div class="flex-1">
+              <span class="text-[16px] text-[#1D1D1F] font-medium">${opt.zh}</span>
+              ${opt.desc ? `<p class="text-xs text-[#86868B] mt-0.5">${opt.desc.zh}</p>` : ''}
+              <p class="text-xs text-[#AEAEB2]">${opt.en}</p>
+            </div>
+          </label>
+          ${opt.hasOther ? `
+            <div class="other-input-wrapper ${isSelected && opt.value === '其他' ? 'show' : ''}">
+              <input type="text" class="w-full p-3 rounded-lg border border-[#E5E5EA] focus:border-[#0071E3] outline-none text-[15px] bg-white" placeholder="请补充说明 / Please specify" data-other-field="${q.field}_other" value="${formData[q.field + '_other'] || ''}">
+            </div>
+          ` : ''}
+        `;
+
+        // Click handler
+        const label = div.querySelector('label');
+        label.addEventListener('click', () => {
+          formData[q.field] = opt.value;
+
+          // Update UI
+          container.querySelectorAll('label').forEach(l => {
+            l.classList.remove('border-[#0071E3]', 'bg-[#0071E3]/[0.03]');
+            l.classList.add('border-transparent');
+            const radio = l.querySelector('div:first-of-type');
+            radio.classList.remove('border-[#0071E3]', 'bg-[#0071E3]');
+            radio.classList.add('border-[#C7C7CC]');
+            radio.innerHTML = '';
+          });
+
+          label.classList.remove('border-transparent');
+          label.classList.add('border-[#0071E3]', 'bg-[#0071E3]/[0.03]');
+          const radio = label.querySelector('div:first-of-type');
+          radio.classList.remove('border-[#C7C7CC]');
+          radio.classList.add('border-[#0071E3]', 'bg-[#0071E3]');
+          radio.innerHTML = '<svg class="w-3.5 h-3.5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+
+          // Handle "Other" input
+          const otherWrapper = div.querySelector('.other-input-wrapper');
+          if (otherWrapper) {
+            const isOther = opt.value === '其他';
+            otherWrapper.classList.toggle('show', isOther);
+            if (isOther) {
+              setTimeout(() => otherWrapper.querySelector('input').focus(), 300);
+            }
+          }
+
+          // Auto-advance for non-other options
+          if (!opt.hasOther || opt.value !== '其他') {
+            setTimeout(() => goNext(), 200);
+          } else {
+            updateNavigation();
+          }
+        });
+
+        // Other input handler
+        const otherInput = div.querySelector('.other-input-wrapper input');
+        if (otherInput) {
+          otherInput.addEventListener('input', () => {
+            formData[q.field + '_other'] = otherInput.value;
+          });
+          otherInput.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        container.appendChild(div);
+      });
+    }
+
+    // Render multi-select options
+    function renderMultiOptions(q) {
+      const container = document.getElementById('options-container');
+      container.classList.remove('hidden');
+      container.innerHTML = '';
+
+      const selected = Array.isArray(formData[q.field]) ? formData[q.field] : [];
+
+      // Max select hint
+      if (q.maxSelect) {
+        const hint = document.createElement('div');
+        hint.className = 'text-sm text-[#86868B] mb-4';
+        hint.innerHTML = `已选 <span class="font-semibold text-[#0071E3]">${selected.length}</span> / ${q.maxSelect}`;
+        hint.id = 'max-hint';
+        container.appendChild(hint);
+      }
+
+      q.options.forEach(opt => {
+        const isSelected = selected.includes(opt.value);
+        const div = document.createElement('div');
+        div.className = 'multi-option option-label';
+        div.innerHTML = `
+          <label class="relative flex items-center p-4 rounded-apple cursor-pointer bg-[#F5F5F7] border-2 ${isSelected ? 'border-[#0071E3] bg-[#0071E3]/[0.03]' : 'border-transparent hover:bg-[#E8E8ED]'} transition-all group" data-value="${opt.value}">
+            <div class="w-[22px] h-[22px] rounded-md border-[1.5px] ${isSelected ? 'border-[#0071E3] bg-[#0071E3]' : 'border-[#C7C7CC]'} mr-4 flex items-center justify-center transition-colors bg-white check-icon">
+              ${isSelected ? '<svg class="w-3.5 h-3.5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+            </div>
+            <div class="flex-1">
+              <span class="text-[16px] text-[#1D1D1F] font-medium">${opt.zh}</span>
+              ${opt.desc ? `<p class="text-xs text-[#86868B] mt-0.5">${opt.desc.zh}</p>` : ''}
+              <p class="text-xs text-[#AEAEB2]">${opt.en}</p>
+            </div>
+          </label>
+          ${opt.hasOther ? `
+            <div class="other-input-wrapper ${isSelected ? 'show' : ''}">
+              <input type="text" class="w-full p-3 rounded-lg border border-[#E5E5EA] focus:border-[#0071E3] outline-none text-[15px] bg-white" placeholder="请补充说明 / Please specify" data-other-field="${q.field}_other" value="${formData[q.field + '_other'] || ''}">
+            </div>
+          ` : ''}
+        `;
+
+        // Click handler
+        const label = div.querySelector('label');
+        label.addEventListener('click', () => {
+          const value = opt.value;
+          let current = Array.isArray(formData[q.field]) ? [...formData[q.field]] : [];
+
+          if (current.includes(value)) {
+            current = current.filter(v => v !== value);
+          } else {
+            if (q.maxSelect && current.length >= q.maxSelect) {
+              const hint = document.getElementById('max-hint');
+              if (hint) {
+                hint.style.color = '#FF3B30';
+                setTimeout(() => hint.style.color = '', 500);
+              }
+              return;
+            }
+            current.push(value);
+          }
+
+          formData[q.field] = current;
+
+          // Update UI
+          const isNowSelected = current.includes(value);
+          if (isNowSelected) {
+            label.classList.remove('border-transparent');
+            label.classList.add('border-[#0071E3]', 'bg-[#0071E3]/[0.03]');
+            const check = label.querySelector('.check-icon');
+            check.classList.remove('border-[#C7C7CC]');
+            check.classList.add('border-[#0071E3]', 'bg-[#0071E3]');
+            check.innerHTML = '<svg class="w-3.5 h-3.5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+          } else {
+            label.classList.remove('border-[#0071E3]', 'bg-[#0071E3]/[0.03]');
+            label.classList.add('border-transparent');
+            const check = label.querySelector('.check-icon');
+            check.classList.remove('border-[#0071E3]', 'bg-[#0071E3]');
+            check.classList.add('border-[#C7C7CC]');
+            check.innerHTML = '';
+          }
+
+          // Update hint
+          const hint = document.getElementById('max-hint');
+          if (hint) {
+            hint.innerHTML = `已选 <span class="font-semibold text-[#0071E3]">${current.length}</span> / ${q.maxSelect}`;
+          }
+
+          // Handle "Other"
+          const otherWrapper = div.querySelector('.other-input-wrapper');
+          if (otherWrapper) {
+            otherWrapper.classList.toggle('show', isNowSelected && value === '其他');
+          }
+
+          updateNavigation();
+        });
+
+        container.appendChild(div);
+      });
+    }
+
+    // Render sliders
+    function renderSliders(q) {
+      const container = document.getElementById('slider-container');
+      container.classList.remove('hidden');
+      container.innerHTML = '';
+
+      q.fields.forEach(f => {
+        const value = formData[f.field] || q.default || 3;
+        formData[f.field] = value;
+
+        const div = document.createElement('div');
+        div.className = 'space-y-2';
+        div.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="text-[15px] font-medium text-[#1D1D1F]">${f.zh}</span>
+              <span class="text-xs text-[#86868B] ml-2">${f.en}</span>
+            </div>
+            <span class="text-lg font-bold text-[#0071E3] slider-value">${value}</span>
+          </div>
+          <input type="range" min="${q.min}" max="${q.max}" value="${value}" class="w-full" data-field="${f.field}">
+        `;
+
+        const slider = div.querySelector('input[type="range"]');
+        const valueDisplay = div.querySelector('.slider-value');
+
+        slider.addEventListener('input', () => {
+          const val = parseInt(slider.value);
+          formData[f.field] = val;
+          valueDisplay.textContent = val;
+          updateNavigation();
+        });
+
+        container.appendChild(div);
+      });
+    }
+
+    // Render textarea
+    function renderTextarea(q) {
+      const container = document.getElementById('textarea-container');
+      container.classList.remove('hidden');
+
+      const textarea = document.getElementById('textarea-input');
+      textarea.value = formData[q.field] || '';
+      textarea.placeholder = `${q.placeholder.zh} / ${q.placeholder.en}`;
+
+      textarea.oninput = () => {
+        formData[q.field] = textarea.value;
+        updateNavigation();
+      };
+    }
+
+    // Render contact question
+    function renderContact(q) {
+      const container = document.getElementById('contact-container');
+      container.classList.remove('hidden');
+
+      const optionsContainer = document.getElementById('contact-options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const isSelected = formData[q.field] === opt.value;
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <label class="relative flex items-center p-4 rounded-apple cursor-pointer bg-[#F5F5F7] border-2 ${isSelected ? 'border-[#0071E3] bg-[#0071E3]/[0.03]' : 'border-transparent hover:bg-[#E8E8ED]'} transition-all group" data-value="${opt.value}">
+            <div class="w-[22px] h-[22px] rounded-full border-[1.5px] ${isSelected ? 'border-[#0071E3] bg-[#0071E3]' : 'border-[#C7C7CC]'} mr-4 flex items-center justify-center transition-colors bg-white">
+              ${isSelected ? '<svg class="w-3.5 h-3.5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+            </div>
+            <span class="text-[16px] text-[#1D1D1F] font-medium">${opt.zh}</span>
+          </label>
+        `;
+
+        const label = div.querySelector('label');
+        label.addEventListener('click', () => {
+          formData[q.field] = opt.value;
+
+          // Update UI
+          optionsContainer.querySelectorAll('label').forEach(l => {
+            l.classList.remove('border-[#0071E3]', 'bg-[#0071E3]/[0.03]');
+            l.classList.add('border-transparent');
+            const radio = l.querySelector('div:first-of-type');
+            radio.classList.remove('border-[#0071E3]', 'bg-[#0071E3]');
+            radio.classList.add('border-[#C7C7CC]');
+            radio.innerHTML = '';
+          });
+
+          label.classList.remove('border-transparent');
+          label.classList.add('border-[#0071E3]', 'bg-[#0071E3]/[0.03]');
+          const radio = label.querySelector('div:first-of-type');
+          radio.classList.remove('border-[#C7C7CC]');
+          radio.classList.add('border-[#0071E3]', 'bg-[#0071E3]');
+          radio.innerHTML = '<svg class="w-3.5 h-3.5 text-white drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+
+          // Show/hide contact fields
+          const contactFields = document.getElementById('contact-fields');
+          if (opt.value === '愿意') {
+            contactFields.classList.add('show');
+          } else {
+            contactFields.classList.remove('show');
+          }
+
+          updateNavigation();
+        });
+
+        optionsContainer.appendChild(div);
+      });
+
+      // Contact fields
+      const wechat = document.getElementById('contact-wechat');
+      const phone = document.getElementById('contact-phone');
+      const email = document.getElementById('contact-email');
+
+      wechat.value = formData.contact_wechat || '';
+      phone.value = formData.contact_phone || '';
+      email.value = formData.contact_email || '';
+
+      wechat.oninput = () => { formData.contact_wechat = wechat.value; };
+      phone.oninput = () => { formData.contact_phone = phone.value; };
+      email.oninput = () => { formData.contact_email = email.value; };
+    }
+
+    // Update navigation buttons
+    function updateNavigation() {
       const q = visibleQuestions[currentStep];
-      if (q?.sectionTitle) {
-        document.getElementById('progressSection').textContent = q.sectionTitle.zh;
+      const nextBtn = document.getElementById('next-btn');
+      const prevBtn = document.getElementById('prev-btn');
+      const prevSpacer = document.getElementById('prev-spacer');
+
+      // Check if can proceed
+      let canProceed = false;
+      switch (q.type) {
+        case 'single':
+          canProceed = formData[q.field] !== undefined;
+          if (canProceed && q.options.find(o => o.value === formData[q.field])?.hasOther && formData[q.field] === '其他') {
+            canProceed = formData[q.field + '_other']?.trim().length > 0;
+          }
+          break;
+        case 'multi':
+          canProceed = (formData[q.field] || []).length > 0;
+          break;
+        case 'slider':
+          canProceed = q.fields.some(f => formData[f.field] !== undefined);
+          break;
+        case 'textarea':
+          canProceed = formData[q.field]?.trim().length > 0;
+          break;
+        case 'contact':
+          canProceed = formData[q.field] !== undefined;
+          break;
+      }
+
+      nextBtn.disabled = !canProceed;
+
+      // Update button text
+      const isLast = currentStep >= visibleQuestions.length - 1;
+      nextBtn.textContent = isLast ? '提交问卷' : '继续';
+
+      // Show/hide prev button
+      if (currentStep > 0) {
+        prevBtn.classList.remove('hidden');
+        prevSpacer.classList.add('hidden');
+      } else {
+        prevBtn.classList.add('hidden');
+        prevSpacer.classList.remove('hidden');
       }
     }
 
     // Go to next question
     function goNext() {
-      // Collect any pending inputs
+      const q = visibleQuestions[currentStep];
+
+      // Collect inputs
       collectCurrentInputs();
 
       if (currentStep >= visibleQuestions.length - 1) {
@@ -591,16 +889,15 @@
       }
 
       // Animate out
-      const currentCard = document.getElementById(`question-${visibleQuestions[currentStep].id}`);
-      if (currentCard) {
-        currentCard.classList.add('slide-out');
-      }
+      const contentEl = document.getElementById('question-content');
+      contentEl.style.opacity = '0';
+      contentEl.style.transform = 'translateX(-30px)';
 
       setTimeout(() => {
         currentStep++;
         updateVisibleQuestions();
         showQuestion();
-      }, 250);
+      }, 350);
     }
 
     // Go to previous question
@@ -608,8 +905,15 @@
       if (currentStep <= 0) return;
 
       collectCurrentInputs();
-      currentStep--;
-      showQuestion();
+
+      const contentEl = document.getElementById('question-content');
+      contentEl.style.opacity = '0';
+      contentEl.style.transform = 'translateX(30px)';
+
+      setTimeout(() => {
+        currentStep--;
+        showQuestion();
+      }, 350);
     }
 
     // Collect current inputs
@@ -618,26 +922,11 @@
       if (!q) return;
 
       // Collect other inputs
-      document.querySelectorAll('.other-input.show input').forEach(input => {
+      document.querySelectorAll('.other-input-wrapper.show input').forEach(input => {
         if (input.value.trim()) {
           formData[input.dataset.field] = input.value.trim();
         }
       });
-
-      // Collect contact inputs
-      document.querySelectorAll('.contact-section.show input').forEach(input => {
-        if (input.value.trim()) {
-          formData[input.dataset.field] = input.value.trim();
-        }
-      });
-
-      // Collect textarea
-      if (q.type === 'textarea') {
-        const textarea = document.querySelector(`#question-${q.id} textarea`);
-        if (textarea) {
-          formData[q.field] = textarea.value;
-        }
-      }
     }
 
     // Submit survey
@@ -645,29 +934,23 @@
       if (isSubmitting) return;
       isSubmitting = true;
 
-      // Collect final inputs
       collectCurrentInputs();
-
-      // Add completion time
       formData.completed_at = new Date().toISOString();
 
       try {
-        // Check network
         if (!navigator.onLine) {
           throw new Error('网络已断开，请检查网络连接后重试');
         }
 
-        // Submit with retry
         const result = await submitWithRetry(formData);
 
         if (result.success) {
-          showSuccessPage();
+          showThankYou();
         } else {
           throw new Error(result.error || '提交失败');
         }
       } catch (err) {
-        alert(err.message || '提交失败，请稍后重试');
-        console.error('Submit error:', err);
+        showError(err.message || '提交失败，请稍后重试');
       } finally {
         isSubmitting = false;
       }
@@ -685,43 +968,27 @@
       }
     }
 
-    // Show success page
-    function showSuccessPage() {
-      document.getElementById('questionContainer').style.display = 'none';
-      document.getElementById('floatingContinue').style.display = 'none';
-      document.getElementById('backButton').style.display = 'none';
-      document.getElementById('progressFill').style.width = '100%';
-
-      const successPage = document.getElementById('successPage');
-      successPage.style.display = 'block';
-
-      // Show "Continue to deep survey" button if shallow
+    // Show thank you page
+    function showThankYou() {
+      const btnDeep = document.getElementById('btn-continue-deep');
       if (surveyType === 'shallow') {
-        document.getElementById('continueDeepBtn').style.display = 'inline-block';
+        btnDeep.classList.remove('hidden');
+      } else {
+        btnDeep.classList.add('hidden');
       }
+      switchView('view-thanks');
     }
 
-    // Continue to deep survey
-    function continueDeepSurvey() {
-      surveyType = 'deep';
-      const deepConfig = window.SURVEY_CONFIG.deep;
-      const shallowQuestions = window.SURVEY_CONFIG.shallow.questions;
-      const shallowBase = shallowQuestions.filter(q => !q.deepOnly);
-      const deepExtra = deepConfig.questions.filter(q => q.deepOnly);
-      questions = [...shallowBase, ...deepExtra];
-
-      formData.survey_type = 'deep';
-
-      // Reset UI
-      document.getElementById('successPage').style.display = 'none';
-      document.getElementById('questionContainer').style.display = 'block';
-      document.getElementById('floatingContinue').style.display = 'block';
-      document.getElementById('backButton').style.display = 'block';
-
-      // Start from where shallow ended (skip Q1-Q7)
-      currentStep = shallowBase.length;
-      updateVisibleQuestions();
-      showQuestion();
+    // Show error toast
+    function showError(message) {
+      const toast = document.getElementById('error-toast');
+      document.getElementById('error-message').textContent = message;
+      toast.style.transform = 'translate(-50%, 0)';
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.transform = 'translate(-50%, 80px)';
+        toast.style.opacity = '0';
+      }, 3000);
     }
 
     // Initialize
