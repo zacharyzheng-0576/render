@@ -509,21 +509,19 @@
       currentStep = 0;
       updateVisibleQuestions();
 
-      // 如果是从浅度继续，跳过已回答的问题
+      // 如果是从浅度继续，跳到第一个未回答的深度问题
       if (isContinue) {
         while (currentStep < visibleQuestions.length) {
           const q = visibleQuestions[currentStep];
-          // 跳过已回答的问题
           if (formData[q.field]) {
             currentStep++;
             continue;
           }
           break;
         }
-        // 如果所有问题都已回答，直接提交
+        // 如果跳过头了，回到最后一题让用户手动提交
         if (currentStep >= visibleQuestions.length) {
-          submitSurvey();
-          return;
+          currentStep = visibleQuestions.length - 1;
         }
       }
 
