@@ -665,8 +665,13 @@
       if (!ctx) return;
       if (charts[canvasId]) charts[canvasId].destroy();
 
-      // Create gradients for each bar
-      const backgroundColors = result.labels.map((_, i) => createGradient(ctx, i));
+      // Create gradients for each bar - same as pie chart
+      const backgroundColors = result.labels.map((_, i) => {
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, GRADIENT_COLORS[i % GRADIENT_COLORS.length].start);
+        gradient.addColorStop(1, GRADIENT_COLORS[i % GRADIENT_COLORS.length].end);
+        return gradient;
+      });
 
       charts[canvasId] = new Chart(ctx, {
         type: 'bar',
@@ -675,10 +680,12 @@
           datasets: [{
             data: result.values,
             backgroundColor: backgroundColors,
-            borderRadius: 10,
-            maxBarThickness: 36,
+            borderRadius: 12,
+            maxBarThickness: 40,
             borderWidth: 0,
-            borderSkipped: false
+            borderSkipped: false,
+            hoverBorderWidth: 2,
+            hoverBorderColor: 'rgba(255, 255, 255, 0.4)'
           }]
         },
         options: {
