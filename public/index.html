@@ -376,6 +376,9 @@
               contactSection.classList.toggle('show', value === '愿意');
             }
 
+            // Update continue button for single-select
+            updateContinueButton();
+
             // Auto-advance for single-select (not contact, not "Other")
             if (q.type === 'single') {
               const isOtherOption = q.options.find(o => o.value === value)?.hasOther;
@@ -481,6 +484,21 @@
       const continueBtn = document.getElementById('continueBtn');
       const isLastQuestion = currentStep >= visibleQuestions.length - 1;
 
+      // Check if single-select with "Other" selected
+      if (q.type === 'single') {
+        const selectedValue = formData[q.field];
+        const isOtherSelected = q.options.find(o => o.value === selectedValue)?.hasOther;
+        if (isOtherSelected) {
+          floatingContinue.classList.toggle('visible', true);
+          continueBtn.disabled = false;
+          continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
+          continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
+          return;
+        }
+        floatingContinue.classList.remove('visible');
+        return;
+      }
+
       if (q.type === 'multi') {
         const selected = formData[q.field] || [];
         const hasSelection = selected.length > 0;
@@ -501,7 +519,6 @@
         continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
         continueBtn.className = isLastQuestion ? 'btn btn-submit' : 'btn btn-primary';
       } else if (q.type === 'contact') {
-        // Contact question always shows continue/submit button
         floatingContinue.classList.toggle('visible', true);
         continueBtn.disabled = false;
         continueBtn.textContent = isLastQuestion ? '提交 / Submit' : '继续 / Continue';
