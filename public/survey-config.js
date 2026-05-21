@@ -161,13 +161,14 @@ window.SURVEY_CONFIG = {
         ]
       },
 
-      // ========== Section D: 联系方式 ==========
+      // ========== Section D: 联系方式（浅度调查独有） ==========
       {
         id: 'Q10',
         section: 'contact',
         sectionTitle: { zh: '联系方式', en: 'Contact' },
         type: 'contact',
         field: 'willing_interview',
+        shallowOnly: true,
         zh: '如果后续有更深入的交流机会，您方便留下联系方式吗？',
         en: 'Would you like to leave your contact for further discussion?',
         options: [

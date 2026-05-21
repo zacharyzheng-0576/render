@@ -481,9 +481,9 @@
       const config = window.SURVEY_CONFIG[type];
 
       if (type === 'shallow') {
-        questions = config.questions;
+        questions = config.questions.filter(q => !q.deepOnly);
       } else {
-        const shallowBase = window.SURVEY_CONFIG.shallow.questions.filter(q => !q.deepOnly);
+        const shallowBase = window.SURVEY_CONFIG.shallow.questions.filter(q => !q.deepOnly && !q.shallowOnly);
         const deepExtra = config.questions.filter(q => q.deepOnly);
         questions = [...shallowBase, ...deepExtra];
       }
