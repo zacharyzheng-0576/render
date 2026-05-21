@@ -908,20 +908,9 @@
     }
 
     function renderQuestion(q) {
-      // Section header - show on every question that has a section
+      // 隐藏章节标题
       const sectionHeader = document.getElementById('section-header');
-      if (q.section && q.sectionTitle) {
-        sectionHeader.classList.remove('hidden');
-        const sectionName = SECTION_NAMES[currentLang][q.section] || q.sectionTitle[currentLang];
-        sectionHeader.innerHTML = `
-          <div class="flex items-center gap-2 mb-4">
-            <span class="text-lg">${SECTION_ICONS[q.section] || '📝'}</span>
-            <span class="text-sm font-semibold text-gray-500">${sectionName}</span>
-          </div>
-        `;
-      } else {
-        sectionHeader.classList.add('hidden');
-      }
+      sectionHeader.classList.add('hidden');
 
       document.getElementById('question-number').textContent = `Q${currentStep + 1}`;
       document.getElementById('question-title').textContent = q[currentLang] || q.zh;
