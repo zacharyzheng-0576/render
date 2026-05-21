@@ -630,11 +630,11 @@
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
-          上一题
+          <span id="prev-btn-text"></span>
         </button>
         <div id="prev-spacer"></div>
         <button id="next-btn" class="apple-btn apple-btn-primary px-8 py-3" disabled>
-          继续
+          <span id="next-btn-text"></span>
         </button>
       </div>
     </div>
@@ -657,10 +657,10 @@
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <button id="btn-continue-deep" onclick="continueToDeep()" class="apple-btn apple-btn-primary hidden">
-          继续深度调研
+          <span id="continue-deep-text"></span>
         </button>
         <button onclick="goHome()" class="apple-btn apple-btn-secondary">
-          返回首页
+          <span id="back-home-text"></span>
         </button>
       </div>
     </div>
@@ -1287,9 +1287,12 @@
 
       const isLastQuestion = currentStep >= visibleQuestions.length - 1;
 
-      // 设置按钮文本和点击事件
+      // Update button texts
+      document.getElementById('prev-btn-text').textContent = t('prev');
+      document.getElementById('next-btn-text').textContent = isLastQuestion ? t('submit') : t('next');
+
+      // 设置按钮点击事件
       if (isLastQuestion) {
-        nextBtn.textContent = t('submit');
         nextBtn.onclick = function() {
           submitSurvey();
         };
@@ -1300,7 +1303,6 @@
           nextBtn.disabled = !canProceed;
         }
       } else {
-        nextBtn.textContent = t('next');
         nextBtn.onclick = function() {
           goNext();
         };
@@ -1404,7 +1406,8 @@
       document.getElementById('thank-title').textContent = t('thankTitle');
       document.getElementById('thank-desc').textContent = t('thankDesc');
       document.getElementById('thank-team').textContent = t('thankTeam');
-      document.getElementById('btn-continue-deep').textContent = t('continueDeep');
+      document.getElementById('continue-deep-text').textContent = t('continueDeep');
+      document.getElementById('back-home-text').textContent = t('backHome');
       document.getElementById('btn-continue-deep').classList.toggle('hidden', surveyType !== 'shallow');
       switchView('view-thanks');
     }
