@@ -553,9 +553,9 @@
     }
 
     function showQuestion() {
+      // 如果超出范围，回到最后一题（不自动提交）
       if (currentStep >= visibleQuestions.length) {
-        submitSurvey();
-        return;
+        currentStep = visibleQuestions.length - 1;
       }
 
       const q = visibleQuestions[currentStep];
