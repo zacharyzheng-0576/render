@@ -467,7 +467,23 @@
       }
     });
 
+    async function submitWithRetry(data, maxRetries = 2) {
+      for (let i = 0; i <= maxRetries; i++) {
+        try {
+          return await submitResponse(data);
+        } catch (err) {
+          if (i === maxRetries) throw err;
+          // 等待1秒后重试
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+    }
+
     async function submitSurvey() {
+      // 防止重复提交
+      if (window._submitting) return;
+      window._submitting = true;
+
       // Collect other inputs
       document.querySelectorAll('.other-input .text-input').forEach(input => {
         if (input.dataset.otherField && input.value.trim()) {
@@ -483,7 +499,12 @@
       button.textContent = '提交中... / Submitting...';
 
       try {
-        const data = await submitResponse(formData);
+        // 检查网络状态
+        if (!navigator.onLine) {
+          throw new Error('网络已断开，请检查网络连接后重试 / Network disconnected, please check your connection');
+        }
+
+        const data = await submitWithRetry(formData);
         if (data.success) {
           document.getElementById('surveyForm').style.display = 'none';
           document.getElementById('successPage').style.display = 'block';
@@ -498,6 +519,8 @@
         console.error(err);
         button.disabled = false;
         button.textContent = originalText;
+      } finally {
+        window._submitting = false;
       }
     }
 

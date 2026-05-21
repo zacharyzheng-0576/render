@@ -369,16 +369,34 @@
     }
 
     function deleteOne(id) {
+      if (window._deleting) return;
       if (!confirm('确定删除这条数据？')) return;
+      window._deleting = true;
       window.CrossPilotData.deleteResponse(id)
-        .then(() => loadData());
+        .then(() => loadData())
+        .catch(err => {
+          console.error('Delete failed:', err);
+          alert('删除失败，请重试');
+        })
+        .finally(() => {
+          window._deleting = false;
+        });
     }
 
     function clearAll() {
+      if (window._deleting) return;
       if (!confirm('确定清空所有数据？此操作不可撤销！')) return;
       if (!confirm('再次确认：删除全部 ' + allResponses.length + ' 条数据？')) return;
+      window._deleting = true;
       window.CrossPilotData.clearResponses(allResponses)
-        .then(() => loadData());
+        .then(() => loadData())
+        .catch(err => {
+          console.error('Clear failed:', err);
+          alert('清空失败，请重试');
+        })
+        .finally(() => {
+          window._deleting = false;
+        });
     }
 
     function renderAll() {
@@ -484,10 +502,30 @@
       document.getElementById('totalCount').textContent = '加载失败';
     }
 
+    async function loadDataWithRetry(maxRetries = 2) {
+      for (let i = 0; i <= maxRetries; i++) {
+        try {
+          const data = await window.CrossPilotData.loadResponses();
+          handleStatsData(data);
+          return;
+        } catch (err) {
+          if (i === maxRetries) {
+            handleStatsError(err);
+            return;
+          }
+          // 等待1秒后重试
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+    }
+
     function loadData() {
-      window.CrossPilotData.loadResponses()
-        .then(handleStatsData)
-        .catch(handleStatsError);
+      // 检查网络状态
+      if (!navigator.onLine) {
+        document.getElementById('totalCount').textContent = '网络断开';
+        return;
+      }
+      loadDataWithRetry();
     }
 
     document.getElementById('responseBody').addEventListener('click', function(e) {
@@ -523,12 +561,27 @@
     }
 
     document.getElementById('btnLogin').addEventListener('click', function() {
+      if (window._loggingIn) return;
       const email = document.getElementById('adminEmail').value.trim();
       const password = document.getElementById('adminPassword').value;
+      if (!email || !password) {
+        document.getElementById('authError').textContent = '请输入邮箱和密码';
+        return;
+      }
       document.getElementById('authError').textContent = '';
-      window.CrossPilotData.login(email, password).catch(err => {
-        document.getElementById('authError').textContent = err.message || '登录失败';
-      });
+      window._loggingIn = true;
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true;
+      btn.textContent = '登录中...';
+      window.CrossPilotData.login(email, password)
+        .catch(err => {
+          document.getElementById('authError').textContent = err.message || '登录失败';
+        })
+        .finally(() => {
+          window._loggingIn = false;
+          btn.disabled = false;
+          btn.textContent = '登录';
+        });
     });
 
     window.CrossPilotData.onAuthChange(user => {
