@@ -289,10 +289,21 @@
           Crosspilot AI
         </span>
       </div>
-      <h1 class="text-[32px] md:text-[44px] font-bold tracking-tight text-[#1D1D1F] mb-4 leading-tight">
+
+      <!-- 语言选择 -->
+      <div class="mb-8 flex justify-center gap-2">
+        <button onclick="setLanguage('zh')" id="lang-zh" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-[#0071E3] text-white">
+          中文
+        </button>
+        <button onclick="setLanguage('en')" id="lang-en" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-[#F5F5F7] text-[#86868B] hover:bg-[#E8E8ED]">
+          English
+        </button>
+      </div>
+
+      <h1 id="home-title" class="text-[32px] md:text-[44px] font-bold tracking-tight text-[#1D1D1F] mb-4 leading-tight">
         跨境电商卖家需求调研
       </h1>
-      <p class="text-lg md:text-xl text-[#86868B] mb-12 max-w-xl mx-auto leading-relaxed">
+      <p id="home-subtitle" class="text-lg md:text-xl text-[#86868B] mb-12 max-w-xl mx-auto leading-relaxed">
         了解您的核心需求与业务痛点，帮助我们为您提供更精准的服务。
       </p>
 
@@ -304,15 +315,15 @@
               <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-[#1D1D1F] mb-2">快速调研</h3>
-          <p class="text-[15px] text-[#86868B] mb-6 leading-relaxed">
+          <h3 id="shallow-title" class="text-xl font-semibold text-[#1D1D1F] mb-2">快速调研</h3>
+          <p id="shallow-desc" class="text-[15px] text-[#86868B] mb-6 leading-relaxed">
             聚焦核心业务指标，快速评估您的基本需求与现状。
           </p>
           <div class="flex items-center justify-between">
-            <span class="text-xs font-medium text-[#86868B] bg-[#F5F5F7] px-3 py-1.5 rounded-full">
+            <span id="shallow-info" class="text-xs font-medium text-[#86868B] bg-[#F5F5F7] px-3 py-1.5 rounded-full">
               约 5 分钟 · 12 题
             </span>
-            <span class="text-[#0071E3] text-sm font-medium flex items-center gap-1">
+            <span id="shallow-btn" class="text-[#0071E3] text-sm font-medium flex items-center gap-1">
               开始
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -328,15 +339,15 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
             </svg>
           </div>
-          <h3 class="text-xl font-semibold text-[#1D1D1F] mb-2">深度调研</h3>
-          <p class="text-[15px] text-[#86868B] mb-6 leading-relaxed">
+          <h3 id="deep-title" class="text-xl font-semibold text-[#1D1D1F] mb-2">深度调研</h3>
+          <p id="deep-desc" class="text-[15px] text-[#86868B] mb-6 leading-relaxed">
             全面剖析业务细节与痛点，为您匹配高度定制化的解决方案。
           </p>
           <div class="flex items-center justify-between">
-            <span class="text-xs font-medium text-[#86868B] bg-[#F5F5F7] px-3 py-1.5 rounded-full">
+            <span id="deep-info" class="text-xs font-medium text-[#86868B] bg-[#F5F5F7] px-3 py-1.5 rounded-full">
               约 10 分钟 · 25 题
             </span>
-            <span class="text-purple-600 text-sm font-medium flex items-center gap-1">
+            <span id="deep-btn" class="text-purple-600 text-sm font-medium flex items-center gap-1">
               开始
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -432,11 +443,11 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
         </svg>
       </div>
-      <h1 class="text-[32px] md:text-[40px] font-bold text-[#1D1D1F] mb-4 tracking-tight">感谢您的参与！</h1>
-      <p class="text-lg text-[#86868B] mb-4 leading-relaxed">
+      <h1 id="thank-title" class="text-[32px] md:text-[40px] font-bold text-[#1D1D1F] mb-4 tracking-tight">感谢您的参与！</h1>
+      <p id="thank-desc" class="text-lg text-[#86868B] mb-4 leading-relaxed">
         您的反馈对我们极其宝贵，我们将仔细分析并以此优化服务。
       </p>
-      <p class="text-[15px] text-[#AEAEB2] mb-10">
+      <p id="thank-team" class="text-[15px] text-[#AEAEB2] mb-10">
         — Crosspilot AI 团队
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -457,6 +468,104 @@
     // ============================================
     // Survey Engine
     // ============================================
+    // Language & Translation
+    // ============================================
+    let currentLang = 'zh';
+
+    const TRANSLATIONS = {
+      zh: {
+        homeTitle: '跨境电商卖家需求调研',
+        homeSubtitle: '了解您的核心需求与业务痛点，帮助我们为您提供更精准的服务。',
+        shallowTitle: '快速调研',
+        shallowDesc: '聚焦核心业务指标，快速评估您的基本需求与现状。',
+        shallowInfo: '约 5 分钟 · 12 题',
+        shallowBtn: '开始',
+        deepTitle: '深度调研',
+        deepDesc: '全面剖析业务细节与痛点，为您匹配高度定制化的解决方案。',
+        deepInfo: '约 10 分钟 · 25 题',
+        deepBtn: '开始',
+        progress: '进度',
+        prev: '上一题',
+        next: '继续',
+        submit: '提交问卷',
+        thankTitle: '感谢您的参与！',
+        thankDesc: '您的反馈对我们极其宝贵，我们将仔细分析并以此优化服务。',
+        thankTeam: '— Crosspilot AI 团队',
+        continueDeep: '继续深度调研',
+        backHome: '返回首页',
+        exitConfirm: '确定要退出吗？进度将不会保留。',
+        maxSelect: '已选',
+        contactHint: '请留下至少一项联系方式',
+        wechatPlaceholder: '微信号 / WeChat ID',
+        phonePlaceholder: '手机号 / Phone',
+        emailPlaceholder: '邮箱 / Email',
+        otherPlaceholder: '请补充说明',
+        networkError: '网络已断开',
+        submitError: '提交失败',
+        selected: '已选'
+      },
+      en: {
+        homeTitle: 'Cross-border Seller Survey',
+        homeSubtitle: 'Help us understand your needs and pain points to provide better service.',
+        shallowTitle: 'Quick Survey',
+        shallowDesc: 'Focus on core business metrics to quickly assess your needs.',
+        shallowInfo: '~5 min · 12 questions',
+        shallowBtn: 'Start',
+        deepTitle: 'Detailed Survey',
+        deepDesc: 'Comprehensive analysis of business details and pain points.',
+        deepInfo: '~10 min · 25 questions',
+        deepBtn: 'Start',
+        progress: 'Progress',
+        prev: 'Previous',
+        next: 'Continue',
+        submit: 'Submit',
+        thankTitle: 'Thank you!',
+        thankDesc: 'Your feedback is extremely valuable. We will analyze it carefully.',
+        thankTeam: '— Crosspilot AI Team',
+        continueDeep: 'Continue to Detailed Survey',
+        backHome: 'Back to Home',
+        exitConfirm: 'Are you sure you want to exit? Progress will not be saved.',
+        maxSelect: 'Selected',
+        contactHint: 'Please leave at least one contact method',
+        wechatPlaceholder: 'WeChat ID',
+        phonePlaceholder: 'Phone number',
+        emailPlaceholder: 'Email address',
+        otherPlaceholder: 'Please specify',
+        networkError: 'Network disconnected',
+        submitError: 'Submission failed',
+        selected: 'Selected'
+      }
+    };
+
+    function t(key) {
+      return TRANSLATIONS[currentLang][key] || key;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      // Update language buttons
+      document.getElementById('lang-zh').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'zh' ? 'bg-[#0071E3] text-white' : 'bg-[#F5F5F7] text-[#86868B] hover:bg-[#E8E8ED]'}`;
+      document.getElementById('lang-en').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'en' ? 'bg-[#0071E3] text-white' : 'bg-[#F5F5F7] text-[#86868B] hover:bg-[#E8E8ED]'}`;
+      // Update home page text
+      updateHomeText();
+    }
+
+    function updateHomeText() {
+      document.getElementById('home-title').textContent = t('homeTitle');
+      document.getElementById('home-subtitle').textContent = t('homeSubtitle');
+      document.getElementById('shallow-title').textContent = t('shallowTitle');
+      document.getElementById('shallow-desc').textContent = t('shallowDesc');
+      document.getElementById('shallow-info').textContent = t('shallowInfo');
+      document.getElementById('shallow-btn').innerHTML = `${t('shallowBtn')} <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+      document.getElementById('deep-title').textContent = t('deepTitle');
+      document.getElementById('deep-desc').textContent = t('deepDesc');
+      document.getElementById('deep-info').textContent = t('deepInfo');
+      document.getElementById('deep-btn').innerHTML = `${t('deepBtn')} <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+    }
+
+    // ============================================
+    // Survey Engine
+    // ============================================
     let surveyType = null;
     let questions = [];
     let visibleQuestions = [];
@@ -474,6 +583,31 @@
       'feature_validation': '✅',
       'pricing': '💰',
       'contact': '📞'
+    };
+
+    const SECTION_NAMES = {
+      zh: {
+        'profile': '基础信息',
+        'branch': '业务详情',
+        'ai_scenarios': 'AI 应用场景',
+        'ai_attitude': 'AI 态度与期望',
+        'listing_details': '商品上架细节',
+        'ad_creative': '广告与创意',
+        'feature_validation': '功能需求验证',
+        'pricing': '付费意愿',
+        'contact': '联系方式'
+      },
+      en: {
+        'profile': 'Basic Profile',
+        'branch': 'Business Details',
+        'ai_scenarios': 'AI Application Scenarios',
+        'ai_attitude': 'AI Attitude & Expectations',
+        'listing_details': 'Listing Details',
+        'ad_creative': 'Ad Creative & Intelligence',
+        'feature_validation': 'Feature Validation',
+        'pricing': 'Willingness to Pay',
+        'contact': 'Contact'
+      }
     };
 
     function switchView(targetViewId) {
@@ -566,7 +700,7 @@
       const total = visibleQuestions.length;
 
       // Progress
-      document.getElementById('progress-text').textContent = `进度 ${currentStep + 1} / ${total}`;
+      document.getElementById('progress-text').textContent = `${t('progress')} ${currentStep + 1} / ${total}`;
       document.getElementById('progress-fill').style.width = `${((currentStep + 1) / total) * 100}%`;
 
       renderQuestion(q);
@@ -577,10 +711,11 @@
       const sectionHeader = document.getElementById('section-header');
       if (q.section && q.sectionTitle) {
         sectionHeader.classList.remove('hidden');
+        const sectionName = SECTION_NAMES[currentLang][q.section] || q.sectionTitle[currentLang];
         sectionHeader.innerHTML = `
           <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
             <span class="text-lg">${SECTION_ICONS[q.section] || '📝'}</span>
-            <span class="text-sm font-semibold text-[#86868B]">${q.sectionTitle.zh}</span>
+            <span class="text-sm font-semibold text-[#86868B]">${sectionName}</span>
           </div>
         `;
       } else {
@@ -588,12 +723,12 @@
       }
 
       document.getElementById('question-number').textContent = `Q${currentStep + 1}`;
-      document.getElementById('question-title').textContent = q.zh;
-      document.getElementById('question-en').textContent = q.en;
+      document.getElementById('question-title').textContent = q[currentLang] || q.zh;
+      document.getElementById('question-en').classList.add('hidden');
 
       const hintEl = document.getElementById('question-hint');
       if (q.hint) {
-        hintEl.textContent = `${q.hint.zh} / ${q.hint.en}`;
+        hintEl.textContent = q.hint[currentLang] || q.hint.zh;
         hintEl.classList.remove('hidden');
       } else {
         hintEl.classList.add('hidden');
@@ -639,6 +774,9 @@
 
       q.options.forEach(opt => {
         const isSelected = formData[q.field] === opt.value;
+        const optText = opt[currentLang] || opt.zh;
+        const optDesc = opt.desc ? (opt.desc[currentLang] || opt.desc.zh) : '';
+        const otherValue = currentLang === 'zh' ? '其他' : 'Other';
         const div = document.createElement('div');
 
         div.innerHTML = `
@@ -648,15 +786,14 @@
                 ${isSelected ? '<div class="w-2.5 h-2.5 rounded-full bg-white"></div>' : ''}
               </div>
               <div class="flex-1 min-w-0">
-                <div class="text-[15px] font-medium text-[#1D1D1F]">${opt.zh}</div>
-                ${opt.desc ? `<div class="text-[13px] text-[#86868B] mt-0.5">${opt.desc.zh}</div>` : ''}
-                <div class="text-[13px] text-[#AEAEB2]">${opt.en}</div>
+                <div class="text-[15px] font-medium text-[#1D1D1F]">${optText}</div>
+                ${optDesc ? `<div class="text-[13px] text-[#86868B] mt-0.5">${optDesc}</div>` : ''}
               </div>
             </div>
           </div>
           ${opt.hasOther ? `
-            <div class="other-input-wrapper ${isSelected && opt.value === '其他' ? 'show' : ''}">
-              <input type="text" class="apple-input other-text-input" placeholder="请补充说明 / Please specify" data-field="${q.field}_other" value="${formData[q.field + '_other'] || ''}">
+            <div class="other-input-wrapper ${isSelected && opt.value === otherValue ? 'show' : ''}">
+              <input type="text" class="apple-input other-text-input" placeholder="${t('otherPlaceholder')}" data-field="${q.field}_other" value="${formData[q.field + '_other'] || ''}">
             </div>
           ` : ''}
         `;
@@ -682,8 +819,9 @@
 
           // Handle "Other"
           const otherWrapper = div.querySelector('.other-input-wrapper');
+          const otherValue = currentLang === 'zh' ? '其他' : 'Other';
           if (otherWrapper) {
-            if (opt.value === '其他') {
+            if (opt.value === otherValue) {
               otherWrapper.classList.add('show');
               setTimeout(() => otherWrapper.querySelector('input').focus(), 300);
             } else {
@@ -692,7 +830,7 @@
           }
 
           // Auto-advance (not for "Other")
-          if (!opt.hasOther || opt.value !== '其他') {
+          if (!opt.hasOther || opt.value !== otherValue) {
             setTimeout(() => goNext(), 200);
           } else {
             updateNavigation();
@@ -730,12 +868,15 @@
         const hint = document.createElement('div');
         hint.className = 'text-[13px] text-[#86868B] mb-4';
         hint.id = 'max-hint';
-        hint.innerHTML = `已选 <span class="font-semibold text-[#0071E3]">${selected.length}</span> / ${q.maxSelect}`;
+        hint.innerHTML = `${t('selected')} <span class="font-semibold text-[#0071E3]">${selected.length}</span> / ${q.maxSelect}`;
         container.appendChild(hint);
       }
 
       q.options.forEach(opt => {
         const isSelected = selected.includes(opt.value);
+        const optText = opt[currentLang] || opt.zh;
+        const optDesc = opt.desc ? (opt.desc[currentLang] || opt.desc.zh) : '';
+        const otherValue = currentLang === 'zh' ? '其他' : 'Other';
         const div = document.createElement('div');
 
         div.innerHTML = `
@@ -745,15 +886,14 @@
                 ${isSelected ? '<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>' : ''}
               </div>
               <div class="flex-1 min-w-0">
-                <div class="text-[15px] font-medium text-[#1D1D1F]">${opt.zh}</div>
-                ${opt.desc ? `<div class="text-[13px] text-[#86868B] mt-0.5">${opt.desc.zh}</div>` : ''}
-                <div class="text-[13px] text-[#AEAEB2]">${opt.en}</div>
+                <div class="text-[15px] font-medium text-[#1D1D1F]">${optText}</div>
+                ${optDesc ? `<div class="text-[13px] text-[#86868B] mt-0.5">${optDesc}</div>` : ''}
               </div>
             </div>
           </div>
           ${opt.hasOther ? `
             <div class="other-input-wrapper ${isSelected ? 'show' : ''}">
-              <input type="text" class="apple-input other-text-input" placeholder="请补充说明 / Please specify" data-field="${q.field}_other" value="${formData[q.field + '_other'] || ''}">
+              <input type="text" class="apple-input other-text-input" placeholder="${t('otherPlaceholder')}" data-field="${q.field}_other" value="${formData[q.field + '_other'] || ''}">
             </div>
           ` : ''}
         `;
@@ -786,13 +926,13 @@
           // Update hint
           const hint = document.getElementById('max-hint');
           if (hint) {
-            hint.innerHTML = `已选 <span class="font-semibold text-[#0071E3]">${current.length}</span> / ${q.maxSelect}`;
+            hint.innerHTML = `${t('selected')} <span class="font-semibold text-[#0071E3]">${current.length}</span> / ${q.maxSelect}`;
           }
 
           // Other
           const otherWrapper = div.querySelector('.other-input-wrapper');
           if (otherWrapper) {
-            otherWrapper.classList.toggle('show', current.includes(opt.value) && opt.value === '其他');
+            otherWrapper.classList.toggle('show', current.includes(opt.value) && opt.value === otherValue);
           }
 
           updateNavigation();
@@ -821,14 +961,12 @@
       q.fields.forEach(f => {
         const value = formData[f.field] || q.default || 3;
         formData[f.field] = value;
+        const fieldText = f[currentLang] || f.zh;
 
         const div = document.createElement('div');
         div.innerHTML = `
           <div class="flex justify-between items-baseline mb-3">
-            <div>
-              <span class="text-[15px] font-medium text-[#1D1D1F]">${f.zh}</span>
-              <span class="text-[13px] text-[#86868B] ml-2">${f.en}</span>
-            </div>
+            <span class="text-[15px] font-medium text-[#1D1D1F]">${fieldText}</span>
             <span class="text-[22px] font-bold text-[#0071E3] slider-value">${value}</span>
           </div>
           <input type="range" min="${q.min}" max="${q.max}" value="${value}" class="w-full" data-field="${f.field}">
@@ -857,7 +995,7 @@
 
       const textarea = document.getElementById('textarea-input');
       textarea.value = formData[q.field] || '';
-      textarea.placeholder = `${q.placeholder.zh} / ${q.placeholder.en}`;
+      textarea.placeholder = q.placeholder[currentLang] || q.placeholder.zh;
       textarea.oninput = () => {
         formData[q.field] = textarea.value;
         updateNavigation();
@@ -876,6 +1014,8 @@
 
       q.options.forEach(opt => {
         const isSelected = formData[q.field] === opt.value;
+        const optText = opt[currentLang] || opt.zh;
+        const yesValue = currentLang === 'zh' ? '愿意' : 'Yes';
         const div = document.createElement('div');
         div.innerHTML = `
           <div class="option-item ${isSelected ? 'selected' : ''}" data-value="${opt.value}">
@@ -883,7 +1023,7 @@
               <div class="option-radio flex items-center justify-center">
                 ${isSelected ? '<div class="w-2.5 h-2.5 rounded-full bg-white"></div>' : ''}
               </div>
-              <span class="text-[15px] font-medium text-[#1D1D1F]">${opt.zh}</span>
+              <span class="text-[15px] font-medium text-[#1D1D1F]">${optText}</span>
             </div>
           </div>
         `;
@@ -900,7 +1040,7 @@
           optionEl.classList.add('selected');
           optionEl.querySelector('.option-radio').innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-white"></div>';
 
-          document.getElementById('contact-fields').classList.toggle('show', opt.value === '愿意');
+          document.getElementById('contact-fields').classList.toggle('show', opt.value === yesValue);
           updateNavigation();
         });
 
@@ -908,6 +1048,12 @@
       });
 
       // Contact fields
+      const contactHint = document.querySelector('#contact-fields .contact-label');
+      if (contactHint) contactHint.textContent = t('contactHint');
+      document.getElementById('contact-wechat').placeholder = t('wechatPlaceholder');
+      document.getElementById('contact-phone').placeholder = t('phonePlaceholder');
+      document.getElementById('contact-email').placeholder = t('emailPlaceholder');
+
       ['wechat', 'phone', 'email'].forEach(type => {
         const input = document.getElementById(`contact-${type}`);
         input.value = formData[`contact_${type}`] || '';
@@ -949,7 +1095,7 @@
 
       // 设置按钮文本和点击事件
       if (isLastQuestion) {
-        nextBtn.textContent = '提交问卷';
+        nextBtn.textContent = t('submit');
         nextBtn.onclick = function() {
           submitSurvey();
         };
@@ -960,7 +1106,7 @@
           nextBtn.disabled = !canProceed;
         }
       } else {
-        nextBtn.textContent = '继续';
+        nextBtn.textContent = t('next');
         nextBtn.onclick = function() {
           goNext();
         };
@@ -1060,6 +1206,11 @@
     }
 
     function showThankYou() {
+      // Update thank you page text
+      document.getElementById('thank-title').textContent = t('thankTitle');
+      document.getElementById('thank-desc').textContent = t('thankDesc');
+      document.getElementById('thank-team').textContent = t('thankTeam');
+      document.getElementById('btn-continue-deep').textContent = t('continueDeep');
       document.getElementById('btn-continue-deep').classList.toggle('hidden', surveyType !== 'shallow');
       switchView('view-thanks');
     }
