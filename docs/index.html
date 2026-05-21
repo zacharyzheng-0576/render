@@ -734,9 +734,9 @@
         sectionHeader.classList.remove('hidden');
         const sectionName = SECTION_NAMES[currentLang][q.section] || q.sectionTitle[currentLang];
         sectionHeader.innerHTML = `
-          <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+          <div class="flex items-center gap-2 mb-4">
             <span class="text-lg">${SECTION_ICONS[q.section] || '📝'}</span>
-            <span class="text-sm font-semibold text-[#86868B]">${sectionName}</span>
+            <span class="text-sm font-semibold text-gray-500">${sectionName}</span>
           </div>
         `;
       } else {
