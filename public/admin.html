@@ -808,6 +808,20 @@
       const labels = ['创意素材', '竞品情报', '多语言管理', '广告优化', '运营效率'];
       const fields = ['pain_creative', 'pain_intelligence', 'pain_multilingual', 'pain_ad_optimize', 'pain_efficiency'];
 
+      // Radar chart uses its own color scheme
+      const RADAR_COLORS = [
+        'rgba(59, 130, 246, 0.85)',
+        'rgba(99, 102, 241, 0.85)',
+        'rgba(34, 197, 94, 0.85)',
+        'rgba(251, 146, 60, 0.85)',
+        'rgba(248, 113, 113, 0.85)',
+        'rgba(168, 85, 247, 0.85)',
+        'rgba(236, 72, 153, 0.85)',
+        'rgba(56, 189, 248, 0.85)',
+        'rgba(250, 204, 21, 0.85)',
+        'rgba(45, 212, 191, 0.85)'
+      ];
+
       charts['radarChart'] = new Chart(ctx, {
         type: 'radar',
         data: {
@@ -815,10 +829,10 @@
           datasets: Object.entries(groups).map(([type, rows], i) => ({
             label: type,
             data: fields.map(f => Math.round(avgField(rows, f) * 10) / 10),
-            borderColor: COLORS[i],
-            backgroundColor: COLORS[i].replace('0.85', '0.15'),
+            borderColor: RADAR_COLORS[i],
+            backgroundColor: RADAR_COLORS[i].replace('0.85', '0.15'),
             borderWidth: 2,
-            pointBackgroundColor: COLORS[i],
+            pointBackgroundColor: RADAR_COLORS[i],
             pointBorderColor: 'rgba(255, 255, 255, 0.3)',
             pointBorderWidth: 1,
             pointRadius: 4,
