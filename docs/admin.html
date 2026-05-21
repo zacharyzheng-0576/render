@@ -554,18 +554,32 @@
     let allResponses = [];
     let charts = {};
 
-    // Liquid Glass color palette - soft, translucent colors
+    // Liquid Glass color palette - frosted translucent colors
     const COLORS = [
-      'rgba(59, 130, 246, 0.85)',   // Blue
-      'rgba(99, 102, 241, 0.85)',   // Indigo
-      'rgba(34, 197, 94, 0.85)',    // Green
-      'rgba(251, 146, 60, 0.85)',   // Orange
-      'rgba(248, 113, 113, 0.85)',  // Red
-      'rgba(168, 85, 247, 0.85)',   // Purple
-      'rgba(236, 72, 153, 0.85)',   // Pink
-      'rgba(56, 189, 248, 0.85)',   // Light Blue
-      'rgba(250, 204, 21, 0.85)',   // Yellow
-      'rgba(45, 212, 191, 0.85)'    // Teal
+      'rgba(59, 130, 246, 0.7)',    // Blue
+      'rgba(99, 102, 241, 0.7)',    // Indigo
+      'rgba(34, 197, 94, 0.7)',     // Green
+      'rgba(251, 146, 60, 0.7)',    // Orange
+      'rgba(248, 113, 113, 0.7)',   // Red
+      'rgba(168, 85, 247, 0.7)',    // Purple
+      'rgba(236, 72, 153, 0.7)',    // Pink
+      'rgba(56, 189, 248, 0.7)',    // Light Blue
+      'rgba(250, 204, 21, 0.7)',    // Yellow
+      'rgba(45, 212, 191, 0.7)'     // Teal
+    ];
+
+    // Gradient colors for liquid glass effect
+    const GRADIENT_COLORS = [
+      { start: 'rgba(59, 130, 246, 0.8)', end: 'rgba(59, 130, 246, 0.3)' },
+      { start: 'rgba(99, 102, 241, 0.8)', end: 'rgba(99, 102, 241, 0.3)' },
+      { start: 'rgba(34, 197, 94, 0.8)', end: 'rgba(34, 197, 94, 0.3)' },
+      { start: 'rgba(251, 146, 60, 0.8)', end: 'rgba(251, 146, 60, 0.3)' },
+      { start: 'rgba(248, 113, 113, 0.8)', end: 'rgba(248, 113, 113, 0.3)' },
+      { start: 'rgba(168, 85, 247, 0.8)', end: 'rgba(168, 85, 247, 0.3)' },
+      { start: 'rgba(236, 72, 153, 0.8)', end: 'rgba(236, 72, 153, 0.3)' },
+      { start: 'rgba(56, 189, 248, 0.8)', end: 'rgba(56, 189, 248, 0.3)' },
+      { start: 'rgba(250, 204, 21, 0.8)', end: 'rgba(250, 204, 21, 0.3)' },
+      { start: 'rgba(45, 212, 191, 0.8)', end: 'rgba(45, 212, 191, 0.3)' }
     ];
 
     const ALL_OPTIONS = {
@@ -639,10 +653,20 @@
       }).replace(/\//g, '-');
     }
 
+    function createGradient(ctx, colorIndex) {
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, GRADIENT_COLORS[colorIndex % GRADIENT_COLORS.length].start);
+      gradient.addColorStop(1, GRADIENT_COLORS[colorIndex % GRADIENT_COLORS.length].end);
+      return gradient;
+    }
+
     function renderBarChart(canvasId, result) {
       const ctx = document.getElementById(canvasId)?.getContext('2d');
       if (!ctx) return;
       if (charts[canvasId]) charts[canvasId].destroy();
+
+      // Create gradients for each bar
+      const backgroundColors = result.labels.map((_, i) => createGradient(ctx, i));
 
       charts[canvasId] = new Chart(ctx, {
         type: 'bar',
@@ -650,10 +674,11 @@
           labels: result.labels,
           datasets: [{
             data: result.values,
-            backgroundColor: COLORS.slice(0, result.labels.length),
-            borderRadius: 8,
+            backgroundColor: backgroundColors,
+            borderRadius: 10,
             maxBarThickness: 36,
-            borderWidth: 0
+            borderWidth: 0,
+            borderSkipped: false
           }]
         },
         options: {
@@ -661,13 +686,15 @@
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: 'rgba(15, 23, 42, 0.9)',
-              titleColor: 'rgba(255, 255, 255, 0.9)',
-              bodyColor: 'rgba(255, 255, 255, 0.7)',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleColor: 'rgba(255, 255, 255, 0.95)',
+              bodyColor: 'rgba(255, 255, 255, 0.8)',
+              borderColor: 'rgba(255, 255, 255, 0.15)',
               borderWidth: 1,
               cornerRadius: 12,
-              padding: 12
+              padding: 14,
+              displayColors: true,
+              boxPadding: 6
             }
           },
           scales: {
@@ -702,10 +729,25 @@
       });
     }
 
+    function createPieGradient(ctx, centerX, centerY, radius, colorIndex) {
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+      gradient.addColorStop(0, GRADIENT_COLORS[colorIndex % GRADIENT_COLORS.length].start);
+      gradient.addColorStop(1, GRADIENT_COLORS[colorIndex % GRADIENT_COLORS.length].end);
+      return gradient;
+    }
+
     function renderPieChart(canvasId, data, labels) {
       const ctx = document.getElementById(canvasId)?.getContext('2d');
       if (!ctx) return;
       if (charts[canvasId]) charts[canvasId].destroy();
+
+      // Create gradients for each slice
+      const backgroundColors = labels.map((_, i) => {
+        const centerX = ctx.canvas.width / 2;
+        const centerY = ctx.canvas.height / 2;
+        const radius = Math.min(centerX, centerY) * 0.8;
+        return createPieGradient(ctx, centerX, centerY, radius, i);
+      });
 
       charts[canvasId] = new Chart(ctx, {
         type: 'doughnut',
@@ -713,16 +755,17 @@
           labels,
           datasets: [{
             data,
-            backgroundColor: COLORS.slice(0, labels.length),
+            backgroundColor: backgroundColors,
             borderWidth: 0,
             borderColor: 'transparent',
             hoverBorderWidth: 2,
-            hoverBorderColor: 'rgba(255, 255, 255, 0.3)'
+            hoverBorderColor: 'rgba(255, 255, 255, 0.4)',
+            hoverOffset: 8
           }]
         },
         options: {
           responsive: true,
-          cutout: '65%',
+          cutout: '68%',
           plugins: {
             legend: {
               position: 'bottom',
@@ -735,13 +778,15 @@
               }
             },
             tooltip: {
-              backgroundColor: 'rgba(15, 23, 42, 0.9)',
-              titleColor: 'rgba(255, 255, 255, 0.9)',
-              bodyColor: 'rgba(255, 255, 255, 0.7)',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: 'rgba(15, 23, 42, 0.95)',
+              titleColor: 'rgba(255, 255, 255, 0.95)',
+              bodyColor: 'rgba(255, 255, 255, 0.8)',
+              borderColor: 'rgba(255, 255, 255, 0.15)',
               borderWidth: 1,
               cornerRadius: 12,
-              padding: 12
+              padding: 14,
+              displayColors: true,
+              boxPadding: 6
             }
           }
         }
