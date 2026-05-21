@@ -25,11 +25,20 @@
     return Object.assign({}, data, {
       id: row.id,
       created_at: row.created_at,
+      survey_type: data.survey_type || 'shallow',
+      // Array fields normalization
       countries: Array.isArray(data.countries) ? data.countries : [],
       platforms: Array.isArray(data.platforms) ? data.platforms : [],
       platform_ai_tools: Array.isArray(data.platform_ai_tools) ? data.platform_ai_tools : [],
       traffic_channels: Array.isArray(data.traffic_channels) ? data.traffic_channels : [],
-      biggest_pains: Array.isArray(data.biggest_pains) ? data.biggest_pains : []
+      biggest_pains: Array.isArray(data.biggest_pains) ? data.biggest_pains : [],
+      // Deep survey array fields
+      time_consuming_steps: Array.isArray(data.time_consuming_steps) ? data.time_consuming_steps : [],
+      ai_tool_problems: Array.isArray(data.ai_tool_problems) ? data.ai_tool_problems : [],
+      current_tools: Array.isArray(data.current_tools) ? data.current_tools : [],
+      ad_platforms: Array.isArray(data.ad_platforms) ? data.ad_platforms : [],
+      checklist_items: Array.isArray(data.checklist_items) ? data.checklist_items : [],
+      top_features: Array.isArray(data.top_features) ? data.top_features : []
     });
   }
 

@@ -7,524 +7,696 @@
   <link rel="stylesheet" href="style.css">
   <script src="supabase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="survey-config.js"></script>
   <script src="data-service.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="survey-header">
-      <h1>跨境电商卖家需求调研</h1>
-      <p>帮助我们了解您的真实需求，约 5 分钟</p>
-      <p class="en-sub">Help us understand your real needs — approx. 5 min</p>
+  <!-- Landing Page -->
+  <div class="landing-page" id="landingPage">
+    <div class="landing-logo">📊</div>
+    <h1 class="landing-title">跨境电商卖家需求调研</h1>
+    <p class="landing-subtitle">Cross-border Seller Survey</p>
+    <div class="survey-type-cards">
+      <div class="survey-type-card shallow" onclick="startSurvey('shallow')">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">快速调研</div>
+        <div class="card-desc">了解您的核心需求</div>
+        <div class="card-time">约5分钟 · 14题</div>
+      </div>
+      <div class="survey-type-card deep" onclick="startSurvey('deep')">
+        <div class="card-icon">📋</div>
+        <div class="card-title">深度调研</div>
+        <div class="card-desc">全面了解您的业务细节</div>
+        <div class="card-time">约10-15分钟 · 33题</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Survey Page -->
+  <div class="survey-container" id="surveyPage" style="display:none">
+    <!-- Back Button -->
+    <button class="back-button" id="backButton" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+
+    <!-- Progress Header -->
+    <div class="progress-header">
+      <div class="progress-info">
+        <span class="progress-text" id="progressText">1 / 14</span>
+        <span class="progress-section" id="progressSection"></span>
+      </div>
+      <div class="progress-bar">
+        <div class="fill" id="progressFill"></div>
+      </div>
     </div>
 
-    <div class="progress-text"><span id="progressNum">1</span> / <span id="progressTotal">12</span></div>
-    <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+    <!-- Question Container -->
+    <div id="questionContainer"></div>
 
-    <div id="surveyForm">
-
-      <!-- Q1: 业务类型（分支点，放最前） -->
-      <div class="question-card" data-q="1">
-        <div class="question-number">Q1</div>
-        <div class="question-title">您目前主要做哪种业务？</div>
-        <div class="question-en">What type of business do you mainly run?</div>
-        <div class="options" data-type="single" data-field="business_type">
-          <label class="option-label" data-value="平台卖家"><div class="option-radio"></div><span>平台卖家（Amazon / TikTok Shop / Shopee 等）<br><em class="en">Platform seller</em></span></label>
-          <label class="option-label" data-value="独立站卖家"><div class="option-radio"></div><span>独立站卖家（Shopify / WooCommerce 等）<br><em class="en">Independent site seller</em></span></label>
-          <label class="option-label" data-value="两者都做"><div class="option-radio"></div><span>两者都做<br><em class="en">Both</em></span></label>
-        </div>
-      </div>
-
-      <!-- Q2: 入行时间 -->
-      <div class="question-card hidden" data-q="2">
-        <div class="question-number">Q2</div>
-        <div class="question-title">您做跨境电商多久了？</div>
-        <div class="question-en">How long have you been doing cross-border e-commerce?</div>
-        <div class="options" data-type="single" data-field="experience">
-          <label class="option-label" data-value="半年以下"><div class="option-radio"></div><span>半年以下 <em class="en">Less than 6 months</em></span></label>
-          <label class="option-label" data-value="半年-1年"><div class="option-radio"></div><span>半年 ~ 1 年 <em class="en">6 months – 1 year</em></span></label>
-          <label class="option-label" data-value="1-3年"><div class="option-radio"></div><span>1 ~ 3 年 <em class="en">1 – 3 years</em></span></label>
-          <label class="option-label" data-value="3年以上"><div class="option-radio"></div><span>3 年以上 <em class="en">More than 3 years</em></span></label>
-        </div>
-      </div>
-
-      <!-- Q3: 目标国家 -->
-      <div class="question-card hidden" data-q="3">
-        <div class="question-number">Q3</div>
-        <div class="question-title">您主要做哪些国家/地区？（可多选）</div>
-        <div class="question-en">Which countries/regions do you mainly target? (Multiple choice)</div>
-        <div class="options" data-type="multi" data-field="countries">
-          <label class="option-label" data-value="北美"><div class="option-checkbox"></div><span>北美 <em class="en">North America</em></span></label>
-          <label class="option-label" data-value="欧洲"><div class="option-checkbox"></div><span>欧洲 <em class="en">Europe</em></span></label>
-          <label class="option-label" data-value="东南亚"><div class="option-checkbox"></div><span>东南亚 <em class="en">Southeast Asia</em></span></label>
-          <label class="option-label" data-value="日韩"><div class="option-checkbox"></div><span>日韩 <em class="en">Japan / Korea</em></span></label>
-          <label class="option-label" data-value="中东"><div class="option-checkbox"></div><span>中东 <em class="en">Middle East</em></span></label>
-          <label class="option-label" data-value="拉美"><div class="option-checkbox"></div><span>拉美 <em class="en">Latin America</em></span></label>
-          <label class="option-label" data-value="其他"><div class="option-checkbox"></div><span>其他 <em class="en">Other</em></span></label>
-        </div>
-        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="countries_other"></div>
-      </div>
-
-      <!-- Q4: 月营收 -->
-      <div class="question-card hidden" data-q="4">
-        <div class="question-number">Q4</div>
-        <div class="question-title">您的平均月营收大约是？（人民币）</div>
-        <div class="question-en">What is your average monthly revenue? (RMB)</div>
-        <div class="options" data-type="single" data-field="revenue">
-          <label class="option-label" data-value="5千以下"><div class="option-radio"></div><span>5 千以下 <em class="en">Under ¥5K</em></span></label>
-          <label class="option-label" data-value="5千-2万"><div class="option-radio"></div><span>5 千 ~ 2 万 <em class="en">¥5K – ¥20K</em></span></label>
-          <label class="option-label" data-value="2万-10万"><div class="option-radio"></div><span>2 万 ~ 10 万 <em class="en">¥20K – ¥100K</em></span></label>
-          <label class="option-label" data-value="10万-50万"><div class="option-radio"></div><span>10 万 ~ 50 万 <em class="en">¥100K – ¥500K</em></span></label>
-          <label class="option-label" data-value="50万以上"><div class="option-radio"></div><span>50 万以上 <em class="en">Over ¥500K</em></span></label>
-        </div>
-      </div>
-
-      <!-- ===== 平台卖家专属 ===== -->
-      <div class="section-divider hidden branch-platform">— 平台卖家相关 / Platform seller questions —</div>
-
-      <!-- A5: 主要平台 -->
-      <div class="question-card hidden branch-platform" data-q="A5">
-        <div class="question-number">Q5</div>
-        <div class="question-title">您主要在哪些平台？（可多选）</div>
-        <div class="question-en">Which platforms do you mainly sell on? (Multiple choice)</div>
-        <div class="options" data-type="multi" data-field="platforms">
-          <label class="option-label" data-value="Amazon"><div class="option-checkbox"></div><span>Amazon</span></label>
-          <label class="option-label" data-value="TikTok Shop"><div class="option-checkbox"></div><span>TikTok Shop</span></label>
-          <label class="option-label" data-value="Shopee"><div class="option-checkbox"></div><span>Shopee</span></label>
-          <label class="option-label" data-value="Temu"><div class="option-checkbox"></div><span>Temu</span></label>
-          <label class="option-label" data-value="速卖通"><div class="option-checkbox"></div><span>速卖通 <em class="en">AliExpress</em></span></label>
-          <label class="option-label" data-value="其他"><div class="option-checkbox"></div><span>其他 <em class="en">Other</em></span></label>
-        </div>
-        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="platforms_other"></div>
-      </div>
-
-      <!-- A6: 平台痛点 -->
-      <div class="question-card hidden branch-platform" data-q="A6">
-        <div class="question-number">Q6</div>
-        <div class="question-title">上新时最大的痛点是？</div>
-        <div class="question-en">What is your biggest pain point when listing new products?</div>
-        <div class="options" data-type="single" data-field="platform_pain">
-          <label class="option-label" data-value="翻译质量差"><div class="option-radio"></div><span>翻译/文案质量不够好 <em class="en">Poor translation / copy quality</em></span></label>
-          <label class="option-label" data-value="关键词不会选"><div class="option-radio"></div><span>关键词不知道怎么选 <em class="en">Don't know how to choose keywords</em></span></label>
-          <label class="option-label" data-value="多平台格式不同"><div class="option-radio"></div><span>不同平台格式要求不同 <em class="en">Different format requirements across platforms</em></span></label>
-          <label class="option-label" data-value="素材不够"><div class="option-radio"></div><span>图片/视频素材不够 <em class="en">Not enough images / video materials</em></span></label>
-          <label class="option-label" data-value="其他"><div class="option-radio"></div><span>其他 <em class="en">Other</em></span></label>
-        </div>
-        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="platform_pain_other"></div>
-      </div>
-
-      <!-- A7: AI工具使用 -->
-      <div class="question-card hidden branch-platform" data-q="A7">
-        <div class="question-number">Q7</div>
-        <div class="question-title">您用过哪些 AI 工具辅助运营？（可多选）</div>
-        <div class="question-en">Which AI tools have you used? (Multiple choice)</div>
-        <div class="options" data-type="multi" data-field="platform_ai_tools">
-          <label class="option-label" data-value="ChatGPT"><div class="option-checkbox"></div><span>ChatGPT</span></label>
-          <label class="option-label" data-value="DeepSeek"><div class="option-checkbox"></div><span>DeepSeek</span></label>
-          <label class="option-label" data-value="平台自带AI"><div class="option-checkbox"></div><span>平台自带 AI <em class="en">Platform built-in AI</em></span></label>
-          <label class="option-label" data-value="ERP工具"><div class="option-checkbox"></div><span>ERP 工具（店小秘/马帮/通途）<em class="en">ERP tools</em></span></label>
-          <label class="option-label" data-value="Helium10等"><div class="option-checkbox"></div><span>Helium 10 / Jungle Scout 等</span></label>
-          <label class="option-label" data-value="都没用过"><div class="option-checkbox"></div><span>都没用过 <em class="en">None of the above</em></span></label>
-        </div>
-      </div>
-
-      <!-- ===== 独立站卖家专属 ===== -->
-      <div class="section-divider hidden branch-indie">— 独立站卖家相关 / Independent site questions —</div>
-
-      <!-- B5: 获客渠道 -->
-      <div class="question-card hidden branch-indie" data-q="B5">
-        <div class="question-number">Q5</div>
-        <div class="question-title">您的主要获客渠道？（可多选）</div>
-        <div class="question-en">What are your main customer acquisition channels? (Multiple choice)</div>
-        <div class="options" data-type="multi" data-field="traffic_channels">
-          <label class="option-label" data-value="Facebook广告"><div class="option-checkbox"></div><span>Facebook / Instagram 广告 <em class="en">Facebook / Instagram Ads</em></span></label>
-          <label class="option-label" data-value="Google广告"><div class="option-checkbox"></div><span>Google 广告 <em class="en">Google Ads</em></span></label>
-          <label class="option-label" data-value="TikTok广告"><div class="option-checkbox"></div><span>TikTok 广告/短视频 <em class="en">TikTok Ads / Short video</em></span></label>
-          <label class="option-label" data-value="SEO"><div class="option-checkbox"></div><span>SEO（搜索引擎优化）<em class="en">Search Engine Optimization</em></span></label>
-          <label class="option-label" data-value="社交媒体"><div class="option-checkbox"></div><span>社交媒体自然流量 <em class="en">Organic social media</em></span></label>
-          <label class="option-label" data-value="邮件营销"><div class="option-checkbox"></div><span>邮件营销 <em class="en">Email marketing</em></span></label>
-        </div>
-      </div>
-
-      <!-- B6: 素材时间 -->
-      <div class="question-card hidden branch-indie" data-q="B6">
-        <div class="question-number">Q6</div>
-        <div class="question-title">每月在广告素材（图片/视频/文案）上花多少时间？</div>
-        <div class="question-en">How much time do you spend monthly on ad creatives (images / video / copy)?</div>
-        <div class="options" data-type="single" data-field="creative_hours">
-          <label class="option-label" data-value="5小时以下"><div class="option-radio"></div><span>5 小时以下 <em class="en">Less than 5 hours</em></span></label>
-          <label class="option-label" data-value="5-20小时"><div class="option-radio"></div><span>5 ~ 20 小时 <em class="en">5 – 20 hours</em></span></label>
-          <label class="option-label" data-value="20-50小时"><div class="option-radio"></div><span>20 ~ 50 小时 <em class="en">20 – 50 hours</em></span></label>
-          <label class="option-label" data-value="50小时以上"><div class="option-radio"></div><span>50 小时以上 <em class="en">More than 50 hours</em></span></label>
-        </div>
-      </div>
-
-      <!-- B7: 竞品追踪 -->
-      <div class="question-card hidden branch-indie" data-q="B7">
-        <div class="question-number">Q7</div>
-        <div class="question-title">您目前怎么追踪竞品的广告和创意？</div>
-        <div class="question-en">How do you currently track competitors' ads and creatives?</div>
-        <div class="options" data-type="single" data-field="competitor_tracking">
-          <label class="option-label" data-value="AdSpy等工具"><div class="option-radio"></div><span>用 AdSpy / Minea / PipiAds 等工具 <em class="en">Using ad spy tools</em></span></label>
-          <label class="option-label" data-value="手动刷"><div class="option-radio"></div><span>手动刷社交媒体和广告库 <em class="en">Manually browsing social media & ad libraries</em></span></label>
-          <label class="option-label" data-value="没有追踪"><div class="option-radio"></div><span>没有系统追踪 <em class="en">No systematic tracking</em></span></label>
-          <label class="option-label" data-value="其他"><div class="option-radio"></div><span>其他 <em class="en">Other</em></span></label>
-        </div>
-        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="competitor_tracking_other"></div>
-      </div>
-
-      <!-- ===== 通用问题 ===== -->
-      <div class="section-divider hidden branch-all">— 更多问题 / General questions —</div>
-
-      <!-- Q8: 最大痛点 -->
-      <div class="question-card hidden branch-all" data-q="8">
-        <div class="question-number">Q8</div>
-        <div class="question-title">哪些工作让您最头疼？（最多选 3 项）</div>
-        <div class="question-en">Which tasks frustrate you the most? (Max 3)</div>
-        <div class="max-hint">已选 <span id="painCount">0</span> / 3</div>
-        <div class="options" data-type="multi" data-field="biggest_pains" data-max="3">
-          <label class="option-label" data-value="写产品文案"><div class="option-checkbox"></div><span>写产品文案 <em class="en">Writing product copy</em></span></label>
-          <label class="option-label" data-value="做广告素材"><div class="option-checkbox"></div><span>做广告素材（图片/视频）<em class="en">Creating ad creatives</em></span></label>
-          <label class="option-label" data-value="追踪竞品"><div class="option-checkbox"></div><span>追踪竞品动态 <em class="en">Tracking competitors</em></span></label>
-          <label class="option-label" data-value="SEO优化"><div class="option-checkbox"></div><span>SEO 优化 <em class="en">SEO optimization</em></span></label>
-          <label class="option-label" data-value="多平台上架"><div class="option-checkbox"></div><span>多平台上架/本地化 <em class="en">Multi-platform listing / localization</em></span></label>
-          <label class="option-label" data-value="客服回复"><div class="option-checkbox"></div><span>客服回复 <em class="en">Customer service replies</em></span></label>
-          <label class="option-label" data-value="其他"><div class="option-checkbox"></div><span>其他 <em class="en">Other</em></span></label>
-        </div>
-        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="biggest_pains_other"></div>
-      </div>
-
-      <!-- Q9: 付费意愿 -->
-      <div class="question-card hidden branch-all" data-q="9">
-        <div class="question-number">Q9</div>
-        <div class="question-title">如果有一个 AI 工具能每天自动分析竞品广告并生成创意建议，您愿意每月付多少？</div>
-        <div class="question-en">If an AI tool could automatically analyze competitor ads and generate creative suggestions daily, how much would you pay monthly?</div>
-        <div class="options" data-type="single" data-field="willing_to_pay">
-          <label class="option-label" data-value="0"><div class="option-radio"></div><span>¥0 — 不需要这类工具 <em class="en">¥0 — Don't need this</em></span></label>
-          <label class="option-label" data-value="99以下"><div class="option-radio"></div><span>¥99 以下 <em class="en">Under ¥99</em></span></label>
-          <label class="option-label" data-value="99-299"><div class="option-radio"></div><span>¥99 ~ ¥299</span></label>
-          <label class="option-label" data-value="300-599"><div class="option-radio"></div><span>¥300 ~ ¥599</span></label>
-          <label class="option-label" data-value="600以上"><div class="option-radio"></div><span>¥600 以上 <em class="en">Over ¥600</em></span></label>
-        </div>
-      </div>
-
-      <!-- Q10: 痛点评分 -->
-      <div class="question-card hidden branch-all" data-q="10">
-        <div class="question-number">Q10</div>
-        <div class="question-title">请对以下维度的痛点程度打分</div>
-        <div class="question-en">Rate the pain level for each dimension (1 = not painful, 5 = very painful)</div>
-        <div class="slider-group">
-          <div class="slider-item">
-            <div class="slider-label"><span>创意素材制作效率 <em class="en">Creative efficiency</em></span><span class="slider-value">3</span></div>
-            <input type="range" min="1" max="5" value="3" data-field="pain_creative" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
-          </div>
-          <div class="slider-item">
-            <div class="slider-label"><span>竞品情报获取能力 <em class="en">Competitor intelligence</em></span><span class="slider-value">3</span></div>
-            <input type="range" min="1" max="5" value="3" data-field="pain_intelligence" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
-          </div>
-          <div class="slider-item">
-            <div class="slider-label"><span>多平台/多语言内容管理 <em class="en">Multi-platform / multilingual</em></span><span class="slider-value">3</span></div>
-            <input type="range" min="1" max="5" value="3" data-field="pain_multilingual" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
-          </div>
-          <div class="slider-item">
-            <div class="slider-label"><span>广告投放效果优化 <em class="en">Ad optimization</em></span><span class="slider-value">3</span></div>
-            <input type="range" min="1" max="5" value="3" data-field="pain_ad_optimize" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
-          </div>
-          <div class="slider-item">
-            <div class="slider-label"><span>整体运营效率 <em class="en">Overall efficiency</em></span><span class="slider-value">3</span></div>
-            <input type="range" min="1" max="5" value="3" data-field="pain_efficiency" oninput="this.previousElementSibling.querySelector('.slider-value').textContent=this.value">
-          </div>
-        </div>
-      </div>
-
-      <!-- Q11: AI工具不足 -->
-      <div class="question-card hidden branch-all" data-q="11">
-        <div class="question-number">Q11</div>
-        <div class="question-title">您觉得现有 AI 工具最缺什么？</div>
-        <div class="question-en">What do existing AI tools lack the most?</div>
-        <div class="options" data-type="single" data-field="ai_tool_gap">
-          <label class="option-label" data-value="中文支持不好"><div class="option-radio"></div><span>中文支持不好 <em class="en">Poor Chinese support</em></span></label>
-          <label class="option-label" data-value="不够智能"><div class="option-radio"></div><span>不够智能，生成内容需大量修改 <em class="en">Not smart enough, needs heavy editing</em></span></label>
-          <label class="option-label" data-value="太贵"><div class="option-radio"></div><span>太贵了 <em class="en">Too expensive</em></span></label>
-          <label class="option-label" data-value="功能太分散"><div class="option-radio"></div><span>功能太分散，要用很多工具 <em class="en">Too fragmented, need many tools</em></span></label>
-          <label class="option-label" data-value="不了解"><div class="option-radio"></div><span>不太了解有哪些工具 <em class="en">Don't know what tools exist</em></span></label>
-          <label class="option-label" data-value="其他"><div class="option-radio"></div><span>其他 <em class="en">Other</em></span></label>
-        </div>
-        <div class="other-input"><input type="text" class="text-input" placeholder="请补充说明 / Please specify" data-other-field="ai_tool_gap_other"></div>
-      </div>
-
-      <!-- Q12: 深度交流 -->
-      <div class="question-card hidden branch-all" data-q="12">
-        <div class="question-number">Q12</div>
-        <div class="question-title">如果后续有更深入的交流机会，您方便留下联系方式吗？</div>
-        <div class="question-en">Would you like to leave your contact for further discussion?</div>
-        <div class="options" data-type="single" data-field="willing_interview">
-          <label class="option-label" data-value="愿意"><div class="option-radio"></div><span>可以，欢迎联系我 <em class="en">Sure, feel free to reach out</em></span></label>
-          <label class="option-label" data-value="不愿意"><div class="option-radio"></div><span>暂时不用 <em class="en">Not right now</em></span></label>
-        </div>
-        <div class="contact-section" id="contactSection">
-          <label>方便的话请留下至少一项联系方式<br><em class="en">Please leave at least one contact method</em></label>
-          <input type="text" class="text-input" placeholder="微信号 / WeChat ID" id="contactWechat">
-          <input type="text" class="text-input" placeholder="手机号 / Phone" id="contactPhone">
-          <input type="text" class="text-input" placeholder="邮箱 / Email" id="contactEmail">
-        </div>
-      </div>
-
-      <!-- Buttons -->
-      <div class="btn-group">
-        <button type="button" class="btn btn-secondary" id="btnPrev" style="display:none">上一题</button>
-        <button type="button" class="btn btn-primary" id="btnNext">下一题</button>
-      </div>
-      <div class="submit-error" id="submitError"></div>
+    <!-- Floating Continue Button (for multi-select and slider) -->
+    <div class="floating-continue" id="floatingContinue">
+      <button class="btn btn-primary" id="continueBtn" onclick="goNext()" disabled>
+        继续 / Continue
+      </button>
     </div>
 
-    <!-- Success -->
+    <!-- Success Page -->
     <div class="success-page" id="successPage">
-      <div class="icon">&#10003;</div>
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
       <h2>感谢您的参与！</h2>
-      <p>您的反馈对我们非常重要。</p>
+      <p>您的反馈对我们非常重要</p>
       <p class="en-sub">Thank you! Your feedback is very important to us.</p>
+      <button class="continue-deep-btn" id="continueDeepBtn" onclick="continueDeepSurvey()" style="display:none">
+        继续深度调研 / Continue to Detailed Survey
+      </button>
     </div>
   </div>
 
   <script>
-    const formData = {};
-    let currentStep = 0;
+    // ============================================
+    // Survey Engine
+    // ============================================
+    let surveyType = null; // 'shallow' or 'deep'
+    let questions = [];
     let visibleQuestions = [];
+    let currentStep = 0;
+    let formData = {};
+    let isSubmitting = false;
 
-    async function submitResponse(data) {
-      if (window.CrossPilotData && window.CrossPilotData.submitResponse) {
-        return window.CrossPilotData.submitResponse(data);
+    // Section icons mapping
+    const SECTION_ICONS = {
+      'profile': '👤',
+      'branch': '💼',
+      'operations': '📦',
+      'needs': '💡',
+      'ai_tools': '🤖',
+      'ad_creative': '📢',
+      'validation': '✅',
+      'contact': '📞'
+    };
+
+    // Start survey
+    function startSurvey(type) {
+      surveyType = type;
+      const config = window.SURVEY_CONFIG[type];
+
+      // Build question list
+      if (type === 'shallow') {
+        questions = config.questions;
+      } else {
+        // Deep survey: include shallow Q1-Q7 + deep-specific questions
+        const shallowQuestions = window.SURVEY_CONFIG.shallow.questions;
+        const shallowBase = shallowQuestions.filter(q => !q.deepOnly);
+        const deepExtra = config.questions.filter(q => q.deepOnly);
+        questions = [...shallowBase, ...deepExtra];
       }
-      throw new Error('数据服务没有加载成功，请刷新页面后重试。');
+
+      // Add survey_type to form data
+      formData.survey_type = type;
+
+      // Update UI
+      document.getElementById('landingPage').style.display = 'none';
+      document.getElementById('surveyPage').style.display = 'flex';
+
+      // Calculate visible questions
+      updateVisibleQuestions();
+      showQuestion();
+
+      // Track start time
+      formData.started_at = new Date().toISOString();
     }
 
-    function getVisibleQuestions() {
-      const type = formData.business_type;
-      const all = ['1', '2', '3', '4'];
-      if (type === '平台卖家') {
-        all.push('A5', 'A6', 'A7');
-      } else if (type === '独立站卖家') {
-        all.push('B5', 'B6', 'B7');
-      } else if (type === '两者都做') {
-        all.push('A5', 'A6', 'B6', 'B7');
-      }
-      for (let i = 8; i <= 12; i++) all.push(String(i));
-      return all;
-    }
-
-    function showStep() {
-      visibleQuestions = getVisibleQuestions();
-      document.querySelectorAll('.question-card, .section-divider').forEach(el => el.classList.add('hidden'));
-
-      const currentQ = visibleQuestions[currentStep];
-      const card = document.querySelector(`[data-q="${currentQ}"]`);
-      if (card) card.classList.remove('hidden');
-
-      // Show section dividers
-      const type = formData.business_type;
-      if (currentQ === 'A5') {
-        const div = document.querySelector('.section-divider.branch-platform');
-        if (div && (type === '平台卖家' || type === '两者都做')) div.classList.remove('hidden');
-      }
-      if (currentQ === 'B5' || (currentQ === 'B6' && type === '两者都做')) {
-        const div = document.querySelector('.section-divider.branch-indie');
-        if (div && (type === '独立站卖家' || type === '两者都做')) div.classList.remove('hidden');
-      }
-      if (currentQ === '8') {
-        const div = document.querySelector('.section-divider.branch-all');
-        if (div) div.classList.remove('hidden');
-      }
-
-      // Progress
-      const total = visibleQuestions.length;
-      document.getElementById('progressNum').textContent = currentStep + 1;
-      document.getElementById('progressTotal').textContent = total;
-      document.getElementById('progressFill').style.width = ((currentStep + 1) / total * 100) + '%';
-
-      // Buttons
-      document.getElementById('btnPrev').style.display = currentStep > 0 ? '' : 'none';
-      document.getElementById('btnNext').textContent = currentStep >= total - 1 ? '提交 / Submit' : '下一题';
-      document.getElementById('btnNext').className = currentStep >= total - 1 ? 'btn btn-submit' : 'btn btn-primary';
-    }
-
-    function collectCurrentData() {
-      const currentQ = visibleQuestions[currentStep];
-      const card = document.querySelector(`[data-q="${currentQ}"]`);
-      if (!card) return;
-
-      card.querySelectorAll('input[type="range"]').forEach(slider => {
-        formData[slider.dataset.field] = parseInt(slider.value);
+    // Update visible questions based on branch logic
+    function updateVisibleQuestions() {
+      visibleQuestions = questions.filter(q => {
+        // Check branch condition
+        if (q.branch) {
+          const branchValue = formData[q.branch.field];
+          if (Array.isArray(branchValue)) {
+            return q.branch.values.some(v => branchValue.includes(v));
+          }
+          return q.branch.values.includes(branchValue);
+        }
+        return true;
       });
+    }
 
-      if (currentQ === '12') {
-        const wechat = document.getElementById('contactWechat').value.trim();
-        const phone = document.getElementById('contactPhone').value.trim();
-        const email = document.getElementById('contactEmail').value.trim();
-        if (wechat) { formData.contact_method = '微信'; formData.contact_info = wechat; }
-        else if (phone) { formData.contact_method = '手机'; formData.contact_info = phone; }
-        else if (email) { formData.contact_method = '邮箱'; formData.contact_info = email; }
+    // Render a single question
+    function renderQuestion(q) {
+      const container = document.getElementById('questionContainer');
+
+      // Section divider
+      if (q.section && q.sectionTitle) {
+        const prevQ = visibleQuestions[visibleQuestions.indexOf(q) - 1];
+        if (!prevQ || prevQ.section !== q.section) {
+          const sectionDiv = document.createElement('div');
+          sectionDiv.className = 'section-divider-card';
+          sectionDiv.innerHTML = `
+            <div class="section-icon">${SECTION_ICONS[q.section] || '📝'}</div>
+            <div class="section-title">${q.sectionTitle.zh}</div>
+            <div class="section-subtitle">${q.sectionTitle.en}</div>
+          `;
+          container.appendChild(sectionDiv);
+
+          // Auto-advance section divider after 800ms
+          setTimeout(() => {
+            sectionDiv.style.display = 'none';
+          }, 800);
+        }
       }
+
+      // Question card
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.id = `question-${q.id}`;
+
+      let html = `
+        <div class="question-number">${getQuestionNumber(q)}</div>
+        <div class="question-title">${q.zh}</div>
+        <div class="question-en">${q.en}</div>
+      `;
+
+      if (q.hint) {
+        html += `<div class="question-hint">${q.hint.zh} / ${q.hint.en}</div>`;
+      }
+
+      // Render based on type
+      switch (q.type) {
+        case 'single':
+          html += renderSingleOptions(q);
+          break;
+        case 'multi':
+          html += renderMultiOptions(q);
+          break;
+        case 'slider':
+          html += renderSliders(q);
+          break;
+        case 'textarea':
+          html += renderTextarea(q);
+          break;
+        case 'contact':
+          html += renderContact(q);
+          break;
+      }
+
+      card.innerHTML = html;
+      container.appendChild(card);
+
+      // Attach event listeners
+      attachEventListeners(q, card);
     }
 
-    function canProceed() {
-      const currentQ = visibleQuestions[currentStep];
-      const card = document.querySelector(`[data-q="${currentQ}"]`);
-      if (!card) return true;
-      const single = card.querySelector('.options[data-type="single"]');
-      if (single && !single.querySelector('.option-label.selected')) return false;
-      return true;
-    }
-
-    // Option click handlers
-    document.querySelectorAll('.option-label').forEach(label => {
-      label.addEventListener('click', function(e) {
-        const optionsDiv = this.closest('.options');
-        const type = optionsDiv.dataset.type;
-        const field = optionsDiv.dataset.field;
-        const value = this.dataset.value;
-        const card = this.closest('.question-card');
-        const otherInput = card.querySelector('.other-input');
-
-        if (type === 'single') {
-          optionsDiv.querySelectorAll('.option-label').forEach(l => l.classList.remove('selected'));
-          this.classList.add('selected');
-          formData[field] = value;
-
-          // Show/hide other input
-          if (otherInput) {
-            if (value === '其他') {
-              otherInput.classList.add('show');
-              otherInput.querySelector('input').focus();
-            } else {
-              otherInput.classList.remove('show');
-              otherInput.querySelector('input').value = '';
-            }
-          }
-
-          // Contact section
-          if (field === 'willing_interview') {
-            const cs = document.getElementById('contactSection');
-            if (value === '愿意') cs.classList.add('show');
-            else cs.classList.remove('show');
-          }
-        } else {
-          const max = parseInt(optionsDiv.dataset.max) || 99;
-          if (this.classList.contains('selected')) {
-            this.classList.remove('selected');
-          } else {
-            const selected = optionsDiv.querySelectorAll('.option-label.selected').length;
-            if (selected >= max) {
-              // Flash the hint
-              const hint = card.querySelector('.max-hint');
-              if (hint) { hint.style.color = '#ff6b6b'; setTimeout(() => hint.style.color = '', 500); }
-              return;
-            }
-            this.classList.add('selected');
-          }
-          const values = [];
-          optionsDiv.querySelectorAll('.option-label.selected').forEach(l => values.push(l.dataset.value));
-          formData[field] = values;
-
-          if (field === 'biggest_pains') {
-            document.getElementById('painCount').textContent = values.length;
-          }
-
-          // Show/hide other input for multi-select
-          if (otherInput) {
-            const hasOther = values.includes('其他');
-            if (hasOther) {
-              otherInput.classList.add('show');
-            } else {
-              otherInput.classList.remove('show');
-              otherInput.querySelector('input').value = '';
-            }
-          }
+    // Render single-select options
+    function renderSingleOptions(q) {
+      let html = '<div class="options">';
+      q.options.forEach(opt => {
+        const selected = formData[q.field] === opt.value ? 'selected' : '';
+        html += `
+          <label class="option-label ${selected}" data-value="${opt.value}" data-field="${q.field}">
+            <div class="option-radio"></div>
+            <div class="option-content">
+              <div class="option-text">${opt.zh}</div>
+              ${opt.desc ? `<div class="option-desc">${opt.desc.zh}</div>` : ''}
+              <div class="option-en">${opt.en}</div>
+            </div>
+            ${selected ? '<span class="option-check">✓</span>' : ''}
+          </label>
+        `;
+        if (opt.hasOther) {
+          const otherValue = formData[`${q.field}_other`] || '';
+          html += `
+            <div class="other-input ${selected && opt.value === '其他' ? 'show' : ''}">
+              <input type="text" class="text-input" placeholder="请补充说明 / Please specify"
+                     data-other-field="${q.field}_other" value="${otherValue}">
+            </div>
+          `;
         }
       });
-    });
+      html += '</div>';
+      return html;
+    }
 
-    document.getElementById('btnNext').addEventListener('click', function() {
-      collectCurrentData();
-      if (!canProceed()) {
-        alert('请先选择一个选项 / Please select an option first');
+    // Render multi-select options
+    function renderMultiOptions(q) {
+      const selected = Array.isArray(formData[q.field]) ? formData[q.field] : [];
+      let html = '';
+
+      if (q.maxSelect) {
+        html += `<div class="max-hint">已选 <span class="count">${selected.length}</span> / ${q.maxSelect}</div>`;
+      }
+
+      html += '<div class="options">';
+      q.options.forEach(opt => {
+        const isSelected = selected.includes(opt.value);
+        html += `
+          <label class="option-label ${isSelected ? 'selected' : ''}" data-value="${opt.value}" data-field="${q.field}">
+            <div class="option-checkbox"></div>
+            <div class="option-content">
+              <div class="option-text">${opt.zh}</div>
+              ${opt.desc ? `<div class="option-desc">${opt.desc.zh}</div>` : ''}
+              <div class="option-en">${opt.en}</div>
+            </div>
+          </label>
+        `;
+        if (opt.hasOther) {
+          const otherValue = formData[`${q.field}_other`] || '';
+          html += `
+            <div class="other-input ${isSelected ? 'show' : ''}">
+              <input type="text" class="text-input" placeholder="请补充说明 / Please specify"
+                     data-other-field="${q.field}_other" value="${otherValue}">
+            </div>
+          `;
+        }
+      });
+      html += '</div>';
+      return html;
+    }
+
+    // Render sliders
+    function renderSliders(q) {
+      let html = '<div class="slider-group">';
+      q.fields.forEach(f => {
+        const value = formData[f.field] || q.default;
+        html += `
+          <div class="slider-item">
+            <div class="slider-label">
+              <div>
+                <div class="slider-label-text">${f.zh}</div>
+                <div class="slider-label-en">${f.en}</div>
+              </div>
+              <div class="slider-value">${value}</div>
+            </div>
+            <input type="range" min="${q.min}" max="${q.max}" value="${value}"
+                   data-field="${f.field}" oninput="updateSliderValue(this)">
+          </div>
+        `;
+      });
+      html += '</div>';
+      return html;
+    }
+
+    // Render textarea
+    function renderTextarea(q) {
+      const value = formData[q.field] || '';
+      return `
+        <textarea class="textarea-input" data-field="${q.field}"
+                  placeholder="${q.placeholder.zh} / ${q.placeholder.en}">${value}</textarea>
+      `;
+    }
+
+    // Render contact question
+    function renderContact(q) {
+      const selected = formData[q.field];
+      let html = '<div class="options">';
+      q.options.forEach(opt => {
+        const isSelected = selected === opt.value;
+        html += `
+          <label class="option-label ${isSelected ? 'selected' : ''}" data-value="${opt.value}" data-field="${q.field}">
+            <div class="option-radio"></div>
+            <div class="option-content">
+              <div class="option-text">${opt.zh}</div>
+              <div class="option-en">${opt.en}</div>
+            </div>
+            ${isSelected ? '<span class="option-check">✓</span>' : ''}
+          </label>
+        `;
+      });
+      html += '</div>';
+
+      // Contact fields
+      const showContact = selected === '愿意';
+      html += `<div class="contact-section ${showContact ? 'show' : ''}" id="contactSection">`;
+      html += '<div class="contact-fields">';
+      html += '<div class="contact-label">方便的话请留下至少一项联系方式 / Please leave at least one contact method</div>';
+      q.contactFields.forEach(f => {
+        const value = formData[f.field] || '';
+        html += `<input type="text" class="text-input" placeholder="${f.placeholder.zh} / ${f.placeholder.en}" data-field="${f.field}" value="${value}">`;
+      });
+      html += '</div></div>';
+
+      return html;
+    }
+
+    // Attach event listeners
+    function attachEventListeners(q, card) {
+      // Single-select options
+      if (q.type === 'single' || q.type === 'contact') {
+        card.querySelectorAll('.option-label').forEach(label => {
+          label.addEventListener('click', () => {
+            const value = label.dataset.value;
+            const field = label.dataset.field;
+
+            // Update selection
+            card.querySelectorAll('.option-label').forEach(l => {
+              l.classList.remove('selected');
+              l.querySelector('.option-check')?.remove();
+            });
+            label.classList.add('selected');
+            label.insertAdjacentHTML('beforeend', '<span class="option-check">✓</span>');
+
+            // Update form data
+            formData[field] = value;
+
+            // Handle "Other" input
+            const otherInput = label.closest('.options').querySelector('.other-input');
+            if (otherInput) {
+              const hasOther = q.options.find(o => o.value === value)?.hasOther;
+              otherInput.classList.toggle('show', hasOther);
+            }
+
+            // Handle contact section
+            if (q.type === 'contact' && q.contactFields) {
+              const contactSection = card.querySelector('.contact-section');
+              contactSection.classList.toggle('show', value === '愿意');
+            }
+
+            // Auto-advance for single-select (not contact)
+            if (q.type === 'single') {
+              setTimeout(() => {
+                // Collect other input if visible
+                const otherInput = card.querySelector('.other-input.show input');
+                if (otherInput && otherInput.value.trim()) {
+                  formData[`${field}_other`] = otherInput.value.trim();
+                }
+                goNext();
+              }, 150);
+            }
+          });
+        });
+      }
+
+      // Multi-select options
+      if (q.type === 'multi') {
+        card.querySelectorAll('.option-label').forEach(label => {
+          label.addEventListener('click', () => {
+            const value = label.dataset.value;
+            const field = label.dataset.field;
+            const maxSelect = q.maxSelect || 99;
+
+            // Toggle selection
+            if (label.classList.contains('selected')) {
+              label.classList.remove('selected');
+              formData[field] = (formData[field] || []).filter(v => v !== value);
+            } else {
+              if ((formData[field] || []).length >= maxSelect) {
+                // Flash hint
+                const hint = card.querySelector('.max-hint');
+                if (hint) {
+                  hint.style.color = '#FF3B30';
+                  setTimeout(() => hint.style.color = '', 500);
+                }
+                return;
+              }
+              label.classList.add('selected');
+              formData[field] = [...(formData[field] || []), value];
+            }
+
+            // Update count
+            const countEl = card.querySelector('.max-hint .count');
+            if (countEl) {
+              countEl.textContent = (formData[field] || []).length;
+            }
+
+            // Handle "Other" input
+            const otherInput = label.querySelector('.other-input') || label.nextElementSibling;
+            if (otherInput?.classList.contains('other-input')) {
+              otherInput.classList.toggle('show', label.classList.contains('selected'));
+            }
+
+            // Show/hide continue button
+            updateContinueButton();
+          });
+        });
+      }
+
+      // Slider inputs
+      if (q.type === 'slider') {
+        card.querySelectorAll('input[type="range"]').forEach(slider => {
+          slider.addEventListener('input', () => {
+            formData[slider.dataset.field] = parseInt(slider.value);
+            updateContinueButton();
+          });
+        });
+      }
+
+      // Textarea
+      if (q.type === 'textarea') {
+        const textarea = card.querySelector('textarea');
+        textarea.addEventListener('input', () => {
+          formData[q.field] = textarea.value;
+          updateContinueButton();
+        });
+      }
+
+      // Text inputs (other fields, contact)
+      card.querySelectorAll('.text-input').forEach(input => {
+        input.addEventListener('input', () => {
+          formData[input.dataset.field] = input.value;
+        });
+      });
+    }
+
+    // Update slider value display
+    function updateSliderValue(slider) {
+      const valueDisplay = slider.parentElement.querySelector('.slider-value');
+      valueDisplay.textContent = slider.value;
+    }
+
+    // Update continue button visibility
+    function updateContinueButton() {
+      const q = visibleQuestions[currentStep];
+      if (!q) return;
+
+      const floatingContinue = document.getElementById('floatingContinue');
+      const continueBtn = document.getElementById('continueBtn');
+
+      if (q.type === 'multi') {
+        const selected = formData[q.field] || [];
+        const hasSelection = selected.length > 0;
+        floatingContinue.classList.toggle('visible', true);
+        continueBtn.disabled = !hasSelection;
+      } else if (q.type === 'slider') {
+        const hasChanged = q.fields.some(f => formData[f.field] !== undefined);
+        floatingContinue.classList.toggle('visible', true);
+        continueBtn.disabled = !hasChanged;
+      } else if (q.type === 'textarea') {
+        const hasContent = formData[q.field] && formData[q.field].trim().length > 0;
+        floatingContinue.classList.toggle('visible', true);
+        continueBtn.disabled = !hasContent;
+      } else {
+        floatingContinue.classList.remove('visible');
+      }
+    }
+
+    // Get question number
+    function getQuestionNumber(q) {
+      const idx = visibleQuestions.indexOf(q);
+      return `Q${idx + 1}`;
+    }
+
+    // Show current question
+    function showQuestion() {
+      const container = document.getElementById('questionContainer');
+      container.innerHTML = '';
+
+      if (currentStep >= visibleQuestions.length) {
+        submitSurvey();
         return;
       }
+
+      const q = visibleQuestions[currentStep];
+      renderQuestion(q);
+
+      // Update progress
+      updateProgress();
+
+      // Update back button
+      document.getElementById('backButton').classList.toggle('visible', currentStep > 0);
+
+      // Update continue button
+      updateContinueButton();
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Update progress
+    function updateProgress() {
+      const total = visibleQuestions.length;
+      const current = currentStep + 1;
+      const percent = (current / total) * 100;
+
+      document.getElementById('progressText').textContent = `${current} / ${total}`;
+      document.getElementById('progressFill').style.width = `${percent}%`;
+
+      // Update section name
+      const q = visibleQuestions[currentStep];
+      if (q?.sectionTitle) {
+        document.getElementById('progressSection').textContent = q.sectionTitle.zh;
+      }
+    }
+
+    // Go to next question
+    function goNext() {
+      // Collect any pending inputs
+      collectCurrentInputs();
+
       if (currentStep >= visibleQuestions.length - 1) {
         submitSurvey();
         return;
       }
-      currentStep++;
-      showStep();
-      window.scrollTo(0, 0);
-    });
 
-    document.getElementById('btnPrev').addEventListener('click', function() {
-      collectCurrentData();
-      if (currentStep > 0) {
-        currentStep--;
-        showStep();
-        window.scrollTo(0, 0);
+      // Animate out
+      const currentCard = document.getElementById(`question-${visibleQuestions[currentStep].id}`);
+      if (currentCard) {
+        currentCard.classList.add('slide-out');
       }
-    });
 
-    async function submitWithRetry(data, maxRetries = 2) {
-      for (let i = 0; i <= maxRetries; i++) {
-        try {
-          return await submitResponse(data);
-        } catch (err) {
-          if (i === maxRetries) throw err;
-          // 等待1秒后重试
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-      }
+      setTimeout(() => {
+        currentStep++;
+        updateVisibleQuestions();
+        showQuestion();
+      }, 250);
     }
 
-    async function submitSurvey() {
-      // 防止重复提交
-      if (window._submitting) return;
-      window._submitting = true;
+    // Go to previous question
+    function goBack() {
+      if (currentStep <= 0) return;
+
+      collectCurrentInputs();
+      currentStep--;
+      showQuestion();
+    }
+
+    // Collect current inputs
+    function collectCurrentInputs() {
+      const q = visibleQuestions[currentStep];
+      if (!q) return;
 
       // Collect other inputs
-      document.querySelectorAll('.other-input .text-input').forEach(input => {
-        if (input.dataset.otherField && input.value.trim()) {
-          formData[input.dataset.otherField] = input.value.trim();
+      document.querySelectorAll('.other-input.show input').forEach(input => {
+        if (input.value.trim()) {
+          formData[input.dataset.field] = input.value.trim();
         }
       });
 
-      const button = document.getElementById('btnNext');
-      const errorBox = document.getElementById('submitError');
-      const originalText = button.textContent;
-      errorBox.textContent = '';
-      button.disabled = true;
-      button.textContent = '提交中... / Submitting...';
-
-      try {
-        // 检查网络状态
-        if (!navigator.onLine) {
-          throw new Error('网络已断开，请检查网络连接后重试 / Network disconnected, please check your connection');
+      // Collect contact inputs
+      document.querySelectorAll('.contact-section.show input').forEach(input => {
+        if (input.value.trim()) {
+          formData[input.dataset.field] = input.value.trim();
         }
+      });
 
-        const data = await submitWithRetry(formData);
-        if (data.success) {
-          document.getElementById('surveyForm').style.display = 'none';
-          document.getElementById('successPage').style.display = 'block';
-          window.scrollTo(0, 0);
-        } else {
-          throw new Error(data.error || 'Submission failed');
+      // Collect textarea
+      if (q.type === 'textarea') {
+        const textarea = document.querySelector(`#question-${q.id} textarea`);
+        if (textarea) {
+          formData[q.field] = textarea.value;
         }
-      } catch (err) {
-        const message = err && err.message ? err.message : '提交失败，请稍后重试 / Submission failed, please try again';
-        errorBox.textContent = message;
-        alert(message);
-        console.error(err);
-        button.disabled = false;
-        button.textContent = originalText;
-      } finally {
-        window._submitting = false;
       }
     }
 
-    showStep();
+    // Submit survey
+    async function submitSurvey() {
+      if (isSubmitting) return;
+      isSubmitting = true;
+
+      // Collect final inputs
+      collectCurrentInputs();
+
+      // Add completion time
+      formData.completed_at = new Date().toISOString();
+
+      try {
+        // Check network
+        if (!navigator.onLine) {
+          throw new Error('网络已断开，请检查网络连接后重试');
+        }
+
+        // Submit with retry
+        const result = await submitWithRetry(formData);
+
+        if (result.success) {
+          showSuccessPage();
+        } else {
+          throw new Error(result.error || '提交失败');
+        }
+      } catch (err) {
+        alert(err.message || '提交失败，请稍后重试');
+        console.error('Submit error:', err);
+      } finally {
+        isSubmitting = false;
+      }
+    }
+
+    // Submit with retry
+    async function submitWithRetry(data, maxRetries = 2) {
+      for (let i = 0; i <= maxRetries; i++) {
+        try {
+          return await window.CrossPilotData.submitResponse(data);
+        } catch (err) {
+          if (i === maxRetries) throw err;
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      }
+    }
+
+    // Show success page
+    function showSuccessPage() {
+      document.getElementById('questionContainer').style.display = 'none';
+      document.getElementById('floatingContinue').style.display = 'none';
+      document.getElementById('backButton').style.display = 'none';
+      document.getElementById('progressFill').style.width = '100%';
+
+      const successPage = document.getElementById('successPage');
+      successPage.style.display = 'block';
+
+      // Show "Continue to deep survey" button if shallow
+      if (surveyType === 'shallow') {
+        document.getElementById('continueDeepBtn').style.display = 'inline-block';
+      }
+    }
+
+    // Continue to deep survey
+    function continueDeepSurvey() {
+      surveyType = 'deep';
+      const deepConfig = window.SURVEY_CONFIG.deep;
+      const shallowQuestions = window.SURVEY_CONFIG.shallow.questions;
+      const shallowBase = shallowQuestions.filter(q => !q.deepOnly);
+      const deepExtra = deepConfig.questions.filter(q => q.deepOnly);
+      questions = [...shallowBase, ...deepExtra];
+
+      formData.survey_type = 'deep';
+
+      // Reset UI
+      document.getElementById('successPage').style.display = 'none';
+      document.getElementById('questionContainer').style.display = 'block';
+      document.getElementById('floatingContinue').style.display = 'block';
+      document.getElementById('backButton').style.display = 'block';
+
+      // Start from where shallow ended (skip Q1-Q7)
+      currentStep = shallowBase.length;
+      updateVisibleQuestions();
+      showQuestion();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Prevent zoom on double tap
+      document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - (window.lastTouchEnd || 0) < 300) {
+          e.preventDefault();
+        }
+        window.lastTouchEnd = now;
+      }, false);
+    });
   </script>
 </body>
 </html>
