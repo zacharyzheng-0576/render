@@ -491,6 +491,7 @@
       surveyType = type;
       continueFromShallow = isContinue;
       isLastQuestionAnswered = false;
+      lastQuestionClicked = false;
       const config = window.SURVEY_CONFIG[type];
 
       if (type === 'shallow') {
@@ -958,11 +959,22 @@
       document.getElementById('prev-spacer').classList.toggle('hidden', currentStep > 0);
     }
 
+    let lastQuestionClicked = false;
+
     function goNext() {
       collectInputs();
 
-      // 如果是最后一题，直接提交
+      // 如果是最后一题
       if (currentStep >= visibleQuestions.length - 1) {
+        // 如果从浅度继续且是第一次点击，标记为已点击，不提交
+        if (continueFromShallow && !lastQuestionClicked) {
+          lastQuestionClicked = true;
+          const nextBtn = document.getElementById('next-btn');
+          nextBtn.textContent = '提交问卷';
+          nextBtn.disabled = false;
+          return;
+        }
+        // 否则提交
         submitSurvey();
         return;
       }
