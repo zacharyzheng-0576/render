@@ -25,8 +25,8 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'PingFang SC', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background-color: #F5F5F7;
-      color: #1D1D1F;
+      background-color: #000000;
+      color: #F5F5F7;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
@@ -61,9 +61,10 @@
 
     /* Card styles */
     .apple-card {
-      background: #FFFFFF;
+      background: #1C1C1E;
       border-radius: 20px;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .apple-card-hover {
@@ -71,7 +72,8 @@
     }
     .apple-card-hover:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 30px rgba(0, 113, 227, 0.15);
+      border-color: rgba(0, 113, 227, 0.3);
     }
 
     /* Button styles */
@@ -120,7 +122,7 @@
       padding: 8px 12px;
     }
     .apple-btn-text:hover {
-      background-color: rgba(0, 113, 227, 0.08);
+      background-color: rgba(0, 113, 227, 0.15);
     }
 
     /* Content animation */
@@ -133,27 +135,27 @@
       position: relative;
       padding: 16px 20px;
       border-radius: 14px;
-      background: #F5F5F7;
+      background: #2C2C2E;
       border: 2px solid transparent;
       cursor: pointer;
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
     }
     .option-item:hover {
-      background: #E8E8ED;
+      background: #3A3A3C;
     }
     .option-item:active {
       transform: scale(0.98);
     }
     .option-item.selected {
       border-color: #0071E3;
-      background: rgba(0, 113, 227, 0.04);
+      background: rgba(0, 113, 227, 0.15);
     }
 
     .option-radio {
       width: 22px;
       height: 22px;
-      border: 2px solid #C7C7CC;
+      border: 2px solid #636366;
       border-radius: 50%;
       transition: all 0.2s ease;
       flex-shrink: 0;
@@ -166,7 +168,7 @@
     .option-check {
       width: 22px;
       height: 22px;
-      border: 2px solid #C7C7CC;
+      border: 2px solid #636366;
       border-radius: 6px;
       transition: all 0.2s ease;
       flex-shrink: 0;
@@ -182,7 +184,7 @@
       appearance: none;
       width: 100%;
       height: 6px;
-      background: #E5E5EA;
+      background: #3A3A3C;
       border-radius: 3px;
       outline: none;
     }
@@ -195,25 +197,26 @@
       border: 2px solid #0071E3;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
     }
 
     /* Input styles */
     .apple-input {
       width: 100%;
       padding: 12px 16px;
-      border: 1px solid #E5E5EA;
+      border: 1px solid #3A3A3C;
       border-radius: 10px;
       font-size: 15px;
       outline: none;
       transition: border-color 0.2s ease;
-      background: #FFFFFF;
+      background: #2C2C2E;
+      color: #F5F5F7;
     }
     .apple-input:focus {
       border-color: #0071E3;
     }
     .apple-input::placeholder {
-      color: #AEAEB2;
+      color: #636366;
     }
 
     /* Other input animation */
@@ -245,7 +248,7 @@
     /* Progress bar */
     .progress-bar {
       height: 3px;
-      background: #E5E5EA;
+      background: #3A3A3C;
       border-radius: 2px;
       overflow: hidden;
     }
@@ -277,6 +280,17 @@
       transform: translateX(-50%) translateY(0);
       opacity: 1;
     }
+
+    /* Section header */
+    #section-header {
+      border-bottom-color: #3A3A3C !important;
+    }
+
+    /* Navigation bar */
+    .nav-bar {
+      background: #1C1C1E !important;
+      border-color: #3A3A3C !important;
+    }
   </style>
 </head>
 <body class="relative min-h-screen">
@@ -295,32 +309,32 @@
         <button onclick="setLanguage('zh')" id="lang-zh" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-[#0071E3] text-white">
           中文
         </button>
-        <button onclick="setLanguage('en')" id="lang-en" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-[#F5F5F7] text-[#86868B] hover:bg-[#E8E8ED]">
+        <button onclick="setLanguage('en')" id="lang-en" class="px-4 py-2 rounded-full text-sm font-medium transition-all bg-[#2C2C2E] text-[#98989D] hover:bg-[#3A3A3C]">
           English
         </button>
       </div>
 
-      <h1 id="home-title" class="text-[32px] md:text-[44px] font-bold tracking-tight text-[#1D1D1F] mb-4 leading-tight">
+      <h1 id="home-title" class="text-[32px] md:text-[44px] font-bold tracking-tight text-white mb-4 leading-tight">
         跨境电商卖家需求调研
       </h1>
-      <p id="home-subtitle" class="text-lg md:text-xl text-[#86868B] mb-12 max-w-xl mx-auto leading-relaxed">
+      <p id="home-subtitle" class="text-lg md:text-xl text-[#98989D] mb-12 max-w-xl mx-auto leading-relaxed">
         了解您的核心需求与业务痛点，帮助我们为您提供更精准的服务。
       </p>
 
       <div class="grid md:grid-cols-2 gap-5 w-full">
         <!-- 快速调研 -->
         <div class="apple-card apple-card-hover p-7 md:p-8 text-left cursor-pointer" onclick="startSurvey('shallow')">
-          <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center mb-5">
+          <div class="w-12 h-12 rounded-2xl bg-[#0071E3]/20 flex items-center justify-center mb-5">
             <svg class="w-6 h-6 text-[#0071E3]" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3 id="shallow-title" class="text-xl font-semibold text-[#1D1D1F] mb-2">快速调研</h3>
-          <p id="shallow-desc" class="text-[15px] text-[#86868B] mb-6 leading-relaxed">
+          <h3 id="shallow-title" class="text-xl font-semibold text-white mb-2">快速调研</h3>
+          <p id="shallow-desc" class="text-[15px] text-[#98989D] mb-6 leading-relaxed">
             聚焦核心业务指标，快速评估您的基本需求与现状。
           </p>
           <div class="flex items-center justify-between">
-            <span id="shallow-info" class="text-xs font-medium text-[#86868B] bg-[#F5F5F7] px-3 py-1.5 rounded-full">
+            <span id="shallow-info" class="text-xs font-medium text-[#98989D] bg-[#2C2C2E] px-3 py-1.5 rounded-full">
               约 5 分钟 · 12 题
             </span>
             <span id="shallow-btn" class="text-[#0071E3] text-sm font-medium flex items-center gap-1">
@@ -334,20 +348,20 @@
 
         <!-- 深度调研 -->
         <div class="apple-card apple-card-hover p-7 md:p-8 text-left cursor-pointer" onclick="startSurvey('deep')">
-          <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center mb-5">
-            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <div class="w-12 h-12 rounded-2xl bg-[#5856D6]/20 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-[#5856D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
             </svg>
           </div>
-          <h3 id="deep-title" class="text-xl font-semibold text-[#1D1D1F] mb-2">深度调研</h3>
-          <p id="deep-desc" class="text-[15px] text-[#86868B] mb-6 leading-relaxed">
+          <h3 id="deep-title" class="text-xl font-semibold text-white mb-2">深度调研</h3>
+          <p id="deep-desc" class="text-[15px] text-[#98989D] mb-6 leading-relaxed">
             全面剖析业务细节与痛点，为您匹配高度定制化的解决方案。
           </p>
           <div class="flex items-center justify-between">
-            <span id="deep-info" class="text-xs font-medium text-[#86868B] bg-[#F5F5F7] px-3 py-1.5 rounded-full">
+            <span id="deep-info" class="text-xs font-medium text-[#98989D] bg-[#2C2C2E] px-3 py-1.5 rounded-full">
               约 10 分钟 · 25 题
             </span>
-            <span id="deep-btn" class="text-purple-600 text-sm font-medium flex items-center gap-1">
+            <span id="deep-btn" class="text-[#5856D6] text-sm font-medium flex items-center gap-1">
               开始
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -367,11 +381,11 @@
         <div class="flex justify-between items-center mb-3">
           <div class="flex items-center gap-3">
             <span class="text-xs font-bold text-[#0071E3]">Crosspilot AI</span>
-            <span class="text-[10px] text-[#C7C7CC]">|</span>
-            <span id="progress-text" class="text-xs font-semibold text-[#86868B] tracking-wider uppercase">进度 1 / 12</span>
+            <span class="text-[10px] text-[#48484A]">|</span>
+            <span id="progress-text" class="text-xs font-semibold text-[#98989D] tracking-wider uppercase">进度 1 / 12</span>
           </div>
-          <button onclick="exitSurvey()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-            <svg class="w-5 h-5 text-[#86868B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onclick="exitSurvey()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-[#3A3A3C] transition-colors">
+            <svg class="w-5 h-5 text-[#98989D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
@@ -389,9 +403,9 @@
         <!-- Question Area -->
         <div id="question-area">
           <div id="question-number" class="text-xs font-bold text-[#0071E3] tracking-widest uppercase mb-3"></div>
-          <h2 id="question-title" class="text-[22px] md:text-[26px] font-semibold text-[#1D1D1F] mb-1.5 leading-snug tracking-tight"></h2>
-          <p id="question-en" class="text-[15px] text-[#86868B] mb-1.5"></p>
-          <p id="question-hint" class="text-[13px] text-[#AEAEB2] mb-6 hidden"></p>
+          <h2 id="question-title" class="text-[22px] md:text-[26px] font-semibold text-white mb-1.5 leading-snug tracking-tight"></h2>
+          <p id="question-en" class="text-[15px] text-[#98989D] mb-1.5"></p>
+          <p id="question-hint" class="text-[13px] text-[#636366] mb-6 hidden"></p>
 
           <!-- Options -->
           <div id="options-container" class="space-y-2.5"></div>
@@ -408,8 +422,8 @@
           <div id="contact-container" class="hidden">
             <div id="contact-options" class="space-y-2.5 mb-4"></div>
             <div id="contact-fields" class="contact-wrapper">
-              <div class="p-5 bg-[#F5F5F7] rounded-2xl space-y-3 mt-4">
-                <p class="text-[13px] text-[#86868B] mb-1">请留下至少一项联系方式</p>
+              <div class="p-5 bg-[#2C2C2E] rounded-2xl space-y-3 mt-4">
+                <p class="text-[13px] text-[#98989D] mb-1">请留下至少一项联系方式</p>
                 <input type="text" id="contact-wechat" class="apple-input" placeholder="微信号 / WeChat ID">
                 <input type="text" id="contact-phone" class="apple-input" placeholder="手机号 / Phone">
                 <input type="text" id="contact-email" class="apple-input" placeholder="邮箱 / Email">
@@ -420,7 +434,7 @@
       </div>
 
       <!-- Navigation -->
-      <div class="px-6 py-5 md:px-8 md:py-6 border-t border-gray-100 flex justify-between items-center bg-white rounded-b-2xl">
+      <div class="px-6 py-5 md:px-8 md:py-6 border-t border-[#3A3A3C] flex justify-between items-center bg-[#1C1C1E] rounded-b-2xl">
         <button id="prev-btn" onclick="goBack()" class="apple-btn-text hidden">
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -438,16 +452,16 @@
   <!-- VIEW 3: 感谢页面 -->
   <div id="view-thanks" class="view-screen view-hidden">
     <div class="w-full max-w-md text-center">
-      <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-8">
+      <div class="w-20 h-20 rounded-full bg-[#0071E3]/20 flex items-center justify-center mx-auto mb-8">
         <svg class="w-10 h-10 text-[#0071E3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
         </svg>
       </div>
-      <h1 id="thank-title" class="text-[32px] md:text-[40px] font-bold text-[#1D1D1F] mb-4 tracking-tight">感谢您的参与！</h1>
-      <p id="thank-desc" class="text-lg text-[#86868B] mb-4 leading-relaxed">
+      <h1 id="thank-title" class="text-[32px] md:text-[40px] font-bold text-white mb-4 tracking-tight">感谢您的参与！</h1>
+      <p id="thank-desc" class="text-lg text-[#98989D] mb-4 leading-relaxed">
         您的反馈对我们极其宝贵，我们将仔细分析并以此优化服务。
       </p>
-      <p id="thank-team" class="text-[15px] text-[#AEAEB2] mb-10">
+      <p id="thank-team" class="text-[15px] text-[#636366] mb-10">
         — Crosspilot AI 团队
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -544,8 +558,8 @@
     function setLanguage(lang) {
       currentLang = lang;
       // Update language buttons
-      document.getElementById('lang-zh').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'zh' ? 'bg-[#0071E3] text-white' : 'bg-[#F5F5F7] text-[#86868B] hover:bg-[#E8E8ED]'}`;
-      document.getElementById('lang-en').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'en' ? 'bg-[#0071E3] text-white' : 'bg-[#F5F5F7] text-[#86868B] hover:bg-[#E8E8ED]'}`;
+      document.getElementById('lang-zh').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'zh' ? 'bg-[#0071E3] text-white' : 'bg-[#2C2C2E] text-[#98989D] hover:bg-[#3A3A3C]'}`;
+      document.getElementById('lang-en').className = `px-4 py-2 rounded-full text-sm font-medium transition-all ${lang === 'en' ? 'bg-[#0071E3] text-white' : 'bg-[#2C2C2E] text-[#98989D] hover:bg-[#3A3A3C]'}`;
       // Update home page text
       updateHomeText();
     }
