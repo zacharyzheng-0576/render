@@ -509,12 +509,9 @@
       if (unsubscribeResponses) unsubscribeResponses();
       unsubscribeResponses = null;
 
-      if (window.CrossPilotData.supabaseEnabled()) {
-        unsubscribeResponses = window.CrossPilotData.subscribeResponses(handleStatsData, handleStatsError);
-      } else {
-        loadData();
-        refreshTimer = setInterval(loadData, 10000);
-      }
+      // 使用轮询方式，每10秒刷新一次
+      loadData();
+      refreshTimer = setInterval(loadData, 10000);
     }
 
     function stopAdmin() {
