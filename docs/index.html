@@ -372,12 +372,8 @@
 
       <!-- Content -->
       <div class="flex-1 px-6 pb-6 md:px-8 md:pb-8 overflow-y-auto" style="min-height: 380px; max-height: 60vh;">
-        <!-- Section Divider -->
-        <div id="section-divider" class="hidden py-12 text-center">
-          <div id="section-icon" class="text-5xl mb-4"></div>
-          <h2 id="section-title" class="text-[28px] font-bold text-[#1D1D1F] mb-2 tracking-tight"></h2>
-          <p id="section-subtitle" class="text-[17px] text-[#86868B]"></p>
-        </div>
+        <!-- Section Header (inline) -->
+        <div id="section-header" class="hidden"></div>
 
         <!-- Question Area -->
         <div id="question-area">
@@ -488,8 +484,11 @@
       });
     }
 
-    function startSurvey(type, continueFromShallow = false) {
+    let continueFromShallow = false;
+
+    function startSurvey(type, isContinue = false) {
       surveyType = type;
+      continueFromShallow = isContinue;
       const config = window.SURVEY_CONFIG[type];
 
       if (type === 'shallow') {
@@ -501,7 +500,7 @@
       }
 
       // 如果是从浅度继续深度，保留之前的 formData
-      if (!continueFromShallow) {
+      if (!isContinue) {
         formData = { survey_type: type, started_at: new Date().toISOString() };
       } else {
         formData.survey_type = type;
@@ -510,20 +509,21 @@
       currentStep = 0;
       updateVisibleQuestions();
 
-      // 如果是从浅度继续，跳过已回答的问题
-      if (continueFromShallow) {
-        // 找到第一个未回答的问题
+      // 如果是从浅度继续，跳过已回答的问题和联系方式
+      if (isContinue) {
         while (currentStep < visibleQuestions.length) {
           const q = visibleQuestions[currentStep];
-          if (!formData[q.field] && q.type !== 'contact') {
-            break;
-          }
-          // 联系方式问题如果已填写则跳过
-          if (q.type === 'contact' && formData.willing_interview) {
+          // 跳过联系方式问题（无论是否填写）
+          if (q.type === 'contact') {
             currentStep++;
             continue;
           }
-          currentStep++;
+          // 跳过已回答的问题
+          if (formData[q.field]) {
+            currentStep++;
+            continue;
+          }
+          break;
         }
         // 如果所有问题都已回答，直接提交
         if (currentStep >= visibleQuestions.length) {
@@ -565,33 +565,30 @@
       document.getElementById('progress-text').textContent = `进度 ${currentStep + 1} / ${total}`;
       document.getElementById('progress-fill').style.width = `${((currentStep + 1) / total) * 100}%`;
 
-      // Section divider
-      if (q.section && q.sectionTitle) {
-        const prevQ = visibleQuestions[currentStep - 1];
-        if (!prevQ || prevQ.section !== q.section) {
-          showSectionDivider(q);
-          return;
-        }
-      }
-
       renderQuestion(q);
     }
 
-    function showSectionDivider(q) {
-      document.getElementById('section-divider').classList.remove('hidden');
-      document.getElementById('question-area').classList.add('hidden');
-      document.getElementById('section-icon').textContent = SECTION_ICONS[q.section] || '📝';
-      document.getElementById('section-title').textContent = q.sectionTitle.zh;
-      document.getElementById('section-subtitle').textContent = q.sectionTitle.en;
-
-      setTimeout(() => {
-        document.getElementById('section-divider').classList.add('hidden');
-        document.getElementById('question-area').classList.remove('hidden');
-        renderQuestion(q);
-      }, 1200);
-    }
-
     function renderQuestion(q) {
+      // Section header (inline, not separate page)
+      const sectionHeader = document.getElementById('section-header');
+      if (q.section && q.sectionTitle) {
+        const prevQ = visibleQuestions[currentStep - 1];
+        const showSection = !prevQ || prevQ.section !== q.section;
+        if (showSection) {
+          sectionHeader.classList.remove('hidden');
+          sectionHeader.innerHTML = `
+            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+              <span class="text-lg">${SECTION_ICONS[q.section] || '📝'}</span>
+              <span class="text-sm font-semibold text-[#86868B]">${q.sectionTitle.zh}</span>
+            </div>
+          `;
+        } else {
+          sectionHeader.classList.add('hidden');
+        }
+      } else {
+        sectionHeader.classList.add('hidden');
+      }
+
       document.getElementById('question-number').textContent = `Q${currentStep + 1}`;
       document.getElementById('question-title').textContent = q.zh;
       document.getElementById('question-en').textContent = q.en;
