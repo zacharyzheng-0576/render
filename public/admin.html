@@ -582,6 +582,56 @@
         <h3>付费意愿</h3>
         <canvas id="payChart"></canvas>
       </div>
+
+      <!-- Deep survey charts -->
+      <div class="chart-card deep-chart hidden">
+        <h3>广告平台分布</h3>
+        <canvas id="adPlatformChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>月素材数量</h3>
+        <canvas id="creativeCountChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>创意来源</h3>
+        <canvas id="creativeSourceChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>创意痛点详情</h3>
+        <canvas id="creativePainDetailChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>页面优化耗时</h3>
+        <canvas id="pageTimeChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>页面重要元素</h3>
+        <canvas id="pageElementsChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>市场准备度检查</h3>
+        <canvas id="marketCheckChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>竞品分析频率</h3>
+        <canvas id="competitorFreqChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>竞品分析内容</h3>
+        <canvas id="competitorContentChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>创意追踪付费意愿</h3>
+        <canvas id="payCreativeScoutChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>页面优化付费意愿</h3>
+        <canvas id="payPageOptimizeChart"></canvas>
+      </div>
+      <div class="chart-card deep-chart hidden">
+        <h3>最有价值功能</h3>
+        <canvas id="valuableFeaturesChart"></canvas>
+      </div>
     </div>
 
     <!-- Data Table -->
@@ -992,7 +1042,13 @@
       const data = filterData();
       document.getElementById('total-count').textContent = data.length;
 
-      // Basic charts
+      // Show/hide deep charts
+      const hasDeep = data.some(r => r.survey_type === 'deep');
+      document.querySelectorAll('.deep-chart').forEach(el => {
+        el.classList.toggle('hidden', !hasDeep);
+      });
+
+      // Basic charts (shallow)
       renderPieChart('typeChart', countField(data, 'business_type').values, ALL_OPTIONS.business_type);
       renderPieChart('marketChart', countField(data, 'main_market').values, ALL_OPTIONS.main_market);
       renderBarChart('adSpendChart', countField(data, 'monthly_ad_spend'));
@@ -1005,21 +1061,64 @@
       renderBarChart('aiExpectationChart', countField(data, 'ai_expectation'));
       renderBarChart('payChart', countField(data, 'willing_to_pay'));
 
+      // Deep survey charts
+      if (hasDeep) {
+        renderBarChart('adPlatformChart', countMultiField(data, 'ad_platforms'));
+        renderBarChart('creativeCountChart', countField(data, 'monthly_creative_count'));
+        renderBarChart('creativeSourceChart', countField(data, 'creative_source'));
+        renderBarChart('creativePainDetailChart', countField(data, 'creative_pain_detail'));
+        renderBarChart('pageTimeChart', countField(data, 'product_page_time'));
+        renderBarChart('pageElementsChart', countMultiField(data, 'product_page_elements'));
+        renderPieChart('marketCheckChart', countField(data, 'market_readiness_need').values, ALL_OPTIONS.market_readiness_need);
+        renderBarChart('competitorFreqChart', countField(data, 'competitor_analysis_frequency'));
+        renderBarChart('competitorContentChart', countMultiField(data, 'competitor_analysis_content'));
+        renderBarChart('payCreativeScoutChart', countField(data, 'pay_for_creative_scout'));
+        renderBarChart('payPageOptimizeChart', countField(data, 'pay_for_page_optimize'));
+        renderBarChart('valuableFeaturesChart', countMultiField(data, 'most_valuable_features'));
+      }
+
       renderTable(data);
     }
 
     // Export functions
     function exportCSV() {
       const data = filterData();
-      const headers = ['时间', '类型', '业务类型', '目标市场', '月广告投入', 'AI经验', '联系方式'];
+      const headers = [
+        '时间', '问卷类型', '业务类型', '目标市场', '月广告投入',
+        '素材更新频率', '最大创意挑战', '竞品追踪方式', '转化率满意度',
+        '商品页问题', 'AI使用经验', 'AI期望功能', '付费意愿',
+        '广告平台', '月素材数量', '创意来源', '创意痛点详情',
+        '优化耗时', '页面元素', '市场准备度', '竞品分析频率',
+        '竞品分析内容', '创意追踪付费', '页面优化付费', '最有价值功能',
+        '联系方式'
+      ];
       const rows = data.map(r => [
         r.created_at,
         r.survey_type === 'deep' ? '深度' : '快速',
         r.business_type || '',
         r.main_market || '',
         r.monthly_ad_spend || '',
+        r.creative_refresh_frequency || '',
+        r.biggest_creative_challenge || '',
+        r.competitor_tracking || '',
+        r.conversion_rate_concern || '',
+        Array.isArray(r.product_page_issues) ? r.product_page_issues.join('|') : '',
         r.ai_experience || '',
-        r.contact_wechat || r.contact_phone || r.contact_email || ''
+        r.ai_expectation || '',
+        r.willing_to_pay || '',
+        Array.isArray(r.ad_platforms) ? r.ad_platforms.join('|') : '',
+        r.monthly_creative_count || '',
+        r.creative_source || '',
+        r.creative_pain_detail || '',
+        r.product_page_time || '',
+        Array.isArray(r.product_page_elements) ? r.product_page_elements.join('|') : '',
+        r.market_readiness_need || '',
+        r.competitor_analysis_frequency || '',
+        Array.isArray(r.competitor_analysis_content) ? r.competitor_analysis_content.join('|') : '',
+        r.pay_for_creative_scout || '',
+        r.pay_for_page_optimize || '',
+        Array.isArray(r.most_valuable_features) ? r.most_valuable_features.join('|') : '',
+        r.contact_wechat || r.contact_phone || r.contact_email || r.contact_linkedin || ''
       ]);
       const csv = '﻿' + [headers, ...rows].map(row => row.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
       download(csv, 'survey_export.csv', 'text/csv;charset=utf-8');
@@ -1033,13 +1132,29 @@
         '提交时间': r.created_at,
         '问卷类型': r.survey_type === 'deep' ? '深度' : '快速',
         '业务类型': r.business_type,
-        '入行时间': r.experience,
-        '月营收': r.revenue,
-        'AI经验': r.ai_experience,
-        '最耗时任务': Array.isArray(r.time_consuming_tasks) ? r.time_consuming_tasks.join(', ') : '',
-        'AI担忧': Array.isArray(r.ai_concerns) ? r.ai_concerns.join(', ') : '',
+        '目标市场': r.main_market,
+        '月广告投入': r.monthly_ad_spend,
+        '素材更新频率': r.creative_refresh_frequency,
+        '最大创意挑战': r.biggest_creative_challenge,
+        '竞品追踪方式': r.competitor_tracking,
+        '转化率满意度': r.conversion_rate_concern,
+        '商品页问题': Array.isArray(r.product_page_issues) ? r.product_page_issues.join(', ') : '',
+        'AI使用经验': r.ai_experience,
+        'AI期望功能': r.ai_expectation,
         '付费意愿': r.willing_to_pay,
-        '联系方式': r.contact_wechat || r.contact_phone || r.contact_email || ''
+        '广告平台': Array.isArray(r.ad_platforms) ? r.ad_platforms.join(', ') : '',
+        '月素材数量': r.monthly_creative_count,
+        '创意来源': r.creative_source,
+        '创意痛点详情': r.creative_pain_detail,
+        '优化耗时': r.product_page_time,
+        '页面元素': Array.isArray(r.product_page_elements) ? r.product_page_elements.join(', ') : '',
+        '市场准备度': r.market_readiness_need,
+        '竞品分析频率': r.competitor_analysis_frequency,
+        '竞品分析内容': Array.isArray(r.competitor_analysis_content) ? r.competitor_analysis_content.join(', ') : '',
+        '创意追踪付费': r.pay_for_creative_scout,
+        '页面优化付费': r.pay_for_page_optimize,
+        '最有价值功能': Array.isArray(r.most_valuable_features) ? r.most_valuable_features.join(', ') : '',
+        '联系方式': r.contact_wechat || r.contact_phone || r.contact_email || r.contact_linkedin || ''
       })));
       XLSX.utils.book_append_sheet(wb, ws, '调研数据');
       XLSX.writeFile(wb, 'survey_export.xlsx');
