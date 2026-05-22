@@ -834,7 +834,7 @@
     }
 
     let continueFromShallow = false;
-    let pendingShallowData = null; // 存储待提交的浅度数据
+    let submittedShallowResponseId = null; // 浅度记录已先保存，继续深度完成后删除它
 
     function startSurvey(type, isContinue = false) {
       surveyType = type;
@@ -854,6 +854,7 @@
       // 如果是从浅度继续深度，保留之前的 formData
       if (!isContinue) {
         formData = { survey_type: type, started_at: new Date().toISOString() };
+        submittedShallowResponseId = null;
       } else {
         formData.survey_type = type;
       }
@@ -1381,21 +1382,18 @@
       collectInputs();
       formData.completed_at = new Date().toISOString();
 
-      // 如果是浅度调研，先存储数据，不立即提交
-      if (surveyType === 'shallow') {
-        pendingShallowData = { ...formData };
-        isSubmitting = false;
-        showThankYou();
-        return;
-      }
-
-      // 深度调研或独立深度调研，直接提交
+      // 浅度问卷立即保存；如果用户继续完成深度问卷，再删除这条浅度记录
       try {
         if (!navigator.onLine) throw new Error('网络已断开');
 
         const result = await submitWithRetry(formData);
         if (result.success) {
-          pendingShallowData = null; // 清除待提交数据
+          if (surveyType === 'shallow') {
+            submittedShallowResponseId = result.id || null;
+          } else if (submittedShallowResponseId) {
+            await deleteWithRetry(submittedShallowResponseId);
+            submittedShallowResponseId = null;
+          }
           showThankYou();
         } else {
           throw new Error(result.error || '提交失败');
@@ -1404,6 +1402,17 @@
         showError(err.message);
       } finally {
         isSubmitting = false;
+      }
+    }
+
+    async function deleteWithRetry(id, maxRetries = 2) {
+      for (let i = 0; i <= maxRetries; i++) {
+        try {
+          return await window.CrossPilotData.deleteResponse(id);
+        } catch (err) {
+          if (i === maxRetries) throw err;
+          await new Promise(r => setTimeout(r, 1000));
+        }
       }
     }
 
@@ -1435,18 +1444,8 @@
       startSurvey('deep', true);
     }
 
-    // 返回首页（如果有待提交的浅度数据，先提交）
+    // 返回首页：浅度记录已经提交，无需再次保存
     async function goHome() {
-      if (pendingShallowData) {
-        try {
-          if (!navigator.onLine) throw new Error('网络已断开');
-          await submitWithRetry(pendingShallowData);
-          pendingShallowData = null;
-        } catch (err) {
-          showError('提交失败: ' + err.message);
-          return;
-        }
-      }
       switchView('view-home');
     }
 
