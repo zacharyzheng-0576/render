@@ -1068,18 +1068,81 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF('l', 'mm', 'a4');
 
-      doc.setFontSize(18);
+      // Title
+      doc.setFontSize(20);
+      doc.setTextColor(29, 29, 31);
       doc.text('CrossPilot Survey Report', 14, 20);
       doc.setFontSize(10);
+      doc.setTextColor(134, 134, 139);
       doc.text(`Generated: ${new Date().toLocaleString('zh-CN')}`, 14, 28);
 
+      // Summary
       const data = filterData();
       doc.setFontSize(12);
+      doc.setTextColor(29, 29, 31);
       doc.text(`Total: ${data.length} | Shallow: ${data.filter(r => r.survey_type !== 'deep').length} | Deep: ${data.filter(r => r.survey_type === 'deep').length}`, 14, 38);
+
+      // Add charts
+      const chartIds = [
+        'radarChart', 'typeChart', 'expChart', 'revenueChart',
+        'taskChart', 'aiExpChart', 'aiConcernChart', 'payChart', 'aiValueChart'
+      ];
+
+      let yPos = 50;
+      const chartWidth = 120;
+      const chartHeight = 80;
+      const margin = 10;
+
+      for (let i = 0; i < chartIds.length; i++) {
+        const canvas = document.getElementById(chartIds[i]);
+        if (!canvas) continue;
+
+        // Check if we need a new page
+        if (yPos + chartHeight > 200) {
+          doc.addPage();
+          yPos = 20;
+        }
+
+        // Add chart title
+        const chartTitle = canvas.parentElement.querySelector('h3')?.textContent || chartIds[i];
+        doc.setFontSize(10);
+        doc.setTextColor(107, 114, 128);
+        doc.text(chartTitle, 14, yPos);
+        yPos += 5;
+
+        // Convert canvas to image
+        const imgData = canvas.toDataURL('image/png', 1.0);
+        const col = i % 2 === 0 ? 0 : chartWidth + margin;
+        const x = 14 + col;
+
+        if (i % 2 === 1) {
+          yPos -= 5; // Align with previous chart title
+        }
+
+        doc.addImage(imgData, 'PNG', x, yPos, chartWidth, chartHeight);
+
+        if (i % 2 === 1) {
+          yPos += chartHeight + margin;
+        }
+
+        if (i === chartIds.length - 1 && i % 2 === 0) {
+          yPos += chartHeight + margin;
+        }
+      }
+
+      // Add data table
+      if (yPos + 50 > 200) {
+        doc.addPage();
+        yPos = 20;
+      }
+
+      doc.setFontSize(14);
+      doc.setTextColor(29, 29, 31);
+      doc.text('Latest Responses', 14, yPos + 10);
 
       doc.autoTable({
         head: [['Time', 'Type', 'Business', 'Experience', 'Revenue', 'AI Experience']],
-        body: data.slice(0, 50).map(r => [
+        body: data.slice(0, 30).map(r => [
           formatTime(r.created_at),
           r.survey_type === 'deep' ? 'Deep' : 'Quick',
           r.business_type || '',
@@ -1087,9 +1150,9 @@
           r.revenue || '',
           r.ai_experience || ''
         ]),
-        startY: 45,
+        startY: yPos + 15,
         styles: { fontSize: 8 },
-        headStyles: { fillColor: [0, 113, 227] }
+        headStyles: { fillColor: [124, 58, 237] }
       });
 
       doc.save('survey_report.pdf');
