@@ -1168,6 +1168,17 @@
       const shallowCount = data.filter(r => r.survey_type !== 'deep').length;
       const deepCount = data.filter(r => r.survey_type === 'deep').length;
 
+      // Helper function to count field values
+      function getFieldCounts(field, options) {
+        const counts = {};
+        options.forEach(o => counts[o] = 0);
+        data.forEach(r => {
+          const val = r[field];
+          if (val && counts.hasOwnProperty(val)) counts[val]++;
+        });
+        return options.map(o => ({ label: o, count: counts[o] }));
+      }
+
       // Page 1: Title and Summary
       doc.setFillColor(245, 245, 247);
       doc.rect(0, 0, 210, 297, 'F');
@@ -1176,120 +1187,168 @@
       doc.setTextColor(29, 29, 31);
       doc.text('CrossPilot AI', 105, 40, { align: 'center' });
 
-      doc.setFontSize(18);
+      doc.setFontSize(16);
       doc.setTextColor(107, 114, 128);
-      doc.text('Survey Report', 105, 52, { align: 'center' });
-
-      doc.setFontSize(11);
-      doc.setTextColor(156, 163, 175);
-      doc.text(`Generated: ${new Date().toLocaleString('zh-CN')}`, 105, 65, { align: 'center' });
-
-      // Summary cards
-      doc.setFillColor(255, 255, 255);
-      doc.roundedRect(30, 85, 50, 35, 5, 5, 'F');
-      doc.roundedRect(90, 85, 50, 35, 5, 5, 'F');
-      doc.roundedRect(150, 85, 50, 35, 5, 5, 'F');
-
-      doc.setFontSize(24);
-      doc.setTextColor(29, 29, 31);
-      doc.text(String(data.length), 55, 100, { align: 'center' });
-      doc.text(String(shallowCount), 115, 100, { align: 'center' });
-      doc.text(String(deepCount), 175, 100, { align: 'center' });
+      doc.text('Cross-border Seller Survey Report', 105, 52, { align: 'center' });
 
       doc.setFontSize(10);
-      doc.setTextColor(107, 114, 128);
-      doc.text('Total', 55, 112, { align: 'center' });
-      doc.text('Quick', 115, 112, { align: 'center' });
-      doc.text('Detailed', 175, 112, { align: 'center' });
+      doc.setTextColor(156, 163, 175);
+      doc.text(`Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 105, 65, { align: 'center' });
 
-      // Charts
-      const chartIds = [
-        'typeChart', 'marketChart', 'adSpendChart',
-        'creativeFreqChart', 'creativeChallengeChart', 'competitorChart',
-        'conversionChart', 'pageIssuesChart', 'aiExpChart',
-        'aiExpectationChart', 'payChart'
-      ];
+      // Summary section
+      doc.setFontSize(14);
+      doc.setTextColor(29, 29, 31);
+      doc.text('Summary', 15, 90);
 
-      let page = 1;
-      let col = 0;
-      let row = 0;
-      const chartW = 85;
-      const chartH = 60;
-      const startX = 15;
-      const startY = 140;
-      const gapX = 10;
-      const gapY = 10;
+      doc.setFontSize(11);
+      doc.setTextColor(75, 85, 99);
+      doc.text(`Total Responses: ${data.length}`, 15, 100);
+      doc.text(`Quick Survey: ${shallowCount}`, 15, 108);
+      doc.text(`Detailed Survey: ${deepCount}`, 15, 116);
 
-      for (let i = 0; i < chartIds.length; i++) {
-        const canvas = document.getElementById(chartIds[i]);
-        if (!canvas) continue;
+      // Statistics section
+      doc.setFontSize(14);
+      doc.setTextColor(29, 29, 31);
+      doc.text('Key Statistics', 15, 140);
 
-        // New page if needed
-        if (row >= 2) {
-          doc.addPage();
-          page++;
-          row = 0;
-          col = 0;
-        }
+      // Business Type
+      const businessTypeCounts = getFieldCounts('business_type', ALL_OPTIONS.business_type);
+      doc.setFontSize(11);
+      doc.setTextColor(75, 85, 99);
+      let yPos = 150;
+      doc.text('Business Type:', 15, yPos);
+      businessTypeCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
 
-        const x = startX + col * (chartW + gapX);
-        const y = startY + row * (chartH + gapY + 15);
+      // Main Market
+      yPos += 10;
+      const marketCounts = getFieldCounts('main_market', ALL_OPTIONS.main_market);
+      doc.text('Target Market:', 15, yPos);
+      marketCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
 
-        // Chart title
-        const title = canvas.parentElement.querySelector('h3')?.textContent || '';
-        doc.setFontSize(9);
-        doc.setTextColor(107, 114, 128);
-        doc.text(title, x + chartW / 2, y, { align: 'center' });
+      // Page 2: More Statistics
+      doc.addPage();
+      yPos = 20;
 
-        // Chart image
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        doc.addImage(imgData, 'PNG', x, y + 5, chartW, chartH);
+      doc.setFontSize(14);
+      doc.setTextColor(29, 29, 31);
+      doc.text('Ad Creative Statistics', 15, yPos);
+      yPos += 12;
 
-        col++;
-        if (col >= 2) {
-          col = 0;
-          row++;
-        }
-      }
+      // Creative Refresh Frequency
+      const refreshCounts = getFieldCounts('creative_refresh_frequency', ALL_OPTIONS.creative_refresh_frequency);
+      doc.setFontSize(11);
+      doc.setTextColor(75, 85, 99);
+      doc.text('Creative Refresh Frequency:', 15, yPos);
+      refreshCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
 
-      // Data table on new page
+      // Biggest Creative Challenge
+      yPos += 10;
+      const challengeCounts = getFieldCounts('biggest_creative_challenge', ALL_OPTIONS.biggest_creative_challenge);
+      doc.text('Biggest Creative Challenge:', 15, yPos);
+      challengeCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
+
+      // Competitor Tracking
+      yPos += 10;
+      const competitorCounts = getFieldCounts('competitor_tracking', ALL_OPTIONS.competitor_tracking);
+      doc.text('Competitor Tracking:', 15, yPos);
+      competitorCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
+
+      // Conversion Rate Concern
+      yPos += 10;
+      const conversionCounts = getFieldCounts('conversion_rate_concern', ALL_OPTIONS.conversion_rate_concern);
+      doc.text('Conversion Rate Satisfaction:', 15, yPos);
+      conversionCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
+
+      // AI Experience
+      yPos += 10;
+      const aiExpCounts = getFieldCounts('ai_experience', ALL_OPTIONS.ai_experience);
+      doc.text('AI Experience:', 15, yPos);
+      aiExpCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
+
+      // Willingness to Pay
+      yPos += 10;
+      const payCounts = getFieldCounts('willing_to_pay', ALL_OPTIONS.willing_to_pay);
+      doc.text('Willingness to Pay:', 15, yPos);
+      payCounts.forEach(item => {
+        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
+        yPos += 8;
+      });
+
+      // Page 3: Data Table
       doc.addPage();
 
-      doc.setFontSize(16);
+      doc.setFontSize(14);
       doc.setTextColor(29, 29, 31);
       doc.text('Response Data', 15, 20);
 
       doc.setFontSize(10);
       doc.setTextColor(107, 114, 128);
-      doc.text(`Showing ${Math.min(data.length, 50)} of ${data.length} responses`, 15, 28);
+      doc.text(`Total: ${data.length} responses`, 15, 28);
 
-      const tableData = data.slice(0, 50).map(r => [
-        formatTime(r.created_at),
-        r.survey_type === 'deep' ? 'D' : 'Q',
-        r.business_type || '-',
-        r.main_market || '-',
-        r.monthly_ad_spend || '-',
-        r.ai_experience || '-',
-        r.willing_to_pay || '-'
-      ]);
+      const tableData = data.slice(0, 50).map(r => {
+        const time = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', {
+          month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) : '';
+        return [
+          time,
+          r.survey_type === 'deep' ? 'Deep' : 'Quick',
+          r.business_type || '-',
+          r.main_market || '-',
+          r.monthly_ad_spend || '-',
+          r.ai_experience || '-',
+          r.willing_to_pay || '-'
+        ];
+      });
 
       doc.autoTable({
-        head: [['Time', 'Type', 'Business', 'Market', 'Ad Spend', 'AI Exp', 'Pay']],
+        head: [['Time', 'Type', 'Business', 'Market', 'Ad Spend', 'AI Exp', 'Pay Willing']],
         body: tableData,
         startY: 35,
         styles: {
           fontSize: 8,
-          cellPadding: 3,
+          cellPadding: 4,
           lineColor: [229, 231, 235],
-          lineWidth: 0.1
+          lineWidth: 0.1,
+          font: 'helvetica'
         },
         headStyles: {
           fillColor: [124, 58, 237],
           textColor: 255,
-          fontStyle: 'bold'
+          fontStyle: 'bold',
+          fontSize: 9
         },
         alternateRowStyles: {
           fillColor: [249, 250, 251]
+        },
+        columnStyles: {
+          0: { cellWidth: 30 },
+          1: { cellWidth: 15 },
+          2: { cellWidth: 25 },
+          3: { cellWidth: 25 },
+          4: { cellWidth: 25 },
+          5: { cellWidth: 25 },
+          6: { cellWidth: 25 }
         }
       });
 
