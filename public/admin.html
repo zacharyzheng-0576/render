@@ -892,6 +892,8 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
           cutout: '68%',
           plugins: {
             legend: {
@@ -1194,12 +1196,11 @@
         'aiExpectationChart', 'payChart'
       ];
 
-      const chartWidth = 80;
-      const chartHeight = 55;
-      const startX = 10;
-      const startY = 15;
-      const gapX = 10;
-      const gapY = 15;
+      const chartSize = 75; // Square size for circular charts
+      const startX = 15;
+      const startY = 20;
+      const gapX = 15;
+      const gapY = 20;
 
       for (let i = 0; i < chartIds.length; i++) {
         const canvas = document.getElementById(chartIds[i]);
@@ -1209,23 +1210,23 @@
         const col = i % 3;
 
         // New page if needed
-        if (row >= 3) {
+        if (row >= 2) {
           doc.addPage();
           break;
         }
 
-        const x = startX + col * (chartWidth + gapX);
-        const y = startY + row * (chartHeight + gapY);
+        const x = startX + col * (chartSize + gapX);
+        const y = startY + row * (chartSize + gapY + 10);
 
         // Chart title
         const chartTitle = canvas.parentElement.querySelector('h3')?.textContent || '';
-        doc.setFontSize(8);
-        doc.setTextColor(100, 100, 100);
-        doc.text(chartTitle, x, y);
+        doc.setFontSize(10);
+        doc.setTextColor(80, 80, 80);
+        doc.text(chartTitle, x + chartSize / 2, y, { align: 'center' });
 
-        // Chart image
+        // Chart image - force square for pie charts
         const imgData = canvas.toDataURL('image/png', 1.0);
-        doc.addImage(imgData, 'PNG', x, y + 5, chartWidth, chartHeight);
+        doc.addImage(imgData, 'PNG', x, y + 5, chartSize, chartSize);
       }
 
       // Data table page
