@@ -20,6 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="supabase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="data-service.js"></script>
@@ -1160,153 +1161,85 @@
       XLSX.writeFile(wb, 'survey_export.xlsx');
     }
 
-    function exportPDF() {
+    async function exportPDF() {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'mm', 'a4');
+      const doc = new jsPDF('l', 'mm', 'a4');
 
       const data = filterData();
-      const shallowCount = data.filter(r => r.survey_type !== 'deep').length;
-      const deepCount = data.filter(r => r.survey_type === 'deep').length;
 
-      // Helper function to count field values
-      function getFieldCounts(field, options) {
-        const counts = {};
-        options.forEach(o => counts[o] = 0);
-        data.forEach(r => {
-          const val = r[field];
-          if (val && counts.hasOwnProperty(val)) counts[val]++;
-        });
-        return options.map(o => ({ label: o, count: counts[o] }));
+      // Title page
+      doc.setFillColor(0, 0, 0);
+      doc.rect(0, 0, 297, 210, 'F');
+
+      doc.setFontSize(32);
+      doc.setTextColor(255, 255, 255);
+      doc.text('CrossPilot AI', 148, 80, { align: 'center' });
+
+      doc.setFontSize(20);
+      doc.setTextColor(200, 200, 200);
+      doc.text('Survey Report', 148, 100, { align: 'center' });
+
+      doc.setFontSize(12);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Generated: ${new Date().toLocaleString('zh-CN')}`, 148, 120, { align: 'center' });
+      doc.text(`Total: ${data.length} | Shallow: ${data.filter(r => r.survey_type !== 'deep').length} | Deep: ${data.filter(r => r.survey_type === 'deep').length}`, 148, 135, { align: 'center' });
+
+      // Charts page
+      doc.addPage();
+
+      const chartIds = [
+        'radarChart', 'typeChart', 'marketChart', 'adSpendChart',
+        'creativeFreqChart', 'creativeChallengeChart', 'competitorChart',
+        'conversionChart', 'pageIssuesChart', 'aiExpChart',
+        'aiExpectationChart', 'payChart'
+      ];
+
+      const chartWidth = 80;
+      const chartHeight = 55;
+      const startX = 10;
+      const startY = 15;
+      const gapX = 10;
+      const gapY = 15;
+
+      for (let i = 0; i < chartIds.length; i++) {
+        const canvas = document.getElementById(chartIds[i]);
+        if (!canvas) continue;
+
+        const row = Math.floor(i / 3);
+        const col = i % 3;
+
+        // New page if needed
+        if (row >= 3) {
+          doc.addPage();
+          break;
+        }
+
+        const x = startX + col * (chartWidth + gapX);
+        const y = startY + row * (chartHeight + gapY);
+
+        // Chart title
+        const chartTitle = canvas.parentElement.querySelector('h3')?.textContent || '';
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(chartTitle, x, y);
+
+        // Chart image
+        const imgData = canvas.toDataURL('image/png', 1.0);
+        doc.addImage(imgData, 'PNG', x, y + 5, chartWidth, chartHeight);
       }
 
-      // Page 1: Title and Summary
-      doc.setFillColor(245, 245, 247);
-      doc.rect(0, 0, 210, 297, 'F');
-
-      doc.setFontSize(28);
-      doc.setTextColor(29, 29, 31);
-      doc.text('CrossPilot AI', 105, 40, { align: 'center' });
+      // Data table page
+      doc.addPage();
 
       doc.setFontSize(16);
-      doc.setTextColor(107, 114, 128);
-      doc.text('Cross-border Seller Survey Report', 105, 52, { align: 'center' });
-
-      doc.setFontSize(10);
-      doc.setTextColor(156, 163, 175);
-      doc.text(`Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 105, 65, { align: 'center' });
-
-      // Summary section
-      doc.setFontSize(14);
       doc.setTextColor(29, 29, 31);
-      doc.text('Summary', 15, 90);
-
-      doc.setFontSize(11);
-      doc.setTextColor(75, 85, 99);
-      doc.text(`Total Responses: ${data.length}`, 15, 100);
-      doc.text(`Quick Survey: ${shallowCount}`, 15, 108);
-      doc.text(`Detailed Survey: ${deepCount}`, 15, 116);
-
-      // Statistics section
-      doc.setFontSize(14);
-      doc.setTextColor(29, 29, 31);
-      doc.text('Key Statistics', 15, 140);
-
-      // Business Type
-      const businessTypeCounts = getFieldCounts('business_type', ALL_OPTIONS.business_type);
-      doc.setFontSize(11);
-      doc.setTextColor(75, 85, 99);
-      let yPos = 150;
-      doc.text('Business Type:', 15, yPos);
-      businessTypeCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // Main Market
-      yPos += 10;
-      const marketCounts = getFieldCounts('main_market', ALL_OPTIONS.main_market);
-      doc.text('Target Market:', 15, yPos);
-      marketCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // Page 2: More Statistics
-      doc.addPage();
-      yPos = 20;
-
-      doc.setFontSize(14);
-      doc.setTextColor(29, 29, 31);
-      doc.text('Ad Creative Statistics', 15, yPos);
-      yPos += 12;
-
-      // Creative Refresh Frequency
-      const refreshCounts = getFieldCounts('creative_refresh_frequency', ALL_OPTIONS.creative_refresh_frequency);
-      doc.setFontSize(11);
-      doc.setTextColor(75, 85, 99);
-      doc.text('Creative Refresh Frequency:', 15, yPos);
-      refreshCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // Biggest Creative Challenge
-      yPos += 10;
-      const challengeCounts = getFieldCounts('biggest_creative_challenge', ALL_OPTIONS.biggest_creative_challenge);
-      doc.text('Biggest Creative Challenge:', 15, yPos);
-      challengeCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // Competitor Tracking
-      yPos += 10;
-      const competitorCounts = getFieldCounts('competitor_tracking', ALL_OPTIONS.competitor_tracking);
-      doc.text('Competitor Tracking:', 15, yPos);
-      competitorCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // Conversion Rate Concern
-      yPos += 10;
-      const conversionCounts = getFieldCounts('conversion_rate_concern', ALL_OPTIONS.conversion_rate_concern);
-      doc.text('Conversion Rate Satisfaction:', 15, yPos);
-      conversionCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // AI Experience
-      yPos += 10;
-      const aiExpCounts = getFieldCounts('ai_experience', ALL_OPTIONS.ai_experience);
-      doc.text('AI Experience:', 15, yPos);
-      aiExpCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // Willingness to Pay
-      yPos += 10;
-      const payCounts = getFieldCounts('willing_to_pay', ALL_OPTIONS.willing_to_pay);
-      doc.text('Willingness to Pay:', 15, yPos);
-      payCounts.forEach(item => {
-        doc.text(`  ${item.label}: ${item.count}`, 20, yPos + 8);
-        yPos += 8;
-      });
-
-      // Page 3: Data Table
-      doc.addPage();
-
-      doc.setFontSize(14);
-      doc.setTextColor(29, 29, 31);
-      doc.text('Response Data', 15, 20);
+      doc.text('Latest Responses', 14, 20);
 
       doc.setFontSize(10);
       doc.setTextColor(107, 114, 128);
-      doc.text(`Total: ${data.length} responses`, 15, 28);
+      doc.text(`Showing ${Math.min(data.length, 30)} of ${data.length} responses`, 14, 28);
 
-      const tableData = data.slice(0, 50).map(r => {
+      const tableData = data.slice(0, 30).map(r => {
         const time = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', {
           month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
         }) : '';
@@ -1327,32 +1260,21 @@
         startY: 35,
         styles: {
           fontSize: 8,
-          cellPadding: 4,
+          cellPadding: 3,
           lineColor: [229, 231, 235],
-          lineWidth: 0.1,
-          font: 'helvetica'
+          lineWidth: 0.1
         },
         headStyles: {
           fillColor: [124, 58, 237],
           textColor: 255,
-          fontStyle: 'bold',
-          fontSize: 9
+          fontStyle: 'bold'
         },
         alternateRowStyles: {
           fillColor: [249, 250, 251]
-        },
-        columnStyles: {
-          0: { cellWidth: 30 },
-          1: { cellWidth: 15 },
-          2: { cellWidth: 25 },
-          3: { cellWidth: 25 },
-          4: { cellWidth: 25 },
-          5: { cellWidth: 25 },
-          6: { cellWidth: 25 }
         }
       });
 
-      doc.save('crosspilot_survey_report.pdf');
+      doc.save('survey_report.pdf');
     }
 
     function download(content, filename, type) {
