@@ -2,7 +2,7 @@
 
 > 更新时间：2026-05-22
 > 当前分支：main
-> 最新提交：5dae0f4 Fix pie charts to be circular and improve PDF layout
+> 最新提交：f5871b7 Handle shallow survey replacement on deep submit
 
 ---
 
@@ -56,7 +56,11 @@
    - 根据业务类型显示不同问题
    - 根据广告状态显示不同问题
 
-6. **品牌元素**
+6. **提交策略**
+   - 浅度问卷提交时立即写入 Supabase，避免用户关闭页面导致数据丢失
+   - 如果用户继续完成深度问卷，深度完整记录提交成功后会删除之前的浅度记录，避免后台重复统计
+
+7. **品牌元素**
    - Crosspilot AI 名称
    - 标语：出海每一步，都有方向
    - 感谢页邮箱：hambur.zach@gmail.com
