@@ -433,6 +433,47 @@
       z-index: 2;
     }
 
+    .chart-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .chart-card-header h3 {
+      margin-bottom: 0;
+    }
+
+    .chart-export-btn {
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 7px 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(12px);
+    }
+
+    .chart-export-btn:hover:not(:disabled) {
+      color: #fff;
+      border-color: rgba(124, 58, 237, 0.55);
+      background: rgba(124, 58, 237, 0.22);
+      box-shadow: 0 0 16px rgba(124, 58, 237, 0.18);
+    }
+
+    .chart-export-btn:disabled {
+      cursor: wait;
+      opacity: 0.55;
+    }
+
     .chart-card canvas {
       position: relative;
       z-index: 2;
@@ -744,6 +785,46 @@
       { id: 'payPageOptimizeChart', title: '页面优化付费意愿', field: 'pay_for_page_optimize', mode: 'single', deepOnly: true },
       { id: 'valuableFeaturesChart', title: '最有价值功能', field: 'most_valuable_features', mode: 'multi', deepOnly: true }
     ];
+
+    const EXPORT_BASE_NAME = 'Crosspilot AI数据调研统计';
+
+    function formatFileDate(date = new Date()) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function sanitizeFilename(value) {
+      return String(value || '未命名')
+        .replace(/[\\/:*?"<>|]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function nextExportNumber(scope) {
+      const key = `crosspilot_export_counter_${scope}`;
+      try {
+        const current = Number(localStorage.getItem(key) || '0');
+        const next = Number.isFinite(current) ? current + 1 : 1;
+        localStorage.setItem(key, String(next));
+        return String(next).padStart(3, '0');
+      } catch (err) {
+        return '001';
+      }
+    }
+
+    function buildExportFilename(baseName, scope, extension) {
+      return `${sanitizeFilename(baseName)}_${formatFileDate()}_${nextExportNumber(scope)}.${extension}`;
+    }
+
+    function buildMainExportFilename(type, extension) {
+      return buildExportFilename(EXPORT_BASE_NAME, `main_${type}`, extension);
+    }
+
+    function buildChartExportFilename(title, chartId) {
+      return buildExportFilename(title, `chart_pdf_${chartId}`, 'pdf');
+    }
 
     function filterData() {
       const surveyType = document.getElementById('filter-survey-type').value;
@@ -1136,6 +1217,30 @@
       }
 
       renderTable(data);
+      setupChartExportButtons();
+    }
+
+    function setupChartExportButtons() {
+      document.querySelectorAll('.chart-card').forEach(card => {
+        const canvas = card.querySelector('canvas');
+        const title = card.querySelector('h3');
+        if (!canvas || !title || card.querySelector('.chart-export-btn')) return;
+
+        let header = card.querySelector('.chart-card-header');
+        if (!header) {
+          header = document.createElement('div');
+          header.className = 'chart-card-header';
+          title.parentNode.insertBefore(header, title);
+          header.appendChild(title);
+        }
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'chart-export-btn';
+        button.textContent = '单图 PDF';
+        button.onclick = () => exportSingleChartPDF(canvas.id, button);
+        header.appendChild(button);
+      });
     }
 
     // Export functions
@@ -1179,7 +1284,7 @@
         r.contact_wechat || r.contact_phone || r.contact_email || r.contact_linkedin || ''
       ]);
       const csv = '﻿' + [headers, ...rows].map(row => row.map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
-      download(csv, 'survey_export.csv', 'text/csv;charset=utf-8');
+      download(csv, buildMainExportFilename('csv', 'csv'), 'text/csv;charset=utf-8');
     }
 
     function exportExcel() {
@@ -1215,7 +1320,7 @@
         '联系方式': r.contact_wechat || r.contact_phone || r.contact_email || r.contact_linkedin || ''
       })));
       XLSX.utils.book_append_sheet(wb, ws, '调研数据');
-      XLSX.writeFile(wb, 'survey_export.xlsx');
+      XLSX.writeFile(wb, buildMainExportFilename('excel', 'xlsx'));
     }
 
     function escapeHtml(value) {
@@ -1400,6 +1505,40 @@
             max-width: 100%;
             max-height: 238px;
           }
+          .pdf-single-chart-layout {
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            gap: 22px;
+            align-items: stretch;
+          }
+          .pdf-single-chart-card {
+            min-height: 542px;
+            background: linear-gradient(135deg, #050505 0%, #111827 100%);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 18px 42px rgba(15,23,42,.18);
+          }
+          .pdf-single-chart-card img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 494px;
+          }
+          .pdf-single-stat-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 12px 32px rgba(15,23,42,.06);
+          }
+          .pdf-single-stat-card h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+          }
           .pdf-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
           .pdf-stat-card {
             background: #fff;
@@ -1538,6 +1677,37 @@
       return createPdfPage('', html, `图表 ${index + 1}/${total}`);
     }
 
+    function buildSingleChartPage(chartShot, def, data) {
+      const result = getPdfChartResult(def, data);
+      const denominator = data.length;
+      const rows = result.labels.map((label, i) => `
+        <tr>
+          <td>${escapeHtml(label)}</td>
+          <td>${result.values[i] || 0}</td>
+          <td>${percentText(result.values[i] || 0, denominator)}</td>
+        </tr>
+      `).join('');
+
+      const html = `
+        <h2 class="pdf-section-title">${escapeHtml(def.title)}</h2>
+        <p class="pdf-section-note">生成时间：${escapeHtml(formatPdfDate(new Date().toISOString()))} ｜ 当前筛选样本：${data.length}</p>
+        <div class="pdf-single-chart-layout">
+          <div class="pdf-single-chart-card">
+            <img src="${chartShot.src}" width="${chartShot.width}" height="${chartShot.height}" alt="${escapeHtml(def.title)}">
+          </div>
+          <div class="pdf-single-stat-card">
+            <h3>统计明细</h3>
+            <table class="pdf-table">
+              <thead><tr><th>选项</th><th>数量</th><th>占比</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      return createPdfPage('', html, def.title);
+    }
+
     function buildStatsPage(defs, data, index, total) {
       const html = `
         <h2 class="pdf-section-title">统计数据明细 ${index + 1}/${total}</h2>
@@ -1619,6 +1789,49 @@
       return createPdfPage('', html, `字段附录 ${pageIndex + 1}/${totalPages}`);
     }
 
+    async function exportSingleChartPDF(chartId, button) {
+      if (!window.jspdf || !window.jspdf.jsPDF || !window.html2canvas) {
+        alert('PDF 导出依赖没有加载完成，请刷新页面后重试');
+        return;
+      }
+
+      const def = PDF_CHART_DEFINITIONS.find(item => item.id === chartId);
+      const canvas = document.getElementById(chartId);
+      if (!def || !canvas || !charts[chartId]) {
+        alert('这个图表还没有生成，请先刷新数据后重试');
+        return;
+      }
+
+      const originalText = button ? button.textContent : '';
+      if (button) {
+        button.disabled = true;
+        button.textContent = '生成中...';
+      }
+
+      let host = null;
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+        const data = filterData();
+        const chartShot = captureChartShots([def])[0];
+        if (!chartShot) throw new Error('图表截图失败');
+
+        host = createPdfHost();
+        const state = { first: true };
+        await addElementAsPdfPage(doc, host, buildSingleChartPage(chartShot, def, data), state, `${def.title} 单图导出`);
+        doc.save(buildChartExportFilename(def.title, chartId));
+      } catch (err) {
+        console.error(err);
+        alert(`单图 PDF 导出失败：${err.message || err}`);
+      } finally {
+        if (host) host.remove();
+        if (button) {
+          button.disabled = false;
+          button.textContent = originalText;
+        }
+      }
+    }
+
     async function exportPDF() {
       if (!window.jspdf || !window.jspdf.jsPDF || !window.html2canvas) {
         alert('PDF 导出依赖没有加载完成，请刷新页面后重试');
@@ -1679,7 +1892,7 @@
         }
 
         updatePdfStatus(button, '保存 PDF...');
-        doc.save(`crosspilot-survey-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+        doc.save(buildMainExportFilename('pdf', 'pdf'));
       } catch (err) {
         console.error(err);
         alert(`PDF 导出失败：${err.message || err}`);
