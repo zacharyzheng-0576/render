@@ -1387,7 +1387,19 @@
             border: 1px solid rgba(15,23,42,.08);
           }
           .pdf-chart-shot h3 { color: #fff; font-size: 18px; margin: 0 0 10px; text-align: center; }
-          .pdf-chart-shot img { display: block; width: 100%; height: 238px; object-fit: contain; }
+          .pdf-chart-image-box {
+            height: 238px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .pdf-chart-image-box img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 238px;
+          }
           .pdf-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
           .pdf-stat-card {
             background: #fff;
@@ -1475,7 +1487,9 @@
         }
         return {
           title: def.title,
-          src: canvas.toDataURL('image/png', 1)
+          src: canvas.toDataURL('image/png', 1),
+          width: canvas.width,
+          height: canvas.height
         };
       }).filter(Boolean);
     }
@@ -1514,7 +1528,9 @@
           ${chunk.map(item => `
             <div class="pdf-chart-shot">
               <h3>${escapeHtml(item.title)}</h3>
-              <img src="${item.src}" alt="${escapeHtml(item.title)}">
+              <div class="pdf-chart-image-box">
+                <img src="${item.src}" width="${item.width}" height="${item.height}" alt="${escapeHtml(item.title)}">
+              </div>
             </div>
           `).join('')}
         </div>
