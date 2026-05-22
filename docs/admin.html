@@ -719,6 +719,32 @@
       most_valuable_features: ['竞品广告追踪', '热门素材发现', '创意脚本生成', '商品页优化建议', '市场准备度检查', '其他']
     };
 
+    const PDF_CHART_DEFINITIONS = [
+      { id: 'typeChart', title: '业务类型分布', field: 'business_type', mode: 'single' },
+      { id: 'marketChart', title: '目标市场分布', field: 'main_market', mode: 'single' },
+      { id: 'adSpendChart', title: '月广告投入分布', field: 'monthly_ad_spend', mode: 'single' },
+      { id: 'creativeFreqChart', title: '素材更新频率', field: 'creative_refresh_frequency', mode: 'single' },
+      { id: 'creativeChallengeChart', title: '最大创意挑战', field: 'biggest_creative_challenge', mode: 'single' },
+      { id: 'competitorChart', title: '竞品追踪方式', field: 'competitor_tracking', mode: 'single' },
+      { id: 'conversionChart', title: '转化率满意度', field: 'conversion_rate_concern', mode: 'single' },
+      { id: 'pageIssuesChart', title: '商品页问题', field: 'product_page_issues', mode: 'multi' },
+      { id: 'aiExpChart', title: 'AI 使用经验', field: 'ai_experience', mode: 'single' },
+      { id: 'aiExpectationChart', title: 'AI 期望功能', field: 'ai_expectation', mode: 'single' },
+      { id: 'payChart', title: '付费意愿', field: 'willing_to_pay', mode: 'single' },
+      { id: 'adPlatformChart', title: '广告平台分布', field: 'ad_platforms', mode: 'multi', deepOnly: true },
+      { id: 'creativeCountChart', title: '月素材数量', field: 'monthly_creative_count', mode: 'single', deepOnly: true },
+      { id: 'creativeSourceChart', title: '创意来源', field: 'creative_source', mode: 'single', deepOnly: true },
+      { id: 'creativePainDetailChart', title: '创意痛点详情', field: 'creative_pain_detail', mode: 'single', deepOnly: true },
+      { id: 'pageTimeChart', title: '页面优化耗时', field: 'product_page_time', mode: 'single', deepOnly: true },
+      { id: 'pageElementsChart', title: '页面重要元素', field: 'product_page_elements', mode: 'multi', deepOnly: true },
+      { id: 'marketCheckChart', title: '市场准备度检查', field: 'market_readiness_need', mode: 'single', deepOnly: true },
+      { id: 'competitorFreqChart', title: '竞品分析频率', field: 'competitor_analysis_frequency', mode: 'single', deepOnly: true },
+      { id: 'competitorContentChart', title: '竞品分析内容', field: 'competitor_analysis_content', mode: 'multi', deepOnly: true },
+      { id: 'payCreativeScoutChart', title: '创意追踪付费意愿', field: 'pay_for_creative_scout', mode: 'single', deepOnly: true },
+      { id: 'payPageOptimizeChart', title: '页面优化付费意愿', field: 'pay_for_page_optimize', mode: 'single', deepOnly: true },
+      { id: 'valuableFeaturesChart', title: '最有价值功能', field: 'most_valuable_features', mode: 'multi', deepOnly: true }
+    ];
+
     function filterData() {
       const surveyType = document.getElementById('filter-survey-type').value;
       const type = document.getElementById('filter-type').value;
@@ -736,26 +762,49 @@
 
     function countField(data, field) {
       const opts = ALL_OPTIONS[field] || [];
+      const labels = [...opts];
       const counts = {};
-      opts.forEach(o => counts[o] = 0);
+      labels.forEach(o => counts[o] = 0);
+      const fallbackLabel = labels.includes('其他') ? '其他' : '其他/自定义';
       data.forEach(r => {
         const val = r[field];
-        if (val && counts.hasOwnProperty(val)) counts[val]++;
+        if (!val) return;
+        if (counts.hasOwnProperty(val)) {
+          counts[val]++;
+        } else {
+          if (!counts.hasOwnProperty(fallbackLabel)) {
+            labels.push(fallbackLabel);
+            counts[fallbackLabel] = 0;
+          }
+          counts[fallbackLabel]++;
+        }
       });
-      return { labels: opts, values: opts.map(o => counts[o]) };
+      return { labels, values: labels.map(o => counts[o]) };
     }
 
     function countMultiField(data, field) {
       const opts = ALL_OPTIONS[field] || [];
+      const labels = [...opts];
       const counts = {};
-      opts.forEach(o => counts[o] = 0);
+      labels.forEach(o => counts[o] = 0);
+      const fallbackLabel = labels.includes('其他') ? '其他' : '其他/自定义';
       data.forEach(r => {
         const arr = r[field];
         if (Array.isArray(arr)) {
-          arr.forEach(v => { if (counts.hasOwnProperty(v)) counts[v]++; });
+          arr.forEach(v => {
+            if (counts.hasOwnProperty(v)) {
+              counts[v]++;
+            } else if (v) {
+              if (!counts.hasOwnProperty(fallbackLabel)) {
+                labels.push(fallbackLabel);
+                counts[fallbackLabel] = 0;
+              }
+              counts[fallbackLabel]++;
+            }
+          });
         }
       });
-      return { labels: opts, values: opts.map(o => counts[o]) };
+      return { labels, values: labels.map(o => counts[o]) };
     }
 
     function avgField(data, field) {
@@ -1052,15 +1101,20 @@
       });
 
       // Basic charts (shallow)
-      renderPieChart('typeChart', countField(data, 'business_type').values, ALL_OPTIONS.business_type);
-      renderPieChart('marketChart', countField(data, 'main_market').values, ALL_OPTIONS.main_market);
+      const typeStats = countField(data, 'business_type');
+      renderPieChart('typeChart', typeStats.values, typeStats.labels);
+      const marketStats = countField(data, 'main_market');
+      renderPieChart('marketChart', marketStats.values, marketStats.labels);
       renderBarChart('adSpendChart', countField(data, 'monthly_ad_spend'));
       renderBarChart('creativeFreqChart', countField(data, 'creative_refresh_frequency'));
       renderBarChart('creativeChallengeChart', countField(data, 'biggest_creative_challenge'));
-      renderPieChart('competitorChart', countField(data, 'competitor_tracking').values, ALL_OPTIONS.competitor_tracking);
-      renderPieChart('conversionChart', countField(data, 'conversion_rate_concern').values, ALL_OPTIONS.conversion_rate_concern);
+      const competitorStats = countField(data, 'competitor_tracking');
+      renderPieChart('competitorChart', competitorStats.values, competitorStats.labels);
+      const conversionStats = countField(data, 'conversion_rate_concern');
+      renderPieChart('conversionChart', conversionStats.values, conversionStats.labels);
       renderBarChart('pageIssuesChart', countMultiField(data, 'product_page_issues'));
-      renderPieChart('aiExpChart', countField(data, 'ai_experience').values, ALL_OPTIONS.ai_experience);
+      const aiExpStats = countField(data, 'ai_experience');
+      renderPieChart('aiExpChart', aiExpStats.values, aiExpStats.labels);
       renderBarChart('aiExpectationChart', countField(data, 'ai_expectation'));
       renderBarChart('payChart', countField(data, 'willing_to_pay'));
 
@@ -1072,7 +1126,8 @@
         renderBarChart('creativePainDetailChart', countField(data, 'creative_pain_detail'));
         renderBarChart('pageTimeChart', countField(data, 'product_page_time'));
         renderBarChart('pageElementsChart', countMultiField(data, 'product_page_elements'));
-        renderPieChart('marketCheckChart', countField(data, 'market_readiness_need').values, ALL_OPTIONS.market_readiness_need);
+        const marketCheckStats = countField(data, 'market_readiness_need');
+        renderPieChart('marketCheckChart', marketCheckStats.values, marketCheckStats.labels);
         renderBarChart('competitorFreqChart', countField(data, 'competitor_analysis_frequency'));
         renderBarChart('competitorContentChart', countMultiField(data, 'competitor_analysis_content'));
         renderBarChart('payCreativeScoutChart', countField(data, 'pay_for_creative_scout'));
@@ -1163,119 +1218,439 @@
       XLSX.writeFile(wb, 'survey_export.xlsx');
     }
 
-    async function exportPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('l', 'mm', 'a4');
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
-      const data = filterData();
+    function formatPdfValue(value) {
+      if (Array.isArray(value)) return value.length ? value.join('、') : '-';
+      if (value === undefined || value === null || value === '') return '-';
+      return String(value);
+    }
 
-      // Title page
-      doc.setFillColor(0, 0, 0);
-      doc.rect(0, 0, 297, 210, 'F');
+    function formatPdfDate(value) {
+      if (!value) return '-';
+      return new Date(value).toLocaleString('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).replace(/\//g, '-');
+    }
 
-      doc.setFontSize(32);
-      doc.setTextColor(255, 255, 255);
-      doc.text('CrossPilot AI', 148, 80, { align: 'center' });
+    function chunkArray(items, size) {
+      const chunks = [];
+      for (let i = 0; i < items.length; i += size) chunks.push(items.slice(i, i + size));
+      return chunks;
+    }
 
-      doc.setFontSize(20);
-      doc.setTextColor(200, 200, 200);
-      doc.text('Survey Report', 148, 100, { align: 'center' });
+    function getSelectedText(id) {
+      const el = document.getElementById(id);
+      if (!el) return '全部';
+      return el.options[el.selectedIndex]?.textContent || '全部';
+    }
 
-      doc.setFontSize(12);
-      doc.setTextColor(150, 150, 150);
-      doc.text(`Generated: ${new Date().toLocaleString('zh-CN')}`, 148, 120, { align: 'center' });
-      doc.text(`Total: ${data.length} | Shallow: ${data.filter(r => r.survey_type !== 'deep').length} | Deep: ${data.filter(r => r.survey_type === 'deep').length}`, 148, 135, { align: 'center' });
-
-      // Charts page
-      doc.addPage();
-
-      const chartIds = [
-        'radarChart', 'typeChart', 'marketChart', 'adSpendChart',
-        'creativeFreqChart', 'creativeChallengeChart', 'competitorChart',
-        'conversionChart', 'pageIssuesChart', 'aiExpChart',
-        'aiExpectationChart', 'payChart'
+    function getPdfFilterSummary() {
+      return [
+        ['问卷类型', getSelectedText('filter-survey-type')],
+        ['业务类型', getSelectedText('filter-type')],
+        ['目标市场', getSelectedText('filter-market')],
+        ['广告投入', getSelectedText('filter-ad-spend')]
       ];
+    }
 
-      const chartSize = 75; // Square size for circular charts
-      const startX = 15;
-      const startY = 20;
-      const gapX = 15;
-      const gapY = 20;
+    function getVisiblePdfCharts() {
+      return PDF_CHART_DEFINITIONS.filter(def => {
+        const canvas = document.getElementById(def.id);
+        const card = canvas?.closest('.chart-card');
+        return Boolean(canvas && card && getComputedStyle(card).display !== 'none' && charts[def.id]);
+      });
+    }
 
-      for (let i = 0; i < chartIds.length; i++) {
-        const canvas = document.getElementById(chartIds[i]);
-        if (!canvas) continue;
+    function getPdfChartResult(def, data) {
+      return def.mode === 'multi'
+        ? countMultiField(data, def.field)
+        : countField(data, def.field);
+    }
 
-        const row = Math.floor(i / 3);
-        const col = i % 3;
+    function percentText(value, denominator) {
+      if (!denominator) return '0%';
+      return `${Math.round((value / denominator) * 1000) / 10}%`;
+    }
 
-        // New page if needed
-        if (row >= 2) {
-          doc.addPage();
-          break;
-        }
+    function getPdfResponseFields(row) {
+      const base = [
+        ['提交时间', formatPdfDate(row.created_at), 'created_at'],
+        ['问卷类型', row.survey_type === 'deep' ? '深度调研' : '快速调研', 'survey_type'],
+        ['业务类型', row.business_type, 'business_type'],
+        ['目标市场', row.main_market, 'main_market'],
+        ['月广告投入', row.monthly_ad_spend, 'monthly_ad_spend'],
+        ['素材更新频率', row.creative_refresh_frequency, 'creative_refresh_frequency'],
+        ['最大创意挑战', row.biggest_creative_challenge, 'biggest_creative_challenge'],
+        ['竞品追踪方式', row.competitor_tracking, 'competitor_tracking'],
+        ['转化率满意度', row.conversion_rate_concern, 'conversion_rate_concern'],
+        ['商品页问题', row.product_page_issues, 'product_page_issues'],
+        ['AI 使用经验', row.ai_experience, 'ai_experience'],
+        ['AI 期望功能', row.ai_expectation, 'ai_expectation'],
+        ['付费意愿', row.willing_to_pay, 'willing_to_pay'],
+        ['广告平台', row.ad_platforms, 'ad_platforms'],
+        ['月素材数量', row.monthly_creative_count, 'monthly_creative_count'],
+        ['创意来源', row.creative_source, 'creative_source'],
+        ['创意痛点详情', row.creative_pain_detail, 'creative_pain_detail'],
+        ['页面优化耗时', row.product_page_time, 'product_page_time'],
+        ['页面重要元素', row.product_page_elements, 'product_page_elements'],
+        ['市场准备度检查', row.market_readiness_need, 'market_readiness_need'],
+        ['竞品分析频率', row.competitor_analysis_frequency, 'competitor_analysis_frequency'],
+        ['竞品分析内容', row.competitor_analysis_content, 'competitor_analysis_content'],
+        ['创意追踪付费意愿', row.pay_for_creative_scout, 'pay_for_creative_scout'],
+        ['页面优化付费意愿', row.pay_for_page_optimize, 'pay_for_page_optimize'],
+        ['最有价值功能', row.most_valuable_features, 'most_valuable_features'],
+        ['是否愿意访谈', row.willing_interview, 'willing_interview'],
+        ['微信', row.contact_wechat, 'contact_wechat'],
+        ['手机', row.contact_phone, 'contact_phone'],
+        ['邮箱', row.contact_email, 'contact_email'],
+        ['LinkedIn', row.contact_linkedin, 'contact_linkedin']
+      ];
+      const usedKeys = new Set(base.map(([, , key]) => key));
+      const customFields = Object.entries(row)
+        .filter(([key, value]) => key.endsWith('_other') && !usedKeys.has(key) && formatPdfValue(value) !== '-')
+        .map(([key, value]) => [`其他补充（${key.replace(/_other$/, '')}）`, value, key]);
 
-        const x = startX + col * (chartSize + gapX);
-        const y = startY + row * (chartSize + gapY + 10);
+      return [...base, ...customFields]
+        .map(([label, value]) => [label, value])
+        .filter(([, value]) => formatPdfValue(value) !== '-');
+    }
 
-        // Chart title
-        const chartTitle = canvas.parentElement.querySelector('h3')?.textContent || '';
-        doc.setFontSize(10);
-        doc.setTextColor(80, 80, 80);
-        doc.text(chartTitle, x + chartSize / 2, y, { align: 'center' });
+    function createPdfHost() {
+      const host = document.createElement('div');
+      host.id = 'pdf-render-host';
+      host.style.cssText = 'position:fixed;left:-20000px;top:0;width:1123px;z-index:-1;pointer-events:none;';
+      host.innerHTML = `
+        <style>
+          .pdf-page {
+            position: relative;
+            width: 1123px;
+            height: 794px;
+            box-sizing: border-box;
+            padding: 42px 48px;
+            background: #f5f7fb;
+            color: #111827;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+          }
+          .pdf-page.dark {
+            background:
+              radial-gradient(circle at 18% 22%, rgba(96,165,250,.22), transparent 24%),
+              radial-gradient(circle at 78% 78%, rgba(124,58,237,.26), transparent 28%),
+              linear-gradient(135deg, #020617 0%, #111827 58%, #1e1b4b 100%);
+            color: #fff;
+          }
+          .pdf-kicker { color: #6b7280; font-size: 18px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+          .pdf-title { font-size: 34px; line-height: 1.15; font-weight: 800; margin: 8px 0 10px; letter-spacing: -0.02em; }
+          .pdf-subtitle { font-size: 17px; line-height: 1.5; color: #6b7280; margin-bottom: 24px; }
+          .dark .pdf-kicker, .dark .pdf-subtitle { color: rgba(255,255,255,.68); }
+          .dark .pdf-title { color: #fff; font-size: 54px; max-width: 720px; }
+          .pdf-section-title { font-size: 28px; font-weight: 800; margin: 0 0 6px; }
+          .pdf-section-note { font-size: 14px; color: #6b7280; margin: 0 0 22px; }
+          .pdf-metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 36px; }
+          .pdf-metric {
+            background: rgba(255,255,255,.9);
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 16px 40px rgba(15,23,42,.08);
+          }
+          .dark .pdf-metric { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.14); }
+          .pdf-metric-label { color: #6b7280; font-size: 14px; font-weight: 700; }
+          .dark .pdf-metric-label { color: rgba(255,255,255,.62); }
+          .pdf-metric-value { font-size: 34px; font-weight: 800; margin-top: 8px; }
+          .pdf-filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 38px; }
+          .pdf-filter { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: 14px 16px; }
+          .pdf-filter strong { display: block; color: rgba(255,255,255,.55); font-size: 12px; margin-bottom: 6px; }
+          .pdf-filter span { font-size: 17px; font-weight: 700; }
+          .pdf-footer { position: absolute; left: 48px; right: 48px; bottom: 28px; display: flex; justify-content: space-between; color: #9ca3af; font-size: 12px; }
+          .pdf-chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+          .pdf-chart-shot {
+            background: #050505;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 18px 42px rgba(15,23,42,.18);
+            border: 1px solid rgba(15,23,42,.08);
+          }
+          .pdf-chart-shot img { display: block; width: 100%; height: 286px; object-fit: cover; }
+          .pdf-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+          .pdf-stat-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 12px 32px rgba(15,23,42,.06);
+          }
+          .pdf-stat-card h3 { font-size: 17px; margin: 0 0 10px; }
+          .pdf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+          .pdf-table th { background: #eef2ff; color: #3730a3; text-align: left; font-weight: 800; padding: 8px; border-bottom: 1px solid #dbeafe; }
+          .pdf-table td { padding: 7px 8px; border-bottom: 1px solid #edf2f7; vertical-align: top; }
+          .pdf-table tr:nth-child(even) td { background: #f9fafb; }
+          .pdf-detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+          .pdf-detail-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 16px; box-shadow: 0 12px 32px rgba(15,23,42,.06); }
+          .pdf-detail-card h3 { margin: 0 0 10px; font-size: 16px; }
+          .pdf-detail-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 12px; font-size: 10.5px; line-height: 1.25; }
+          .pdf-detail-fields strong { color: #4b5563; margin-right: 5px; }
+          .pdf-empty { height: 520px; display: flex; align-items: center; justify-content: center; border: 1px dashed #cbd5e1; border-radius: 20px; color: #64748b; font-size: 22px; font-weight: 700; }
+        </style>
+      `;
+      document.body.appendChild(host);
+      return host;
+    }
 
-        // Chart image - force square for pie charts
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        doc.addImage(imgData, 'PNG', x, y + 5, chartSize, chartSize);
+    function createPdfPage(className, bodyHtml, footerText = '') {
+      const page = document.createElement('section');
+      page.className = `pdf-page ${className || ''}`;
+      page.innerHTML = `${bodyHtml}<div class="pdf-footer"><span>CrossPilot AI Survey Report</span><span>${escapeHtml(footerText)}</span></div>`;
+      return page;
+    }
+
+    async function waitForImages(el) {
+      const imgs = Array.from(el.querySelectorAll('img'));
+      await Promise.all(imgs.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = resolve;
+          img.onerror = resolve;
+        });
+      }));
+    }
+
+    async function addElementAsPdfPage(doc, host, page, state) {
+      host.appendChild(page);
+      await waitForImages(page);
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const canvas = await html2canvas(page, {
+        scale: 2,
+        backgroundColor: '#f5f7fb',
+        useCORS: true,
+        logging: false
+      });
+      const img = canvas.toDataURL('image/png');
+      if (!state.first) doc.addPage();
+      doc.addImage(img, 'PNG', 0, 0, 297, 210);
+      state.first = false;
+      page.remove();
+    }
+
+    async function captureChartShots(chartDefs) {
+      const shots = [];
+      for (const def of chartDefs) {
+        const canvas = document.getElementById(def.id);
+        const card = canvas?.closest('.chart-card');
+        if (!card) continue;
+        const shotCanvas = await html2canvas(card, {
+          scale: 2,
+          backgroundColor: '#050505',
+          useCORS: true,
+          logging: false
+        });
+        shots.push({
+          title: def.title,
+          src: shotCanvas.toDataURL('image/png')
+        });
+      }
+      return shots;
+    }
+
+    function buildCoverPage(data, chartCount) {
+      const shallow = data.filter(r => r.survey_type !== 'deep').length;
+      const deep = data.filter(r => r.survey_type === 'deep').length;
+      const contacts = data.filter(r => r.contact_wechat || r.contact_phone || r.contact_email || r.contact_linkedin).length;
+      const filterHtml = getPdfFilterSummary().map(([label, value]) => `
+        <div class="pdf-filter"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></div>
+      `).join('');
+
+      return createPdfPage('dark', `
+        <div class="pdf-kicker">CrossPilot AI</div>
+        <h1 class="pdf-title">跨境电商卖家需求调研报告</h1>
+        <p class="pdf-subtitle">生成时间：${escapeHtml(formatPdfDate(new Date().toISOString()))}</p>
+        <div class="pdf-metric-grid">
+          <div class="pdf-metric"><div class="pdf-metric-label">当前筛选样本</div><div class="pdf-metric-value">${data.length}</div></div>
+          <div class="pdf-metric"><div class="pdf-metric-label">快速调研</div><div class="pdf-metric-value">${shallow}</div></div>
+          <div class="pdf-metric"><div class="pdf-metric-label">深度调研</div><div class="pdf-metric-value">${deep}</div></div>
+          <div class="pdf-metric"><div class="pdf-metric-label">统计图表</div><div class="pdf-metric-value">${chartCount}</div></div>
+        </div>
+        <div class="pdf-metric-grid" style="grid-template-columns: repeat(2, 1fr); margin-top: 16px;">
+          <div class="pdf-metric"><div class="pdf-metric-label">留资数量</div><div class="pdf-metric-value">${contacts}</div></div>
+          <div class="pdf-metric"><div class="pdf-metric-label">留资率</div><div class="pdf-metric-value">${percentText(contacts, data.length)}</div></div>
+        </div>
+        <div class="pdf-filter-grid">${filterHtml}</div>
+      `, '封面');
+    }
+
+    function buildChartPage(chunk, index, total) {
+      const html = `
+        <h2 class="pdf-section-title">统计图表 ${index + 1}/${total}</h2>
+        <p class="pdf-section-note">按当前后台筛选条件导出，保留页面图表的真实视觉状态。</p>
+        <div class="pdf-chart-grid">
+          ${chunk.map(item => `
+            <div class="pdf-chart-shot">
+              <img src="${item.src}" alt="${escapeHtml(item.title)}">
+            </div>
+          `).join('')}
+        </div>
+      `;
+      return createPdfPage('', html, `图表 ${index + 1}/${total}`);
+    }
+
+    function buildStatsPage(defs, data, index, total) {
+      const html = `
+        <h2 class="pdf-section-title">统计数据明细 ${index + 1}/${total}</h2>
+        <p class="pdf-section-note">每个图表对应的选项、数量和占比。多选题占比按当前样本数计算。</p>
+        <div class="pdf-stat-grid">
+          ${defs.map(def => {
+            const result = getPdfChartResult(def, data);
+            const denominator = data.length;
+            const rows = result.labels.map((label, i) => `
+              <tr>
+                <td>${escapeHtml(label)}</td>
+                <td>${result.values[i] || 0}</td>
+                <td>${percentText(result.values[i] || 0, denominator)}</td>
+              </tr>
+            `).join('');
+            return `
+              <div class="pdf-stat-card">
+                <h3>${escapeHtml(def.title)}</h3>
+                <table class="pdf-table">
+                  <thead><tr><th>选项</th><th>数量</th><th>占比</th></tr></thead>
+                  <tbody>${rows}</tbody>
+                </table>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+      return createPdfPage('', html, `统计明细 ${index + 1}/${total}`);
+    }
+
+    function buildResponseTablePage(rows, pageIndex, totalPages, totalRows) {
+      const body = rows.length ? rows.map((r, i) => `
+        <tr>
+          <td>${pageIndex * 12 + i + 1}</td>
+          <td>${escapeHtml(formatPdfDate(r.created_at))}</td>
+          <td>${escapeHtml(r.survey_type === 'deep' ? '深度' : '快速')}</td>
+          <td>${escapeHtml(formatPdfValue(r.business_type))}</td>
+          <td>${escapeHtml(formatPdfValue(r.main_market))}</td>
+          <td>${escapeHtml(formatPdfValue(r.monthly_ad_spend))}</td>
+          <td>${escapeHtml(formatPdfValue(r.ai_experience))}</td>
+          <td>${escapeHtml(formatPdfValue(r.willing_to_pay))}</td>
+          <td>${escapeHtml(formatPdfValue(r.contact_wechat || r.contact_phone || r.contact_email || r.contact_linkedin))}</td>
+        </tr>
+      `).join('') : '<tr><td colspan="9">当前筛选条件下暂无数据</td></tr>';
+
+      const html = `
+        <h2 class="pdf-section-title">原始记录总览 ${pageIndex + 1}/${totalPages}</h2>
+        <p class="pdf-section-note">共 ${totalRows} 条记录。本页展示每条问卷的核心字段，后续附录保留完整非空字段。</p>
+        <table class="pdf-table" style="font-size: 11px;">
+          <thead>
+            <tr>
+              <th>#</th><th>提交时间</th><th>类型</th><th>业务类型</th><th>目标市场</th><th>广告投入</th><th>AI经验</th><th>付费意愿</th><th>联系方式</th>
+            </tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+      `;
+      return createPdfPage('', html, `原始记录 ${pageIndex + 1}/${totalPages}`);
+    }
+
+    function buildDetailPage(rows, pageIndex, totalPages) {
+      const html = `
+        <h2 class="pdf-section-title">完整字段附录 ${pageIndex + 1}/${totalPages}</h2>
+        <p class="pdf-section-note">每条记录仅展示已填写字段，避免空字段占用版面。</p>
+        <div class="pdf-detail-grid">
+          ${rows.map((row, i) => {
+            const fields = getPdfResponseFields(row).map(([label, value]) => `
+              <div><strong>${escapeHtml(label)}:</strong>${escapeHtml(formatPdfValue(value))}</div>
+            `).join('');
+            return `
+              <div class="pdf-detail-card">
+                <h3>#${pageIndex * 2 + i + 1} · ${escapeHtml(row.survey_type === 'deep' ? '深度调研' : '快速调研')}</h3>
+                <div class="pdf-detail-fields">${fields}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+      return createPdfPage('', html, `字段附录 ${pageIndex + 1}/${totalPages}`);
+    }
+
+    async function exportPDF() {
+      if (!window.jspdf || !window.jspdf.jsPDF || !window.html2canvas) {
+        alert('PDF 导出依赖没有加载完成，请刷新页面后重试');
+        return;
       }
 
-      // Data table page
-      doc.addPage();
+      const button = document.querySelector('button[onclick="exportPDF()"]');
+      const originalText = button ? button.textContent : '';
+      if (button) {
+        button.disabled = true;
+        button.textContent = '生成 PDF 中...';
+      }
 
-      doc.setFontSize(16);
-      doc.setTextColor(29, 29, 31);
-      doc.text('Latest Responses', 14, 20);
+      let host = null;
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
+        const data = filterData();
+        const chartDefs = getVisiblePdfCharts();
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const chartShots = await captureChartShots(chartDefs);
 
-      doc.setFontSize(10);
-      doc.setTextColor(107, 114, 128);
-      doc.text(`Showing ${Math.min(data.length, 30)} of ${data.length} responses`, 14, 28);
+        host = createPdfHost();
+        const state = { first: true };
 
-      const tableData = data.slice(0, 30).map(r => {
-        const time = r.created_at ? new Date(r.created_at).toLocaleDateString('en-US', {
-          month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
-        }) : '';
-        return [
-          time,
-          r.survey_type === 'deep' ? 'Deep' : 'Quick',
-          r.business_type || '-',
-          r.main_market || '-',
-          r.monthly_ad_spend || '-',
-          r.ai_experience || '-',
-          r.willing_to_pay || '-'
-        ];
-      });
+        await addElementAsPdfPage(doc, host, buildCoverPage(data, chartShots.length), state);
 
-      doc.autoTable({
-        head: [['Time', 'Type', 'Business', 'Market', 'Ad Spend', 'AI Exp', 'Pay Willing']],
-        body: tableData,
-        startY: 35,
-        styles: {
-          fontSize: 8,
-          cellPadding: 3,
-          lineColor: [229, 231, 235],
-          lineWidth: 0.1
-        },
-        headStyles: {
-          fillColor: [124, 58, 237],
-          textColor: 255,
-          fontStyle: 'bold'
-        },
-        alternateRowStyles: {
-          fillColor: [249, 250, 251]
+        if (chartShots.length) {
+          const chartChunks = chunkArray(chartShots, 4);
+          for (let i = 0; i < chartChunks.length; i++) {
+            await addElementAsPdfPage(doc, host, buildChartPage(chartChunks[i], i, chartChunks.length), state);
+          }
+        } else {
+          await addElementAsPdfPage(doc, host, createPdfPage('', '<div class="pdf-empty">当前筛选条件下暂无可导出的图表</div>', '图表'), state);
         }
-      });
 
-      doc.save('survey_report.pdf');
+        const statChunks = chunkArray(chartDefs, 4);
+        for (let i = 0; i < statChunks.length; i++) {
+          await addElementAsPdfPage(doc, host, buildStatsPage(statChunks[i], data, i, statChunks.length), state);
+        }
+
+        const tableChunks = chunkArray(data, 12);
+        const tablePages = tableChunks.length || 1;
+        for (let i = 0; i < tablePages; i++) {
+          await addElementAsPdfPage(doc, host, buildResponseTablePage(tableChunks[i] || [], i, tablePages, data.length), state);
+        }
+
+        const detailChunks = chunkArray(data, 2);
+        for (let i = 0; i < detailChunks.length; i++) {
+          await addElementAsPdfPage(doc, host, buildDetailPage(detailChunks[i], i, detailChunks.length), state);
+        }
+
+        doc.save(`crosspilot-survey-report-${new Date().toISOString().slice(0, 10)}.pdf`);
+      } catch (err) {
+        console.error(err);
+        alert(`PDF 导出失败：${err.message || err}`);
+      } finally {
+        if (host) host.remove();
+        if (button) {
+          button.disabled = false;
+          button.textContent = originalText;
+        }
+      }
     }
 
     function download(content, filename, type) {
