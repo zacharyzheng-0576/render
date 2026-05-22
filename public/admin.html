@@ -1379,13 +1379,15 @@
           .pdf-footer { position: absolute; left: 48px; right: 48px; bottom: 28px; display: flex; justify-content: space-between; color: #9ca3af; font-size: 12px; }
           .pdf-chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
           .pdf-chart-shot {
-            background: #050505;
+            background: linear-gradient(135deg, #050505 0%, #111827 100%);
             border-radius: 18px;
             overflow: hidden;
+            padding: 18px;
             box-shadow: 0 18px 42px rgba(15,23,42,.18);
             border: 1px solid rgba(15,23,42,.08);
           }
-          .pdf-chart-shot img { display: block; width: 100%; height: 286px; object-fit: cover; }
+          .pdf-chart-shot h3 { color: #fff; font-size: 18px; margin: 0 0 10px; text-align: center; }
+          .pdf-chart-shot img { display: block; width: 100%; height: 238px; object-fit: contain; }
           .pdf-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
           .pdf-stat-card {
             background: #fff;
@@ -1418,27 +1420,45 @@
       return page;
     }
 
-    async function waitForImages(el) {
+    function withTimeout(promise, ms, label) {
+      let timer;
+      const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`${label} 超时，请稍后重试`)), ms);
+      });
+      return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+    }
+
+    function updatePdfStatus(button, text) {
+      if (button) button.textContent = text;
+    }
+
+    async function waitForImages(el, timeoutMs = 5000) {
       const imgs = Array.from(el.querySelectorAll('img'));
-      await Promise.all(imgs.map(img => {
+      const loadPromise = Promise.all(imgs.map(img => {
         if (img.complete) return Promise.resolve();
         return new Promise(resolve => {
           img.onload = resolve;
           img.onerror = resolve;
         });
       }));
+      await withTimeout(loadPromise, timeoutMs, '图片加载');
     }
 
-    async function addElementAsPdfPage(doc, host, page, state) {
+    async function addElementAsPdfPage(doc, host, page, state, label = '页面渲染') {
       host.appendChild(page);
       await waitForImages(page);
       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      const canvas = await html2canvas(page, {
-        scale: 2,
-        backgroundColor: '#f5f7fb',
-        useCORS: true,
-        logging: false
-      });
+      const canvas = await withTimeout(
+        html2canvas(page, {
+          scale: 1.5,
+          backgroundColor: '#f5f7fb',
+          useCORS: true,
+          logging: false,
+          removeContainer: true
+        }),
+        12000,
+        label
+      );
       const img = canvas.toDataURL('image/png');
       if (!state.first) doc.addPage();
       doc.addImage(img, 'PNG', 0, 0, 297, 210);
@@ -1446,24 +1466,18 @@
       page.remove();
     }
 
-    async function captureChartShots(chartDefs) {
-      const shots = [];
-      for (const def of chartDefs) {
+    function captureChartShots(chartDefs) {
+      return chartDefs.map(def => {
         const canvas = document.getElementById(def.id);
-        const card = canvas?.closest('.chart-card');
-        if (!card) continue;
-        const shotCanvas = await html2canvas(card, {
-          scale: 2,
-          backgroundColor: '#050505',
-          useCORS: true,
-          logging: false
-        });
-        shots.push({
+        if (!canvas) return null;
+        if (charts[def.id] && typeof charts[def.id].update === 'function') {
+          charts[def.id].update('none');
+        }
+        return {
           title: def.title,
-          src: shotCanvas.toDataURL('image/png')
-        });
-      }
-      return shots;
+          src: canvas.toDataURL('image/png', 1)
+        };
+      }).filter(Boolean);
     }
 
     function buildCoverPage(data, chartCount) {
@@ -1499,6 +1513,7 @@
         <div class="pdf-chart-grid">
           ${chunk.map(item => `
             <div class="pdf-chart-shot">
+              <h3>${escapeHtml(item.title)}</h3>
               <img src="${item.src}" alt="${escapeHtml(item.title)}">
             </div>
           `).join('')}
@@ -1607,39 +1622,47 @@
         const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4', compress: true });
         const data = filterData();
         const chartDefs = getVisiblePdfCharts();
+        updatePdfStatus(button, '整理图表...');
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-        const chartShots = await captureChartShots(chartDefs);
+        const chartShots = captureChartShots(chartDefs);
 
         host = createPdfHost();
         const state = { first: true };
 
-        await addElementAsPdfPage(doc, host, buildCoverPage(data, chartShots.length), state);
+        updatePdfStatus(button, '生成封面...');
+        await addElementAsPdfPage(doc, host, buildCoverPage(data, chartShots.length), state, '封面渲染');
 
         if (chartShots.length) {
           const chartChunks = chunkArray(chartShots, 4);
           for (let i = 0; i < chartChunks.length; i++) {
-            await addElementAsPdfPage(doc, host, buildChartPage(chartChunks[i], i, chartChunks.length), state);
+            updatePdfStatus(button, `生成图表 ${i + 1}/${chartChunks.length}...`);
+            await addElementAsPdfPage(doc, host, buildChartPage(chartChunks[i], i, chartChunks.length), state, `图表页 ${i + 1}`);
           }
         } else {
-          await addElementAsPdfPage(doc, host, createPdfPage('', '<div class="pdf-empty">当前筛选条件下暂无可导出的图表</div>', '图表'), state);
+          updatePdfStatus(button, '生成空图表页...');
+          await addElementAsPdfPage(doc, host, createPdfPage('', '<div class="pdf-empty">当前筛选条件下暂无可导出的图表</div>', '图表'), state, '空图表页');
         }
 
         const statChunks = chunkArray(chartDefs, 4);
         for (let i = 0; i < statChunks.length; i++) {
-          await addElementAsPdfPage(doc, host, buildStatsPage(statChunks[i], data, i, statChunks.length), state);
+          updatePdfStatus(button, `生成统计 ${i + 1}/${statChunks.length}...`);
+          await addElementAsPdfPage(doc, host, buildStatsPage(statChunks[i], data, i, statChunks.length), state, `统计页 ${i + 1}`);
         }
 
         const tableChunks = chunkArray(data, 12);
         const tablePages = tableChunks.length || 1;
         for (let i = 0; i < tablePages; i++) {
-          await addElementAsPdfPage(doc, host, buildResponseTablePage(tableChunks[i] || [], i, tablePages, data.length), state);
+          updatePdfStatus(button, `生成记录 ${i + 1}/${tablePages}...`);
+          await addElementAsPdfPage(doc, host, buildResponseTablePage(tableChunks[i] || [], i, tablePages, data.length), state, `记录页 ${i + 1}`);
         }
 
         const detailChunks = chunkArray(data, 2);
         for (let i = 0; i < detailChunks.length; i++) {
-          await addElementAsPdfPage(doc, host, buildDetailPage(detailChunks[i], i, detailChunks.length), state);
+          updatePdfStatus(button, `生成附录 ${i + 1}/${detailChunks.length}...`);
+          await addElementAsPdfPage(doc, host, buildDetailPage(detailChunks[i], i, detailChunks.length), state, `附录页 ${i + 1}`);
         }
 
+        updatePdfStatus(button, '保存 PDF...');
         doc.save(`crosspilot-survey-report-${new Date().toISOString().slice(0, 10)}.pdf`);
       } catch (err) {
         console.error(err);
