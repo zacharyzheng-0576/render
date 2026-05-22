@@ -2,7 +2,7 @@
 
 > 更新时间：2026-05-22
 > 当前分支：main
-> 最新提交：f5871b7 Handle shallow survey replacement on deep submit
+> 关键功能提交：f5871b7 Handle shallow survey replacement on deep submit
 
 ---
 
