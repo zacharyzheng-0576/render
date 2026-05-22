@@ -511,24 +511,27 @@
         </select>
         <select id="filter-type" class="apple-select" onchange="renderAll()">
           <option value="">全部业务类型</option>
-          <option value="平台卖家">平台卖家</option>
           <option value="独立站卖家">独立站卖家</option>
+          <option value="平台卖家">平台卖家</option>
           <option value="两者都做">两者都做</option>
         </select>
-        <select id="filter-exp" class="apple-select" onchange="renderAll()">
-          <option value="">全部入行时间</option>
-          <option value="半年以下">半年以下</option>
-          <option value="半年-1年">半年-1年</option>
-          <option value="1-3年">1-3年</option>
-          <option value="3年以上">3年以上</option>
+        <select id="filter-market" class="apple-select" onchange="renderAll()">
+          <option value="">全部目标市场</option>
+          <option value="北美">北美</option>
+          <option value="欧洲">欧洲</option>
+          <option value="东南亚">东南亚</option>
+          <option value="日韩">日韩</option>
+          <option value="中东">中东</option>
+          <option value="拉美">拉美</option>
+          <option value="全球">全球</option>
         </select>
-        <select id="filter-revenue" class="apple-select" onchange="renderAll()">
-          <option value="">全部月营收</option>
-          <option value="5千以下">5千以下</option>
-          <option value="5千-2万">5千-2万</option>
-          <option value="2万-10万">2万-10万</option>
-          <option value="10万-50万">10万-50万</option>
-          <option value="50万以上">50万以上</option>
+        <select id="filter-ad-spend" class="apple-select" onchange="renderAll()">
+          <option value="">全部广告投入</option>
+          <option value="0">目前不投广告</option>
+          <option value="5千以下">¥5,000 以下</option>
+          <option value="5千-2万">¥5,000 ~ ¥20,000</option>
+          <option value="2万-10万">¥20,000 ~ ¥100,000</option>
+          <option value="10万以上">¥100,000+</option>
         </select>
       </div>
     </div>
@@ -536,66 +539,48 @@
     <!-- Charts Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
       <div class="chart-card">
-        <h3>痛点评分雷达图</h3>
-        <canvas id="radarChart"></canvas>
-      </div>
-      <div class="chart-card">
         <h3>业务类型分布</h3>
         <canvas id="typeChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>入行时间分布</h3>
-        <canvas id="expChart"></canvas>
+        <h3>目标市场分布</h3>
+        <canvas id="marketChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>月营收分布</h3>
-        <canvas id="revenueChart"></canvas>
+        <h3>月广告投入分布</h3>
+        <canvas id="adSpendChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>最耗时任务</h3>
-        <canvas id="taskChart"></canvas>
+        <h3>素材更新频率</h3>
+        <canvas id="creativeFreqChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>最大创意挑战</h3>
+        <canvas id="creativeChallengeChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>竞品追踪方式</h3>
+        <canvas id="competitorChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>转化率满意度</h3>
+        <canvas id="conversionChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>商品页问题</h3>
+        <canvas id="pageIssuesChart"></canvas>
       </div>
       <div class="chart-card">
         <h3>AI 使用经验</h3>
         <canvas id="aiExpChart"></canvas>
       </div>
       <div class="chart-card">
-        <h3>AI 担忧因素</h3>
-        <canvas id="aiConcernChart"></canvas>
+        <h3>AI 期望功能</h3>
+        <canvas id="aiExpectationChart"></canvas>
       </div>
       <div class="chart-card">
         <h3>付费意愿</h3>
         <canvas id="payChart"></canvas>
-      </div>
-      <div class="chart-card">
-        <h3>AI 期望价值</h3>
-        <canvas id="aiValueChart"></canvas>
-      </div>
-
-      <!-- Deep survey charts -->
-      <div class="chart-card deep-chart hidden">
-        <h3>SKU 数量分布</h3>
-        <canvas id="skuChart"></canvas>
-      </div>
-      <div class="chart-card deep-chart hidden">
-        <h3>上架耗时分布</h3>
-        <canvas id="listingTimeChart"></canvas>
-      </div>
-      <div class="chart-card deep-chart hidden">
-        <h3>广告投放状态</h3>
-        <canvas id="adStatusChart"></canvas>
-      </div>
-      <div class="chart-card deep-chart hidden">
-        <h3>功能需求排名</h3>
-        <canvas id="featureChart"></canvas>
-      </div>
-      <div class="chart-card deep-chart hidden">
-        <h3>上架付费意愿</h3>
-        <canvas id="listingPayChart"></canvas>
-      </div>
-      <div class="chart-card deep-chart hidden">
-        <h3>创意付费意愿</h3>
-        <canvas id="creativePayChart"></canvas>
       </div>
     </div>
 
@@ -611,8 +596,8 @@
               <th>时间</th>
               <th>类型</th>
               <th>业务类型</th>
-              <th>入行时间</th>
-              <th>月营收</th>
+              <th>目标市场</th>
+              <th>月广告投入</th>
               <th>AI经验</th>
               <th>联系方式</th>
               <th>操作</th>
@@ -657,33 +642,43 @@
     ];
 
     const ALL_OPTIONS = {
-      business_type: ['平台卖家', '独立站卖家', '两者都做'],
-      experience: ['半年以下', '半年-1年', '1-3年', '3年以上'],
-      revenue: ['5千以下', '5千-2万', '2万-10万', '10万-50万', '50万以上'],
+      business_type: ['独立站卖家', '平台卖家', '两者都做'],
+      main_market: ['北美', '欧洲', '东南亚', '日韩', '中东', '拉美', '全球'],
+      monthly_ad_spend: ['0', '5千以下', '5千-2万', '2万-10万', '10万以上'],
+      creative_refresh_frequency: ['几天', '每周', '两周', '每月', '很少', '不投'],
+      biggest_creative_challenge: ['没有灵感', '制作慢', '不知道有效', '素材疲劳', '竞品难追踪', '其他'],
+      competitor_tracking: ['工具', '手动', '没有', '其他'],
+      conversion_rate_concern: ['很差', '一般', '还行', '很好', '不关注'],
+      product_page_issues: ['转化率低', '跳出率高', '退货多', '差评多', 'SEO差', '其他'],
       ai_experience: ['经常用', '偶尔用', '试过', '想试', '不考虑'],
-      ai_value_expectation: ['节省时间', '提升质量', '降低成本', '快速上手', '一站式', '其他'],
+      ai_expectation: ['创意情报', '广告优化', '商品页优化', '内容生成', '其他'],
       willing_to_pay: ['0', '99以下', '99-299', '300-599', '600以上'],
-      time_consuming_tasks: ['商品上架', '广告素材', '竞品分析', '客服回复', '内容本地化', 'SEO优化', '数据分析', '其他'],
-      ai_concerns: ['质量不稳定', '不够本地化', '需要大量修改', '学习成本高', '数据安全', '价格贵', '不了解', '其他'],
-      sku_count: ['1-10', '11-50', '51-200', '201-1000', '1000以上'],
-      listing_time: ['10分钟以下', '10-30分钟', '30-60分钟', '1-2小时', '2小时以上'],
-      ad_status: ['在投', '测试中', '计划中', '没有'],
-      top_features: ['商品文案', '广告创意', '竞品追踪', '多平台上架', '内容本地化', '客服回复', '数据分析', '其他'],
-      pay_for_listing: ['0', '1-5元', '5-10元', '10-20元', '20元以上'],
-      pay_for_creative: ['0', '99以下', '99-299', '300-599', '600以上']
+      // Deep survey options
+      ad_platforms: ['Facebook/Instagram', 'TikTok', 'Google', 'Pinterest', '其他'],
+      monthly_creative_count: ['10条以下', '10-50条', '50-100条', '100条以上'],
+      creative_source: ['竞品参考', '平台趋势', '自己想', '外包', '其他'],
+      creative_pain_detail: ['追踪竞品', '热门素材', '生成脚本', '测试建议', '其他'],
+      product_page_time: ['1小时以下', '1-3小时', '3-8小时', '8小时以上', '不优化'],
+      product_page_elements: ['主图视频', '标题卖点', '详细描述', '用户评价', 'FAQ', '价格策略', '其他'],
+      market_readiness_need: ['每次都查', '偶尔查', '基本不查', '不知道查什么'],
+      competitor_analysis_frequency: ['每天', '每周', '每月', '很少', '从不'],
+      competitor_analysis_content: ['广告素材', '定价策略', '商品页', '用户评价', '流量来源', '其他'],
+      pay_for_creative_scout: ['0', '99以下', '99-299', '300-599', '600以上'],
+      pay_for_page_optimize: ['0', '99以下', '99-299', '300-599', '600以上'],
+      most_valuable_features: ['竞品广告追踪', '热门素材发现', '创意脚本生成', '商品页优化建议', '市场准备度检查', '其他']
     };
 
     function filterData() {
       const surveyType = document.getElementById('filter-survey-type').value;
       const type = document.getElementById('filter-type').value;
-      const exp = document.getElementById('filter-exp').value;
-      const rev = document.getElementById('filter-revenue').value;
+      const market = document.getElementById('filter-market').value;
+      const adSpend = document.getElementById('filter-ad-spend').value;
 
       return allResponses.filter(r => {
         if (surveyType && r.survey_type !== surveyType) return false;
         if (type && r.business_type !== type) return false;
-        if (exp && r.experience !== exp) return false;
-        if (rev && r.revenue !== rev) return false;
+        if (market && r.main_market !== market) return false;
+        if (adSpend && r.monthly_ad_spend !== adSpend) return false;
         return true;
       });
     }
@@ -983,8 +978,8 @@
             <td>${formatTime(r.created_at)}</td>
             <td>${typeBadge}</td>
             <td>${r.business_type || '-'}</td>
-            <td>${r.experience || '-'}</td>
-            <td>${r.revenue || '-'}</td>
+            <td>${r.main_market || '-'}</td>
+            <td>${r.monthly_ad_spend || '-'}</td>
             <td>${r.ai_experience || '-'}</td>
             <td>${contact}</td>
             <td><button class="btn-delete" onclick="deleteOne('${r.id}')">删除</button></td>
@@ -997,32 +992,18 @@
       const data = filterData();
       document.getElementById('total-count').textContent = data.length;
 
-      // Show/hide deep charts
-      const hasDeep = data.some(r => r.survey_type === 'deep');
-      document.querySelectorAll('.deep-chart').forEach(el => {
-        el.classList.toggle('hidden', !hasDeep);
-      });
-
       // Basic charts
-      renderRadarChart(data);
       renderPieChart('typeChart', countField(data, 'business_type').values, ALL_OPTIONS.business_type);
-      renderPieChart('expChart', countField(data, 'experience').values, ALL_OPTIONS.experience);
-      renderPieChart('revenueChart', countField(data, 'revenue').values, ALL_OPTIONS.revenue);
-      renderBarChart('taskChart', countMultiField(data, 'time_consuming_tasks'));
+      renderPieChart('marketChart', countField(data, 'main_market').values, ALL_OPTIONS.main_market);
+      renderBarChart('adSpendChart', countField(data, 'monthly_ad_spend'));
+      renderBarChart('creativeFreqChart', countField(data, 'creative_refresh_frequency'));
+      renderBarChart('creativeChallengeChart', countField(data, 'biggest_creative_challenge'));
+      renderPieChart('competitorChart', countField(data, 'competitor_tracking').values, ALL_OPTIONS.competitor_tracking);
+      renderPieChart('conversionChart', countField(data, 'conversion_rate_concern').values, ALL_OPTIONS.conversion_rate_concern);
+      renderBarChart('pageIssuesChart', countMultiField(data, 'product_page_issues'));
       renderPieChart('aiExpChart', countField(data, 'ai_experience').values, ALL_OPTIONS.ai_experience);
-      renderBarChart('aiConcernChart', countMultiField(data, 'ai_concerns'));
+      renderBarChart('aiExpectationChart', countField(data, 'ai_expectation'));
       renderBarChart('payChart', countField(data, 'willing_to_pay'));
-      renderPieChart('aiValueChart', countField(data, 'ai_value_expectation').values, ALL_OPTIONS.ai_value_expectation);
-
-      // Deep charts
-      if (hasDeep) {
-        renderBarChart('skuChart', countField(data, 'sku_count'));
-        renderBarChart('listingTimeChart', countField(data, 'listing_time'));
-        renderPieChart('adStatusChart', countField(data, 'ad_status').values, ALL_OPTIONS.ad_status);
-        renderBarChart('featureChart', countMultiField(data, 'top_features'));
-        renderBarChart('listingPayChart', countField(data, 'pay_for_listing'));
-        renderBarChart('creativePayChart', countField(data, 'pay_for_creative'));
-      }
 
       renderTable(data);
     }
@@ -1030,13 +1011,13 @@
     // Export functions
     function exportCSV() {
       const data = filterData();
-      const headers = ['时间', '类型', '业务类型', '入行时间', '月营收', 'AI经验', '联系方式'];
+      const headers = ['时间', '类型', '业务类型', '目标市场', '月广告投入', 'AI经验', '联系方式'];
       const rows = data.map(r => [
         r.created_at,
         r.survey_type === 'deep' ? '深度' : '快速',
         r.business_type || '',
-        r.experience || '',
-        r.revenue || '',
+        r.main_market || '',
+        r.monthly_ad_spend || '',
         r.ai_experience || '',
         r.contact_wechat || r.contact_phone || r.contact_email || ''
       ]);
