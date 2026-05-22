@@ -1162,96 +1162,138 @@
 
     function exportPDF() {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('l', 'mm', 'a4');
+      const doc = new jsPDF('p', 'mm', 'a4');
 
-      // Title
-      doc.setFontSize(20);
-      doc.setTextColor(29, 29, 31);
-      doc.text('CrossPilot Survey Report', 14, 20);
-      doc.setFontSize(10);
-      doc.setTextColor(134, 134, 139);
-      doc.text(`Generated: ${new Date().toLocaleString('zh-CN')}`, 14, 28);
-
-      // Summary
       const data = filterData();
-      doc.setFontSize(12);
-      doc.setTextColor(29, 29, 31);
-      doc.text(`Total: ${data.length} | Shallow: ${data.filter(r => r.survey_type !== 'deep').length} | Deep: ${data.filter(r => r.survey_type === 'deep').length}`, 14, 38);
+      const shallowCount = data.filter(r => r.survey_type !== 'deep').length;
+      const deepCount = data.filter(r => r.survey_type === 'deep').length;
 
-      // Add charts
+      // Page 1: Title and Summary
+      doc.setFillColor(245, 245, 247);
+      doc.rect(0, 0, 210, 297, 'F');
+
+      doc.setFontSize(28);
+      doc.setTextColor(29, 29, 31);
+      doc.text('CrossPilot AI', 105, 40, { align: 'center' });
+
+      doc.setFontSize(18);
+      doc.setTextColor(107, 114, 128);
+      doc.text('Survey Report', 105, 52, { align: 'center' });
+
+      doc.setFontSize(11);
+      doc.setTextColor(156, 163, 175);
+      doc.text(`Generated: ${new Date().toLocaleString('zh-CN')}`, 105, 65, { align: 'center' });
+
+      // Summary cards
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(30, 85, 50, 35, 5, 5, 'F');
+      doc.roundedRect(90, 85, 50, 35, 5, 5, 'F');
+      doc.roundedRect(150, 85, 50, 35, 5, 5, 'F');
+
+      doc.setFontSize(24);
+      doc.setTextColor(29, 29, 31);
+      doc.text(String(data.length), 55, 100, { align: 'center' });
+      doc.text(String(shallowCount), 115, 100, { align: 'center' });
+      doc.text(String(deepCount), 175, 100, { align: 'center' });
+
+      doc.setFontSize(10);
+      doc.setTextColor(107, 114, 128);
+      doc.text('Total', 55, 112, { align: 'center' });
+      doc.text('Quick', 115, 112, { align: 'center' });
+      doc.text('Detailed', 175, 112, { align: 'center' });
+
+      // Charts
       const chartIds = [
-        'radarChart', 'typeChart', 'expChart', 'revenueChart',
-        'taskChart', 'aiExpChart', 'aiConcernChart', 'payChart', 'aiValueChart'
+        'typeChart', 'marketChart', 'adSpendChart',
+        'creativeFreqChart', 'creativeChallengeChart', 'competitorChart',
+        'conversionChart', 'pageIssuesChart', 'aiExpChart',
+        'aiExpectationChart', 'payChart'
       ];
 
-      let yPos = 50;
-      const chartWidth = 120;
-      const chartHeight = 80;
-      const margin = 10;
+      let page = 1;
+      let col = 0;
+      let row = 0;
+      const chartW = 85;
+      const chartH = 60;
+      const startX = 15;
+      const startY = 140;
+      const gapX = 10;
+      const gapY = 10;
 
       for (let i = 0; i < chartIds.length; i++) {
         const canvas = document.getElementById(chartIds[i]);
         if (!canvas) continue;
 
-        // Check if we need a new page
-        if (yPos + chartHeight > 200) {
+        // New page if needed
+        if (row >= 2) {
           doc.addPage();
-          yPos = 20;
+          page++;
+          row = 0;
+          col = 0;
         }
 
-        // Add chart title
-        const chartTitle = canvas.parentElement.querySelector('h3')?.textContent || chartIds[i];
-        doc.setFontSize(10);
+        const x = startX + col * (chartW + gapX);
+        const y = startY + row * (chartH + gapY + 15);
+
+        // Chart title
+        const title = canvas.parentElement.querySelector('h3')?.textContent || '';
+        doc.setFontSize(9);
         doc.setTextColor(107, 114, 128);
-        doc.text(chartTitle, 14, yPos);
-        yPos += 5;
+        doc.text(title, x + chartW / 2, y, { align: 'center' });
 
-        // Convert canvas to image
+        // Chart image
         const imgData = canvas.toDataURL('image/png', 1.0);
-        const col = i % 2 === 0 ? 0 : chartWidth + margin;
-        const x = 14 + col;
+        doc.addImage(imgData, 'PNG', x, y + 5, chartW, chartH);
 
-        if (i % 2 === 1) {
-          yPos -= 5; // Align with previous chart title
-        }
-
-        doc.addImage(imgData, 'PNG', x, yPos, chartWidth, chartHeight);
-
-        if (i % 2 === 1) {
-          yPos += chartHeight + margin;
-        }
-
-        if (i === chartIds.length - 1 && i % 2 === 0) {
-          yPos += chartHeight + margin;
+        col++;
+        if (col >= 2) {
+          col = 0;
+          row++;
         }
       }
 
-      // Add data table
-      if (yPos + 50 > 200) {
-        doc.addPage();
-        yPos = 20;
-      }
+      // Data table on new page
+      doc.addPage();
 
-      doc.setFontSize(14);
+      doc.setFontSize(16);
       doc.setTextColor(29, 29, 31);
-      doc.text('Latest Responses', 14, yPos + 10);
+      doc.text('Response Data', 15, 20);
+
+      doc.setFontSize(10);
+      doc.setTextColor(107, 114, 128);
+      doc.text(`Showing ${Math.min(data.length, 50)} of ${data.length} responses`, 15, 28);
+
+      const tableData = data.slice(0, 50).map(r => [
+        formatTime(r.created_at),
+        r.survey_type === 'deep' ? 'D' : 'Q',
+        r.business_type || '-',
+        r.main_market || '-',
+        r.monthly_ad_spend || '-',
+        r.ai_experience || '-',
+        r.willing_to_pay || '-'
+      ]);
 
       doc.autoTable({
-        head: [['Time', 'Type', 'Business', 'Experience', 'Revenue', 'AI Experience']],
-        body: data.slice(0, 30).map(r => [
-          formatTime(r.created_at),
-          r.survey_type === 'deep' ? 'Deep' : 'Quick',
-          r.business_type || '',
-          r.experience || '',
-          r.revenue || '',
-          r.ai_experience || ''
-        ]),
-        startY: yPos + 15,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [124, 58, 237] }
+        head: [['Time', 'Type', 'Business', 'Market', 'Ad Spend', 'AI Exp', 'Pay']],
+        body: tableData,
+        startY: 35,
+        styles: {
+          fontSize: 8,
+          cellPadding: 3,
+          lineColor: [229, 231, 235],
+          lineWidth: 0.1
+        },
+        headStyles: {
+          fillColor: [124, 58, 237],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+          fillColor: [249, 250, 251]
+        }
       });
 
-      doc.save('survey_report.pdf');
+      doc.save('crosspilot_survey_report.pdf');
     }
 
     function download(content, filename, type) {
